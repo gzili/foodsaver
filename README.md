@@ -30,4 +30,4 @@ Reduce food waste by developing a platform where everyone from individuals to la
 
 - Frontend: React
 - Backend: ASP.NET
-- Databse: PostgreSQL
+- Database: PostgreSQL
