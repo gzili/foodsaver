@@ -6,6 +6,10 @@ Waste food sharing at any scale.
 
 Reduce food waste by developing a platform where everyone from individuals to large food chains can post redundant food offers.
 
+## Goal
+
+Build a React powered SPA (Single Page Application), using ASP.NET framework as an API backend and PostgreSQL as data persistence database.
+
 ## Roadmap
 
 ### First Release
