@@ -19,12 +19,12 @@ Reduce food waste by developing a platform where everyone from individuals to la
 - [ ] Offer reservation for pickup
 - [ ] Pickup status tracking on both ends
 - [ ] Display of pickup location as a point on the map
-- [ ] Database
+- [ ] Data persistence in a database
 
 ### Third Release
 
 - [ ] Templates - save commonly used food data for reuse in future offers
-- [ ] Full integration with Google Maps (display all pickup locations in the map, clicking one should take to the offers page for that location)
+- [ ] Full integration with Google Maps (display all pickup locations in the map, clicking a location brings up an offers page)
 
 ## Technology Stack
 
