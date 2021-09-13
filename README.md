@@ -11,13 +11,13 @@ Reduce food waste by developing a platform where everyone from individuals to la
 ### First Release
 
 - [ ] Account registration & login
-- [ ] Posting of food offers by registered users
+- [ ] User-posted food offers
 - [ ] Public listing of all currently active offers
 
 ### Second Release
 
-- [ ] Reservation of offers for pickup later
-- [ ] Tracking of pickup status on both ends
+- [ ] Offer reservation for pickup
+- [ ] Pickup status tracking on both ends
 - [ ] Display of pickup location as a point on the map
 - [ ] Database
 
