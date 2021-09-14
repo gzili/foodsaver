@@ -16,7 +16,7 @@ Build a React powered SPA (Single Page Application), using ASP.NET framework as 
 
 - [ ] Account registration & login
 - [ ] User-posted food offers
-- [ ] Public listing of all currently active offers
+- [ ] Public listing of all active offers
 
 ### Second Release
 
