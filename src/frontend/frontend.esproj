@@ -11,6 +11,13 @@
     <Script Include="**" Exclude="*.esproj;**\node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+    <Script Include="src\containers\App\index.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\components" />
+    <Folder Include="src\routes" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="src\containers\App\index.js" />
   </ItemGroup>
   <!-- This target is copied from the ASP.NET SPA template in order to ensure node_modules are in place. -->
