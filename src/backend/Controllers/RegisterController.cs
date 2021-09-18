@@ -17,9 +17,15 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public User Get()
+        public User GetRegister()
         {
             return _registerService.GetUser();
+        } 
+        
+        [HttpPost]
+        public void PostRegister(User user)
+        {
+            Console.WriteLine(user.ToString());
         }
     }
 }

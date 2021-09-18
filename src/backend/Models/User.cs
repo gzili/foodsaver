@@ -1,4 +1,7 @@
-﻿namespace backend.Models
+﻿using System;
+using backend.Controllers;
+
+namespace backend.Models
 {
     public class User
     {
@@ -17,5 +20,10 @@
         public string Password { get; set; }
         public string Location { get; set; } 
         public UserType UserType { get; set; }
+
+        public string ToString()
+        {
+            return Id + ", " + Email + ", " + Name + ", " + Password + ", " + Location + ", " + UserType;
+        }
     }
 }
