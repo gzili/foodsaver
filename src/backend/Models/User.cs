@@ -21,7 +21,7 @@ namespace backend.Models
         public string Location { get; set; } 
         public UserType UserType { get; set; }
 
-        public string ToString()
+        public override string ToString()
         {
             return Id + ", " + Email + ", " + Name + ", " + Password + ", " + Location + ", " + UserType;
         }
