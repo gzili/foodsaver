@@ -26,6 +26,7 @@ namespace backend.Controllers
         public void PostRegister(User user)
         {
             Console.WriteLine(user.ToString());
+            _registerService.Save(user);
         }
     }
 }
