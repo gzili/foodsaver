@@ -19,6 +19,8 @@
   <ItemGroup>
     <Content Include="src\containers\App\index.js" />
     <Content Include="src\routes\index.js" />
+    <Content Include="src\theme\index.js" />
+    <Content Include="src\theme\styles.js" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\components\core\index.tsx" />
