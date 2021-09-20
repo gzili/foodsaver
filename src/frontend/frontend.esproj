@@ -15,10 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\components" />
-    <Folder Include="src\routes" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="src\containers\App\index.js" />
+    <Content Include="src\routes\index.js" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\components\core\index.tsx" />
