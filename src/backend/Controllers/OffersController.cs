@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using backend.Services;
 
 namespace backend.Controllers
 {
@@ -14,7 +15,7 @@ namespace backend.Controllers
         public List<Offer> Get()
         {
             // should return a list of all user-posted offers
-            return new List<Offer>();
+            return OffersServices.GetAllOffers();
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"
@@ -23,7 +24,7 @@ namespace backend.Controllers
             // should return an offer having a specified id
             // the id will likely be index in a static list
             // until a database is created
-            return new Offer();
+            return OffersServices.GetSpecificOffer(id);
         }
     }
 }
