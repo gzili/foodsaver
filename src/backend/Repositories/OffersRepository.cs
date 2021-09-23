@@ -13,21 +13,21 @@ namespace backend.Repositories
             Offers = new List<Offer>();
         }
 
-        public static void SaveOffer(Offer offer)
+        public static void Save(Offer offer)
         {
             Offers.Add(offer);
         }
 
-        public static Offer GetStandardOffer()
+        public static Offer GetStandard()
         {
             return new Offer(999999, 999999, 999999, 999999, DateTime.Now, DateTime.Now);
         }
 
-        public static Offer GetOfferById(int id)
+        public static Offer GetById(int id)
         {
             return Offers.Find((Offer offer) => offer.Id == id);
         }
-        public static List<Offer> GetAllOffers()
+        public static List<Offer> GetAll()
         {
             return Offers;
         }
