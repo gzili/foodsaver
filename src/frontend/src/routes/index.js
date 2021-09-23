@@ -1,5 +1,7 @@
-import { Box, Button, Flex, Heading, HStack, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
+
+import logo from 'resources/foodsaver_logo.jpg';
 
 export default function Home() {
   return (
@@ -12,10 +14,10 @@ export default function Home() {
         borderBottom="1px solid"
         borderBottomColor="gray.100"
       >
-        <Flex justify="space-between" align="center" maxW="container.xl" m="0 auto" p={2}>
+        <Flex justify="space-between" align="center" maxW="container.xl" m="0 auto" px={10} py={2}>
           <Box as={RouterLink} to="/" fontSize="2xl" fontWeight="bold">
             Food
-            <Box as="span" color="green.500">Saver</Box>
+            <Box as="span" color="brand.500">Saver</Box>
           </Box>
           <HStack spacing={8}>
             <HStack spacing={4} align="center">
@@ -24,13 +26,13 @@ export default function Home() {
             </HStack>
             <HStack spacing={2}>
               <Button as={RouterLink} to="/login" size="sm">Login</Button>
-              <Button as={RouterLink} to="/join" colorScheme="green" size="sm">Join</Button>
+              <Button as={RouterLink} to="/join" colorScheme="brand" size="sm">Join</Button>
             </HStack>
           </HStack>
         </Flex>
       </Box>
-      <Flex m="0 auto" p={2} h="100vh" maxW="container.xl" align="center">
-        <Box maxW="60%">
+      <Grid m="0 auto" p={10} h="100vh" maxW="container.xl" alignItems="center" templateColumns="60% 1fr" columnGap={10}>
+        <GridItem>
           <Heading as="h1" fontSize="5rem" fontWeight="black" lineHeight="1.0">
             Where excess food gets shared
           </Heading>
@@ -39,11 +41,14 @@ export default function Home() {
             chains can share excess food with anyone.
           </Text>
           <HStack spacing={4}>
-            <Button as={RouterLink} to="/join" size="lg" colorScheme="green">Join</Button>
+            <Button as={RouterLink} to="/join" size="lg" colorScheme="brand">Join</Button>
             <Button as={RouterLink} to="/offers" size="lg">Browse offers</Button>
           </HStack>
-        </Box>
-      </Flex>
+        </GridItem>
+        <GridItem>
+          <Image src={logo} w="100%" />
+        </GridItem>
+      </Grid>
     </>
   );
 }
