@@ -23,7 +23,7 @@ namespace backend.Repositories
             return new Offer(999999, 999999, 999999, 999999, DateTime.Now, DateTime.Now);
         }
 
-        public static Offer GetSpecificOffer(int id)
+        public static Offer GetOfferById(int id)
         {
             return Offers.Find((Offer offer) => offer.Id == id);
         }

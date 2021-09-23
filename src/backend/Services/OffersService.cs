@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace backend.Services
 {
-    public static class OffersServices
+    public static class OffersService
     {
         public static void SaveOffer(Offer offer)
         {
@@ -17,15 +17,15 @@ namespace backend.Services
             return OffersRepository.GetStandardOffer();
         }
 
-        public static Offer GetSpecificOffer(int id)
+        public static Offer GetOfferById(int id)
         {
-            return OffersRepository.GetSpecificOffer(id);
+            return OffersRepository.GetOfferById(id);
         }
         public static List<Offer> GetAllOffers()
         {
             return OffersRepository.GetAllOffers();
         }
-        public static Offer GenerateRandomOfffer()
+        public static Offer GenerateRandomOffer()
         {
             Random rng = new Random();
             return new Offer(rng.Next(1, 1000), rng.Next(1, 1000), rng.Next(1, rng.Next(1, rng.Next(1, 50))), rng.Next(1, 1000), DateTime.Now, DateTime.Now);

@@ -15,7 +15,7 @@ namespace backend.Controllers
         public List<Offer> Get()
         {
             // should return a list of all user-posted offers
-            return OffersServices.GetAllOffers();
+            return OffersService.GetAllOffers();
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"
@@ -24,7 +24,7 @@ namespace backend.Controllers
             // should return an offer having a specified id
             // the id will likely be index in a static list
             // until a database is created
-            return OffersServices.GetSpecificOffer(id);
+            return OffersService.GetOfferById(id);
         }
     }
 }
