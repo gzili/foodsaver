@@ -8,7 +8,7 @@ namespace backend.Repositories
     {
         private static List<Food> Foods { get; set; } = new();
 
-        public static Food GetFood()
+        public static Food Get()
         {
             return new Food(new Random().Next(), "bandele", "labai skani", "pathpath", "vnt");
         }

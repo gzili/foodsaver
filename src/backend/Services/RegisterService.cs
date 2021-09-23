@@ -12,9 +12,9 @@ namespace backend.Services
             _userRepository = new UserRepository();
         }
 
-        public User GetUser()
+        public User Get()
         {
-            return UserRepository.GetUser();
+            return UserRepository.Get();
         }
 
         public void Save(User user)

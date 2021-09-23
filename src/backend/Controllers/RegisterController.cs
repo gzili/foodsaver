@@ -19,7 +19,7 @@ namespace backend.Controllers
         [HttpGet]
         public User GetRegister()
         {
-            return _registerService.GetUser();
+            return _registerService.Get();
         } 
         
         [HttpPost]

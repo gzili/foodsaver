@@ -9,7 +9,7 @@ namespace backend.Repositories
     {
         private static List<User> Users { get; set; } = new();
 
-        public static User GetUser()
+        public static User Get()
         {
             return new User(new Random().Next(), "e@gmail.com", "edvinas", "pass", "vilnius", UserType.Individual);
         }

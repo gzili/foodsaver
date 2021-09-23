@@ -20,7 +20,7 @@ namespace backend.Controllers
         [HttpGet]
         public User GetLogin()
         {
-            return _logInService.GetUser();
+            return _logInService.Get();
         }
         
         [HttpPost]
