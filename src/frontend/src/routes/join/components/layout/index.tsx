@@ -1,3 +1,3 @@
 export * from './BottomBar';
-export * from './Flow';
+export * from './Step';
 export * from './ProgressIndicator';

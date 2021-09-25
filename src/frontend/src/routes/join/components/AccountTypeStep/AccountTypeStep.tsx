@@ -4,7 +4,7 @@ import { faHandHoldingHeart, FaIcon, faStore, faUser } from 'components/core';
 import { useState } from 'react';
 
 import { IStep, AccountTypeData } from '../interfaces';
-import { FlowContainer, FlowContent, FlowHeader, BottomBar, ProgressIndicator } from '../layout';
+import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 import AccountTypeRadioGroup, { AccountTypeOption } from './components/AccountTypeRadioGroup';
 
 const accountTypeOptions: AccountTypeOption[] = [
@@ -43,17 +43,17 @@ export default function AccountTypeFlow(props: IStep<AccountTypeData>) {
   };
 
   return (
-    <FlowContainer>
-      <FlowHeader title="Account Type" description="Choose your account type for optimal experience" />
-      <FlowContent>
+    <StepContainer>
+      <StepHeader title="Account Type" description="Choose your account type for optimal experience" />
+      <StepContent>
         <AccountTypeRadioGroup options={accountTypeOptions} value={accountType} onChange={v => setAccountType(v)} />
-      </FlowContent>
+      </StepContent>
       <BottomBar>
         <ProgressIndicator count={stepCount} activeIndex={currentStep} />
         <Box>
           <Button colorScheme="brand" onClick={handleSubmit}>Next</Button>
         </Box>
       </BottomBar>
-    </FlowContainer>
+    </StepContainer>
   );
 }

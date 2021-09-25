@@ -1,7 +1,7 @@
 import { Button, HStack } from '@chakra-ui/react';
 
 import { IStep, LoginCredentialsData } from '../interfaces';
-import { FlowContainer, FlowContent, FlowHeader, BottomBar, ProgressIndicator } from '../layout';
+import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   const {
@@ -11,11 +11,11 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   } = props;
 
   return (
-    <FlowContainer>
-      <FlowHeader title="Login credentials" description="Please provide the login credentials you will use to access your account" />
-      <FlowContent>
+    <StepContainer>
+      <StepHeader title="Login credentials" description="Please provide the login credentials you will use to access your account" />
+      <StepContent>
         Form Fields
-      </FlowContent>
+      </StepContent>
       <BottomBar>
         <ProgressIndicator count={stepCount} activeIndex={currentStep} />
         <HStack spacing={2}>
@@ -23,6 +23,6 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
           <Button colorScheme="brand">Next</Button>
         </HStack>
       </BottomBar>
-    </FlowContainer>
+    </StepContainer>
   );
 }

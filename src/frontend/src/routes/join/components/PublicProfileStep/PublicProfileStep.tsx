@@ -1,7 +1,7 @@
 import { Button, HStack } from '@chakra-ui/react';
 
 import { IStep, PublicProfileData } from '../interfaces';
-import { FlowContainer, FlowContent, FlowHeader, BottomBar, ProgressIndicator } from '../layout';
+import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 
 export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
   const {
@@ -12,11 +12,11 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
   } = props;
 
   return (
-    <FlowContainer>
-      <FlowHeader title="Public Profile" description="This information is displayed alongside the offers you create" />
-      <FlowContent>
+    <StepContainer>
+      <StepHeader title="Public Profile" description="This information is displayed alongside the offers you create" />
+      <StepContent>
         Form Fields
-      </FlowContent>
+      </StepContent>
       <BottomBar>
         <ProgressIndicator count={stepCount} activeIndex={currentStep} />
         <HStack spacing={2}>
@@ -24,6 +24,6 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
           <Button colorScheme="brand" onClick={() => onNext({})}>Next</Button>
         </HStack>
       </BottomBar>
-    </FlowContainer>
+    </StepContainer>
   );
 }

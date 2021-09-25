@@ -1,22 +1,22 @@
 import { ReactNode } from 'react';
 import { Box, Heading } from '@chakra-ui/react';
 
-interface IFlowContainer {
+interface IStepContainer {
   children: ReactNode
 }
 
-export const FlowContainer = ({ children }: IFlowContainer) => (
+export const StepContainer = ({ children }: IStepContainer) => (
   <Box px={8} pt={6} pb={16} borderTop="1px solid" borderColor="gray.100">
     {children}
   </Box>
 );
 
-interface IFlowHeader {
+interface IStepHeader {
   title: string,
   description: string
 }
 
-export function FlowHeader(props: IFlowHeader) {
+export function StepHeader(props: IStepHeader) {
   const {
     title,
     description
@@ -30,10 +30,10 @@ export function FlowHeader(props: IFlowHeader) {
   );
 }
 
-interface IFlowContent {
+interface IStepContent {
   children: ReactNode
 }
 
-export const FlowContent = ({ children }: IFlowContent) => (
+export const StepContent = ({ children }: IStepContent) => (
   <Box>{children}</Box>
 );
