@@ -2,12 +2,12 @@ import { Box, HStack } from '@chakra-ui/react';
 
 import { faCircle, FaIcon } from 'components/core';
 
-interface IProgressDots {
+interface IProgressIndicator {
   count: number,
   activeIndex: number
 }
 
-export function ProgressDots(props: IProgressDots) {
+export function ProgressIndicator(props: IProgressIndicator) {
   const {
     count,
     activeIndex
@@ -22,8 +22,8 @@ export function ProgressDots(props: IProgressDots) {
   }
 
   return (
-    <HStack spacing={4}>
-      <HStack spacing={2}>
+    <HStack spacing={2}>
+      <HStack spacing={1}>
         {dotComponents}
       </HStack>
       <Box>Step {activeIndex + 1} of {count}</Box>

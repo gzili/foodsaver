@@ -3,8 +3,8 @@ import { Box, Button } from '@chakra-ui/react';
 import { faHandHoldingHeart, FaIcon, faStore, faUser } from 'components/core';
 import { useState } from 'react';
 
-import { IAccountFlow, AccountType } from '../interfaces';
-import { FlowContainer, FlowContent, FlowHeader, BottomBar, ProgressDots } from '../layout';
+import { IStep, AccountTypeData } from '../interfaces';
+import { FlowContainer, FlowContent, FlowHeader, BottomBar, ProgressIndicator } from '../layout';
 import AccountTypeRadioGroup, { AccountTypeOption } from './components/AccountTypeRadioGroup';
 
 const accountTypeOptions: AccountTypeOption[] = [
@@ -28,15 +28,18 @@ const accountTypeOptions: AccountTypeOption[] = [
   }
 ];
 
-export default function AccountTypeFlow(props: IAccountFlow<AccountType>) {
+export default function AccountTypeFlow(props: IStep<AccountTypeData>) {
   const {
+    currentStep,
+    stepCount,
+    data,
     onNext
   } = props;
 
-  const [accountType, setAccountType] = useState(0);
+  const [accountType, setAccountType] = useState(data.accountType ?? 0);
 
   const handleSubmit = () => {
-    onNext(accountType);
+    onNext({ accountType });
   };
 
   return (
@@ -46,7 +49,7 @@ export default function AccountTypeFlow(props: IAccountFlow<AccountType>) {
         <AccountTypeRadioGroup options={accountTypeOptions} value={accountType} onChange={v => setAccountType(v)} />
       </FlowContent>
       <BottomBar>
-        <ProgressDots count={3} activeIndex={0} />
+        <ProgressIndicator count={stepCount} activeIndex={currentStep} />
         <Box>
           <Button colorScheme="brand" onClick={handleSubmit}>Next</Button>
         </Box>
