@@ -1,6 +1,11 @@
 import { Box, Flex, useRadio, UseRadioProps, useRadioGroup, VStack } from '@chakra-ui/react';
 
-import { faHandHoldingHeart, FaIcon, faStore, faUser } from 'components/core';
+export interface AccountTypeOption {
+  icon: JSX.Element,
+  title: string,
+  description: string,
+  value: string
+}
 
 interface IAccountTypeRadioCard extends UseRadioProps {
   isSelected?: boolean,
@@ -23,7 +28,6 @@ function AccountTypeRadioCard(props: IAccountTypeRadioCard) {
     <Box as="label" w="100%">
       <input {...getInputProps()} />
       <Flex
-        {...getCheckboxProps()}
         align="center"
         cursor="pointer"
         h="6rem"
@@ -39,6 +43,7 @@ function AccountTypeRadioCard(props: IAccountTypeRadioCard) {
           borderColor: 'brand.500',
           boxShadow: theme => `0 0 0 1px ${theme.colors.brand[500]}`
         }}
+        {...getCheckboxProps()}
       >
         <Flex align="center">
           <Box fontSize="2xl" mr={4}>{icon}</Box>
@@ -52,44 +57,30 @@ function AccountTypeRadioCard(props: IAccountTypeRadioCard) {
   );
 }
 
-interface AccountTypeOption {
-  icon: JSX.Element,
-  title: string,
-  description: string,
-  value: string
+interface IAccountTypeRadioGroup {
+  options: AccountTypeOption[],
+  value: number,
+  onChange: (value: number) => void
 }
 
-const accountTypeOptions: AccountTypeOption[] = [
-  {
-    icon: <FaIcon icon={faUser} fixedWidth />,
-    title: 'Individual',
-    description: 'For individuals offering their own food',
-    value: '0'
-  },
-  {
-    icon: <FaIcon icon={faStore} fixedWidth />,
-    title: 'Business',
-    description: 'For representatives of businesses, such as restaurants or shops',
-    value: '1'
-  },
-  {
-    icon: <FaIcon icon={faHandHoldingHeart} fixedWidth />,
-    title: 'Non-profit',
-    description: 'For representatives of non-profit organizations',
-    value: '2'
-  }
-];
+export default function AccountTypeRadioGroup(props: IAccountTypeRadioGroup) {
+  const {
+    options,
+    value,
+    onChange
+  } = props;
 
-export default function AccountTypeForm() {
+  const handleChange = (value: string) => onChange(+value);
+
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'accountType',
-    defaultValue: '0',
-    onChange: console.log
+    value: value.toString(10),
+    onChange: handleChange
   });
 
   return (
     <VStack spacing={2} {...getRootProps()}>
-      {accountTypeOptions.map(({ value, ...cardProps }) => (
+      {options.map(({ value, ...cardProps }) => (
         <AccountTypeRadioCard
           key={value}
           {...cardProps}
