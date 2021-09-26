@@ -26,6 +26,7 @@ export interface PublicProfileData {
 export interface LoginCredentialsData {
   email: string,
   password: string,
+  repeatPassword: string,
 }
 
 export type FormData = AccountTypeData & PublicProfileData & LoginCredentialsData;
