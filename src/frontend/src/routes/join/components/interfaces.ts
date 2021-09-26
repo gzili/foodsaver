@@ -4,6 +4,14 @@ export enum AccountType {
   Nonprofit
 }
 
+export interface RegisterUserDto {
+  userType: AccountType,
+  name: string,
+  location: string,
+  email: string,
+  password: string
+}
+
 export interface AccountTypeData {
   accountType: AccountType
 }

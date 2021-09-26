@@ -5,7 +5,7 @@ import { Resolver, useForm } from 'react-hook-form';
 
 import { FieldWithController, Input } from 'components/form';
 
-import { IStep, LoginCredentialsData } from '../interfaces';
+import { IStep, LoginCredentialsData, RegisterUserDto } from '../interfaces';
 import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 
 const publicProfileSchema = yup.object().shape({
@@ -15,13 +15,32 @@ const publicProfileSchema = yup.object().shape({
 
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
 
+async function registerUser(data: RegisterUserDto) {
+  let res;
+
+  try {
+    res = await fetch('/api/register', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  } catch (err) {
+    throw new Error(`Server is unreachable`);
+  }
+
+  if (res.ok) {
+    return true;
+  } else {
+    throw new Error(`Server responded with status code ${res.status} ${res.statusText}`);
+  }
+}
+
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   const {
     data,
     currentStep,
     stepCount,
     onPrev,
-    onNext
+    // onNext
   } = props;
 
   const { control, getValues, handleSubmit } = useForm<LoginCredentialsData>({
@@ -37,7 +56,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
       ...data,
       ...values,
     });
-    //onNext(data);
+    // onNext(data);
   }
 
   return (
