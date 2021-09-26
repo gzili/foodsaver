@@ -9,7 +9,7 @@ interface FieldState {
 }
 
 interface FieldWithControllerProps extends Omit<FieldProps, 'children'> {
-  control: Control,
+  control: Control<any>,
   name: string,
   children: (props: ControllerRenderProps, state: FieldState) => JSX.Element,
 };

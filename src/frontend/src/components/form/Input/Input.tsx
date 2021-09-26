@@ -59,6 +59,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           boxShadow: false,
         }}
         ref={ref}
+        required={false} // avoid native validation
         {...InputProps}
       />
       {rightElement && (

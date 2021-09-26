@@ -19,23 +19,20 @@ interface State {
   data: FormData
 }
 
-interface PrevAction {
-  type: 'prev'
+interface Action {
+  type: 'prev' | 'next',
+  data: any,
 }
-
-interface NextAction {
-  type: 'next',
-  data: AccountTypeData | PublicProfileData | LoginCredentialsData,
-}
-
-type Action = PrevAction | NextAction;
 
 function reducer(state: State, action: Action) {
   switch (action.type) {
     case 'prev':
       return {
         step: (state.step > 0) ? state.step - 1 : 0,
-        data: state.data,
+        data: {
+          ...state.data,
+          ...action.data,
+        },
       };
     case 'next':
       return {
@@ -55,18 +52,16 @@ function Join() {
     step: 0,
     data: {}
   });
-  
-  console.log(state.data);
 
-  const FlowComponent = steps[state.step];
+  const StepComponent = steps[state.step];
 
   return (
-    <FlowComponent
+    <StepComponent
       data={state.data}
       currentStep={state.step}
       stepCount={3}
       onNext={data => dispatch({ type: 'next', data })}
-      onPrev={() => dispatch({ type: 'prev' })}
+      onPrev={data => dispatch({ type: 'prev', data })}
     />
   );
 }

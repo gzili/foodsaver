@@ -15,9 +15,10 @@ export function BottomBar(props: IBottomBar) {
       left={0}
       w="100%"
       h={16}
+      px={4}
       align="center"
       justify="space-between"
-      px={4}
+      bg="white"
     >
       {children}
     </Flex>
