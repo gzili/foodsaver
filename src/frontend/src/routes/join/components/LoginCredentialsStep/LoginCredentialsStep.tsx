@@ -1,7 +1,8 @@
-import { Button, HStack, VStack } from '@chakra-ui/react';
+import { Button, HStack, useToast, VStack } from '@chakra-ui/react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Resolver, useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
 
 import { FieldWithController, Input } from 'components/form';
 
@@ -51,11 +52,49 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     resolver,
   });
 
+  const toast = useToast();
+
+  const { mutate, isLoading } = useMutation(registerUser, {
+    onError: (e: Error) => {
+      // console.log(e.message);
+      toast({
+        title: 'Failed to create account',
+        description: e.message,
+        status: 'error',
+        position: 'top',
+        duration: 3000,
+        isClosable: true
+      });
+    },
+  });
+
   const handleNext = (values: LoginCredentialsData) => {
-    console.log({
-      ...data,
-      ...values,
+    // console.log({
+    //   ...data,
+    //   ...values,
+    // });
+
+    const {
+      accountType,
+      name,
+      street,
+      city,
+      postcode
+    } = data as Required<typeof data>;
+
+    const {
+      email,
+      password
+    } = values;
+
+    mutate({
+      userType: accountType,
+      name,
+      location: [street, city, postcode].join(', '),
+      email,
+      password
     });
+
     // onNext(data);
   }
 
@@ -77,8 +116,8 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
       <BottomBar>
         <ProgressIndicator count={stepCount} activeIndex={currentStep} />
         <HStack spacing={2}>
-          <Button onClick={() => onPrev(getValues())}>Back</Button>
-          <Button type="submit" form="login-credentials-form" colorScheme="brand">Finish</Button>
+          <Button isDisabled={isLoading} onClick={() => onPrev(getValues())}>Back</Button>
+          <Button isLoading={isLoading} type="submit" form="login-credentials-form" colorScheme="brand">Finish</Button>
         </HStack>
       </BottomBar>
     </StepContainer>
