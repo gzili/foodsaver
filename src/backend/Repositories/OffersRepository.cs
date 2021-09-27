@@ -18,11 +18,6 @@ namespace backend.Repositories
             Offers.Add(offer);
         }
 
-        public static Offer GetStandard()
-        {
-            return new Offer(999999, FoodRepository.Get(), 999999, 999999, DateTime.Now, DateTime.Now);
-        }
-
         public static Offer GetById(int id)
         {
             return Offers.Find((Offer offer) => offer.Id == id);

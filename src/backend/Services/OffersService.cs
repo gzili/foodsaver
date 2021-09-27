@@ -12,11 +12,6 @@ namespace backend.Services
             OffersRepository.Save(offer);
         }
 
-        public static Offer GetStandard()
-        {
-            return OffersRepository.GetStandard();
-        }
-
         public static Offer GetById(int id)
         {
             return OffersRepository.GetById(id);
@@ -28,7 +23,7 @@ namespace backend.Services
         public static Offer GenerateRandom()
         {
             Random rng = new Random();
-            return new Offer(rng.Next(1, 1000), FoodRepository.Get(), rng.Next(1, rng.Next(1, rng.Next(1, 50))), rng.Next(1, 1000), DateTime.Now, DateTime.Now);
+            return new Offer(rng.Next(1, 1000), FoodRepository.Get(), UserRepository.Get(), rng.Next(1, 1000), DateTime.Now, DateTime.Now);
         }
     }
 }
