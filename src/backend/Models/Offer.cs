@@ -3,10 +3,10 @@ namespace backend.Models
 {
     public class Offer
     {
-        public Offer(int id, int foodId, int giverId, int quantity, DateTime expirationDate, DateTime creationDate)
+        public Offer(int id, Food foodPtr, int giverId, int quantity, DateTime expirationDate, DateTime creationDate)
         {
             Id = id;
-            FoodId = foodId;
+            FoodPtr = foodPtr;
             GiverId = giverId;
             Quantity = quantity;
             ExpirationDate = expirationDate;
@@ -14,7 +14,7 @@ namespace backend.Models
         }
 
         public int Id {  get; set; }
-        public int FoodId {  get; set; }
+        public Food FoodPtr {  get; set; }
         public int GiverId {  get; set; }
         public int Quantity {  get; set; }
         public DateTime ExpirationDate {  get; set; }
@@ -22,7 +22,7 @@ namespace backend.Models
 
         public override string ToString()
         {
-            return Id + ", " + FoodId + ", " + GiverId + ", " + Quantity + ", " + ExpirationDate + ", " + CreationDate;
+            return Id + ", " + FoodPtr + ", " + GiverId + ", " + Quantity + ", " + ExpirationDate + ", " + CreationDate;
         }
 
         public override bool Equals(object obj)

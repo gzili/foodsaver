@@ -20,7 +20,7 @@ namespace backend.Repositories
 
         public static Offer GetStandard()
         {
-            return new Offer(999999, 999999, 999999, 999999, DateTime.Now, DateTime.Now);
+            return new Offer(999999, FoodRepository.Get(), 999999, 999999, DateTime.Now, DateTime.Now);
         }
 
         public static Offer GetById(int id)
