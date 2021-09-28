@@ -1,19 +1,17 @@
 using System;
 namespace backend.Models
 {
-    public class Offer
+    public class Offer : ModelClass
     {
-        public Offer(int id, Food foodPtr, User giver, int quantity, DateTime expirationDate, DateTime creationDate)
+        public Offer(int id, Food food, User giver, int quantity, DateTime expirationDate, DateTime creationDate) : base(id)
         {
-            Id = id;
-            Food = foodPtr;
+            Food = food;
             Giver = giver;
             Quantity = quantity;
             ExpirationDate = expirationDate;
             CreationDate = creationDate;
         }
 
-        public int Id {  get; set; }
         public Food Food {  get; set; }
         public User Giver {  get; set; }
         public int Quantity {  get; set; }
