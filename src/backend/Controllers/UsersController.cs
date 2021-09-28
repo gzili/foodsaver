@@ -1,6 +1,7 @@
 ﻿using System;
 using backend.Models;
 using backend.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -10,42 +11,35 @@ namespace backend.Controllers
     public class UsersController : Controller
     {
         private readonly UserService _userService;
-        
+
         public UsersController()
         {
             _userService = new UserService();
         }
-
+        
         /*
-        [HttpGet]
-        public User GetLogin()
+        [HttpGet("{id:int}")] // "api/users/<number>"
+        public User Get(int id)
         {
-            return _userService.get();
+            return _userService.GetById(id);
         }*/
-        
-        [HttpPost("login")]
-        public void PostLogin(User user)
+
+        [HttpPost("login")] // "api/users/login"
+        public ActionResult<User> Login(User user)
         {
-            _userService.Save(user);
-            Console.WriteLine("------");
-            foreach (User user1 in _userService.GetAll())
+            if (_userService.CheckLogin(user))
             {
-                Console.WriteLine(user1.ToString());
+                return Ok(user);
             }
+            return NotFound();
         }
-        
-        /*
-        [HttpGet]
-        public User GetRegister()
+
+        [HttpPost("register")] // "api/users/register"
+        public ActionResult Register(User user)
         {
-            return _userService.ge();
-        } */
-        
-        [HttpPost("register")]
-        public void PostRegister(User user)
-        {
-            Console.WriteLine(user.ToString());
+            if (!_userService.CheckRegister(user)) return Conflict();
             _userService.Save(user);
+            return Ok();
         }
     }
 }

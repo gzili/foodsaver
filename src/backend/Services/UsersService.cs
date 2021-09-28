@@ -26,5 +26,20 @@ namespace backend.Services
         {
             _userRepository.Save(user);
         }
+
+        public bool CheckLogin(User user)
+        {
+            return _userRepository.CheckLogin(user);
+        }
+
+        public bool CheckRegister(User user)
+        {
+            return CheckRegisterInner(user);
+        }
+
+        private bool CheckRegisterInner(User user)
+        {
+            return _userRepository.GetByEmail(user.Email);
+        }
     }
 }

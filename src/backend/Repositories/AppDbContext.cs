@@ -45,9 +45,9 @@ namespace backend.Services
             };
         }
 
-        public T GetById<T> (List<T> list, int id) where T  : ModelClass
+        private T GetById<T> (List<T> list, int id) where T  : ModelClass
         {
-            return list.Find(x => x.Id == id); 
+            return list.Find(x => x.Id == id);
         }
     }
 }

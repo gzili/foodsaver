@@ -6,7 +6,7 @@ using backend.Services;
 
 namespace backend.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IRepository<User>
     {
         private readonly AppDbContext _appContext;
 
@@ -27,7 +27,17 @@ namespace backend.Repositories
 
         public User GetById(int id)
         {
-            return _appContext.GetById(_appContext.Users, id);
+            return _appContext.Users.Find(x => x.Id == id); 
+        }
+
+        public bool CheckLogin(User user)
+        {
+            return _appContext.Users.Contains(user);
+        }
+
+        public bool GetByEmail(string email)
+        {
+            return _appContext.Users.Find(x => x.Email.Equals(email)) == null;
         }
     }
 }

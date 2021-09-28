@@ -5,7 +5,7 @@ using backend.Services;
 
 namespace backend.Repositories
 {
-    public class OffersRepository
+    public class OffersRepository : IRepository<Offer>
     {
 
         private readonly AppDbContext _appDbContext;
@@ -21,7 +21,7 @@ namespace backend.Repositories
 
         public Offer GetById(int id)
         {
-            return _appDbContext.GetById(_appDbContext.Offers, id);
+            return _appDbContext.Offers.Find(x => x.Id == id);
         }
         public List<Offer> GetAll()
         {
