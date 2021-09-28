@@ -1,30 +1,31 @@
 ﻿using backend.Models;
 using System.Collections.Generic;
 using System;
+using backend.Services;
 
 namespace backend.Repositories
 {
-    public static class OffersRepository
+    public class OffersRepository
     {
-        private static List<Offer> Offers {  get; set; }
 
-        static OffersRepository()
+        private readonly AppDbContext _appDbContext;
+        public OffersRepository()
         {
-            Offers = new List<Offer>();
+            _appDbContext = AppDbContext.GetObject();
         }
 
-        public static void Save(Offer offer)
+        public void Save(Offer offer)
         {
-            Offers.Add(offer);
+            _appDbContext.Offers.Add(offer);
         }
 
-        public static Offer GetById(int id)
+        public Offer GetById(int id)
         {
-            return Offers.Find((Offer offer) => offer.Id == id);
+            return _appDbContext.GetById(_appDbContext.Offers, id);
         }
-        public static List<Offer> GetAll()
+        public List<Offer> GetAll()
         {
-            return Offers;
+            return _appDbContext.Offers;
         }
     }
 }

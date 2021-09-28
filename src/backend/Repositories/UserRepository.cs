@@ -2,26 +2,32 @@
 using System.Collections.Generic;
 using backend.Controllers;
 using backend.Models;
+using backend.Services;
 
 namespace backend.Repositories
 {
     public class UserRepository
     {
-        private static List<User> Users { get; set; } = new();
+        private readonly AppDbContext _appContext;
 
-        public static User Get()
+        public UserRepository()
         {
-            return new User(new Random().Next(), "e@gmail.com", "edvinas", "pass", "vilnius", UserType.Individual);
+            _appContext = AppDbContext.GetObject();
         }
 
-        public static void Save(User user)
+        public void Save(User user)
         {
-            Users.Add(user);
+            _appContext.Users.Add(user);
         }
 
-        public static List<User> GetAll()
+        public List<User> GetAll()
         {
-            return Users;
+            return _appContext.Users;
+        }
+
+        public User GetById(int id)
+        {
+            return _appContext.GetById(_appContext.Users, id);
         }
     }
 }

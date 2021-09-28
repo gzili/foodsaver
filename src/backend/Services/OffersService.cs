@@ -5,25 +5,28 @@ using System.Collections.Generic;
 
 namespace backend.Services
 {
-    public static class OffersService
+    public class OffersService : IService<Offer>
     {
-        public static void Save(Offer offer)
+
+        private readonly OffersRepository _offersRepository;
+        public OffersService()
         {
-            OffersRepository.Save(offer);
+            _offersRepository = new OffersRepository();
         }
 
-        public static Offer GetById(int id)
+        public Offer GetById( int id)
         {
-            return OffersRepository.GetById(id);
+            return _offersRepository.GetById(id);
         }
-        public static List<Offer> GetAll()
+
+        public List<Offer> GetAll()
         {
-            return OffersRepository.GetAll();
+            return _offersRepository.GetAll();
         }
-        public static Offer GenerateRandom()
+
+        public void Save(Offer offer)
         {
-            Random rng = new Random();
-            return new Offer(rng.Next(1, 1000), FoodRepository.Get(), UserRepository.Get(), rng.Next(1, 1000), DateTime.Now, DateTime.Now);
+            _offersRepository.Save(offer);
         }
     }
 }
