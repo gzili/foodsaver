@@ -1,26 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using backend.Models;
+using backend.Services;
 
 namespace backend.Repositories
 {
-    public class FoodRepository
+    public class FoodRepository : IRepository<Food>
     {
-        private static List<Food> Foods { get; set; } = new();
+        private readonly AppDbContext _appDbContext;
 
-        public static Food Get()
+        public FoodRepository()
         {
-            return new Food(new Random().Next(), "bandele", "labai skani", "pathpath", "vnt");
+            _appDbContext = AppDbContext.GetObject();
         }
 
-        public static void Save(Food food)
+        public void Save(Food food)
         {
-            Foods.Add(food);
+            _appDbContext.Foods.Add(food);
         }
 
-        public static List<Food> GetAll()
+        public List<Food> GetAll()
         {
-            return Foods;
+            return _appDbContext.Foods;
+        }
+
+        public Food GetById(int id)
+        {
+            return _appDbContext.Foods.Find(x => x.Id == id);
         }
     }
 }
