@@ -33,15 +33,15 @@ namespace backend.Controllers
             return _offersService.GetById(id);
         }
         
-        [HttpPost("add")]
+        [HttpPost("add")]// "api/offers/add"
         public void PostOffer(Offer offer)
         {
             _offersService.Save(offer);
-            Console.WriteLine("------");
+            /*Console.WriteLine("------");
             foreach (Offer offer1 in _offersService.GetAll())
             {
                 Console.WriteLine(offer1.ToString());
-            }
+            }*/
         }
     }
 }
