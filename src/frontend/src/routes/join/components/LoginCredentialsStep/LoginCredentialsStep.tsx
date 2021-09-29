@@ -80,8 +80,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
       accountType,
       name,
       street,
-      city,
-      postcode
+      city
     } = data as Required<typeof data>;
 
     const {
@@ -92,7 +91,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     mutate({
       userType: accountType,
       name,
-      location: [street, city, postcode].join(', '),
+      location: [street, city].join(', '),
       email,
       password
     });

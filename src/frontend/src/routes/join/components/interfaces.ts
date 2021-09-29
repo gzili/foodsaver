@@ -20,7 +20,6 @@ export interface PublicProfileData {
   name: string,
   street: string,
   city: string,
-  postcode: string,
 }
 
 export interface LoginCredentialsData {

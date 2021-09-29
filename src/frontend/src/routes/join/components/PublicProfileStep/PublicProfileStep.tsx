@@ -12,7 +12,6 @@ const publicProfileSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
   street: yup.string().required('Please provide your street address'),
   city: yup.string().required('Please provide the city / region'),
-  postcode: yup.string().required('Please provide the postcode').matches(/\d{5}/, 'Please provide a valid 5-digit postcode')
 });
 
 const resolver: Resolver<PublicProfileData> = yupResolver(publicProfileSchema) as any;
@@ -31,7 +30,6 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
       name: data.name ?? '',
       street: data.street ?? '',
       city: data.city ?? '',
-      postcode: data.postcode ?? ''
     },
     resolver,
   });
@@ -54,9 +52,6 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
             </FieldWithController>
             <FieldWithController control={control} name="city" label="City / county">
               {field => <Input {...field} />}
-            </FieldWithController>
-            <FieldWithController control={control} name="postcode" label="Postcode">
-              {field => <Input {...field} placeholder="XXXXX" />}
             </FieldWithController>
           </VStack>
         </form>
