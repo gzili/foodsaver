@@ -3,18 +3,16 @@ using backend.Controllers;
 
 namespace backend.Models
 {
-    public class User
+    public class User : ModelClass
     {
-        public User(int id, string email, string name, string password, Address address, UserType userType)
+        public User(int id, string email, string name, string password, Address address, UserType userType) : base(id)
         {
-            Id = id;
             Email = email;
             Name = name;
             Password = password;
             Address = address;
             UserType = userType;
         }
-        public int Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
