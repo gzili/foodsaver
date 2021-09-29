@@ -52,7 +52,7 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
             <FieldWithController control={control} name="street" label="Street address">
               {field => <Input {...field} />}
             </FieldWithController>
-            <FieldWithController control={control} name="city" label="City / region">
+            <FieldWithController control={control} name="city" label="City / county">
               {field => <Input {...field} />}
             </FieldWithController>
             <FieldWithController control={control} name="postcode" label="Postcode">
