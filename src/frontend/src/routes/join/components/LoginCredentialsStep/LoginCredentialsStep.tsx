@@ -12,7 +12,7 @@ import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } 
 const publicProfileSchema = yup.object().shape({
   email: yup.string().email('Please provide a valid email').required(),
   password: yup.string().min(6, 'Password must be at least 6 characters long'),
-  repeatPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
+  confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
 });
 
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
@@ -49,7 +49,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     defaultValues: {
       email: data.email ?? '',
       password: data.password ?? '',
-      repeatPassword: data.repeatPassword ?? '',
+      confirmPassword: data.confirmPassword ?? '',
     },
     resolver,
   });
@@ -80,8 +80,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
       accountType,
       name,
       street,
-      city,
-      postcode
+      city
     } = data as Required<typeof data>;
 
     const {
@@ -92,7 +91,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     mutate({
       userType: accountType,
       name,
-      location: [street, city, postcode].join(', '),
+      location: [street, city].join(', '),
       email,
       password
     });
@@ -112,7 +111,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
             <FieldWithController control={control} name="password" label="Password">
               {field => <Input {...field} type="password" />}
             </FieldWithController>
-            <FieldWithController control={control} name="repeatPassword" label="Repeat password">
+            <FieldWithController control={control} name="confirmPassword" label="Confirm password">
               {field => <Input {...field} type="password" />}
             </FieldWithController>
           </VStack>

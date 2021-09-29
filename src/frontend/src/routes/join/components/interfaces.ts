@@ -20,13 +20,12 @@ export interface PublicProfileData {
   name: string,
   street: string,
   city: string,
-  postcode: string,
 }
 
 export interface LoginCredentialsData {
   email: string,
   password: string,
-  repeatPassword: string,
+  confirmPassword: string,
 }
 
 export type FormData = AccountTypeData & PublicProfileData & LoginCredentialsData;
