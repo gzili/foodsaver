@@ -41,6 +41,7 @@ namespace backend.Controllers
 
         public OfferDto ToDto(Offer offer) => new()
         {
+            Id = offer.Id,
             Food = offer.Food,
             CreationDate = offer.CreationDate,
             Description = offer.Description,
@@ -48,6 +49,7 @@ namespace backend.Controllers
             Quantity = offer.Quantity,
             Giver = new GiverDto
             {
+                Id = offer.Giver.Id,
                 Address = offer.Giver.Address,
                 Name = offer.Giver.Name
             }
