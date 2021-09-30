@@ -1,7 +1,4 @@
-﻿using System;
-using backend.Controllers;
-
-namespace backend.Models
+﻿namespace backend.Models
 {
     public class User : ModelClass
     {

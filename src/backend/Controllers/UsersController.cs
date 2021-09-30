@@ -1,7 +1,5 @@
-﻿using System;
-using backend.Models;
+﻿using backend.Models;
 using backend.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
