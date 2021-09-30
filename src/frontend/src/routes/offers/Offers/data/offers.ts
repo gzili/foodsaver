@@ -1,28 +1,33 @@
-import bananas from '../images/bananas.jpg';
-import cepelinai from '../images/cepelinai.jpg';
-import sukutis from '../images/sukutis.jpg';
-import elderlyWoman from '../images/elderly_woman.jpg';
-import etnoDvarasLogo from '../images/etno_dvaras_logo.png';
-import lidlLogo from '../images/lidl_logo.jpg';
+// import bananas from '../images/bananas.jpg';
+// import cepelinai from '../images/cepelinai.jpg';
+// import sukutis from '../images/sukutis.jpg';
+// import elderlyWoman from '../images/elderly_woman.jpg';
+// import etnoDvarasLogo from '../images/etno_dvaras_logo.png';
+// import lidlLogo from '../images/lidl_logo.jpg';
 
 export interface OfferItem {
   id: number,
-  dateCreated: string,
-  user: {
+  quantity: number,
+  description: string,
+  creationDate: string,
+  expirationDate: string,
+  giver: {
     name: string,
     avatar: string,
+    address: {
+      streetAddress: string,
+      city: string,
+    }
   },
   food: {
+    id: number,
     name: string,
-    photo: string,
+    imagePath: string,
+    unit: string,
   },
-  location: {
-    street: string,
-    city: string,
-  }
 }
 
-export const offers: OfferItem[] = [
+/*export const offers: OfferItem[] = [
   {
     id: 0,
     dateCreated: '28 Sep, 7:31',
@@ -71,4 +76,4 @@ export const offers: OfferItem[] = [
       city: 'Ukmergė',
     }
   },
-];
+];*/
