@@ -24,18 +24,23 @@ namespace backend.Repositories
 
         private void Initialize()
         {
-            Users = new List<User> {new User(1, "edvinas@gmail.com", "edvinas", "pass", new Address(), UserType.Individual)};
+            Users = new List<User>
+            {
+                new User(1, "edvinas@gmail.com", "Edvinas", "pass", new Address{StreetAddress = "Perkūno g. 10", City = "Vilniaus r."}, UserType.Individual),
+                new User(2, "andrius123@lidl.com", "Lidl", "parkside", new Address{StreetAddress = "Vytauto g. 111A", City = "Ukmergė"}, UserType.Enterprise),
+                new User(3, "inga@etnodvaras.lt", "Etno dvaras", "manozepelinas", new Address{StreetAddress = "Ukmergės g. 369", City = "Vilnius"}, UserType.Enterprise)
+            };
             Foods = new List<Food>
             {
-                new Food(1, "bandele", "path", "vnt."),
-                new Food(2, "bandele", "path", "kg"),
-                new Food(3, "bandele", "path", "l")
+                new Food(1, "Marcipaninis sukutis", "images/sukutis.jpg", "vnt."),
+                new Food(2, "Bananai", "images/bananas.jpg", "kg"),
+                new Food(3, "Cepelinai", "images/cepelinai.jpg", "vnt.")
             };
             Offers = new List<Offer>
             {
-                new Offer(1, GetById(Foods, 1), GetById(Users, 1), 1, DateTime.Now, DateTime.Now, "Atiduodu skania bandele"),
-                new Offer(2, GetById(Foods, 2), GetById(Users, 1), 2, DateTime.Now, DateTime.Now, "Atiduodu skania bandele"),
-                new Offer(3, GetById(Foods, 3), GetById(Users, 1), 3, DateTime.Now, DateTime.Now, "Atiduodu skania bandele")
+                new Offer(1, GetById(Foods, 1), GetById(Users, 2), 3, DateTime.Now, DateTime.Now, "Leftover buns from the last day"),
+                new Offer(2, GetById(Foods, 2), GetById(Users, 1), 1, DateTime.Now, DateTime.Now, "Have nowhere to put these bananas"),
+                new Offer(3, GetById(Foods, 3), GetById(Users, 3), 2, DateTime.Now, DateTime.Now, "Delicious serving made by mistake")
             };
         }
 
