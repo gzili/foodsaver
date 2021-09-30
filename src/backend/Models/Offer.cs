@@ -22,10 +22,5 @@ namespace backend.Models
         {
             return Id + ", " + Food + ", " + Giver + ", " + Quantity + ", " + ExpirationDate + ", " + CreationDate;
         }
-
-        public override bool Equals(object obj)
-        {
-            return Id == (obj as Offer).Id;
-        }
     }
 }
