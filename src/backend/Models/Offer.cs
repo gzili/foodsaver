@@ -4,13 +4,14 @@ namespace backend.Models
 {
     public class Offer : ModelClass
     {
-        public Offer(int id, Food food, User giver, int quantity, DateTime expirationDate, DateTime creationDate) : base(id)
+        public Offer(int id, Food food, User giver, int quantity, DateTime expirationDate, DateTime creationDate, string description) : base(id)
         {
             Food = food;
             Giver = giver;
             Quantity = quantity;
             ExpirationDate = expirationDate;
             CreationDate = creationDate;
+            Description = description;
         }
 
         public Food Food {  get; set; }
@@ -18,10 +19,11 @@ namespace backend.Models
         public int Quantity {  get; set; }
         public DateTime ExpirationDate {  get; set; }
         public DateTime CreationDate {  get; set; }
+        public string Description { get; set; }
 
         public override string ToString()
         {
-            return Id + ", " + Food + ", " + Giver + ", " + Quantity + ", " + ExpirationDate + ", " + CreationDate;
+            return Id + ", " + Food + ", " + Giver + ", " + Quantity + ", " + ExpirationDate + ", " + CreationDate + ", " + Description;
         }
     }
 }
