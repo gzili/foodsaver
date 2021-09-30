@@ -1,5 +1,6 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using backend.DTO;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
@@ -18,30 +19,38 @@ namespace backend.Controllers
         }
 
         [HttpGet] // "api/offers"
-        public List<Offer> Get()
+        public IEnumerable<OfferDto> Get()
         {
             // should return a list of all user-posted offers
-            return _offersService.GetAll();
+            return _offersService.GetAll().Select(ToDto);
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"
-        public Offer Get(int id)
+        public ActionResult<OfferDto> Get(int id)
         {
             // should return an offer having a specified id
-            // the id will likely be index in a static list
-            // until a database is created
-            return _offersService.GetById(id);
+            Offer offer = _offersService.GetById(id);
+            return (offer != null) ? Ok(ToDto(offer)) : NotFound();
         }
         
         [HttpPost("add")]// "api/offers/add"
         public void PostOffer(Offer offer)
         {
             _offersService.Save(offer);
-            /*Console.WriteLine("------");
-            foreach (Offer offer1 in _offersService.GetAll())
-            {
-                Console.WriteLine(offer1.ToString());
-            }*/
         }
+
+        public OfferDto ToDto(Offer offer) => new()
+        {
+            Food = offer.Food,
+            CreationDate = offer.CreationDate,
+            Description = offer.Description,
+            ExpirationDate = offer.ExpirationDate,
+            Quantity = offer.Quantity,
+            Giver = new GiverDto
+            {
+                Address = offer.Giver.Address,
+                Name = offer.Giver.Name
+            }
+        };
     }
 }
