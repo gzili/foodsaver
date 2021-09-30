@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using backend.Models;
 
-namespace backend.Services
+namespace backend.Repositories
 {
     public class AppDbContext
     {
@@ -16,12 +15,7 @@ namespace backend.Services
 
         public static AppDbContext GetObject()
         {
-            if (_appDbContext == null)
-            {
-                _appDbContext = new AppDbContext();
-            }
-
-            return _appDbContext;
+            return _appDbContext ??= new AppDbContext();
         }
 
         public List<Offer> Offers { get; set; }

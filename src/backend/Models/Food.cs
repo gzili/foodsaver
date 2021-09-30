@@ -1,6 +1,4 @@
-﻿using System.Transactions;
-
-namespace backend.Models
+﻿namespace backend.Models
 {
     public class Food : ModelClass
     {

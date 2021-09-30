@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using backend.Controllers;
+﻿using System.Collections.Generic;
 using backend.Models;
-using backend.Services;
 
 namespace backend.Repositories
 {

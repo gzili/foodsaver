@@ -1,4 +1,5 @@
 using System;
+
 namespace backend.Models
 {
     public class Offer : ModelClass
