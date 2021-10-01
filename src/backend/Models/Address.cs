@@ -7,7 +7,7 @@
 
         public override string ToString()
         {
-            return StreetAddress + ", " + City;
+            return $"Address{{StreetAddress = {StreetAddress}, City = {City}}}";
         }
     }
 }

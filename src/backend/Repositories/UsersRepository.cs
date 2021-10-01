@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using backend.Models;
 
 namespace backend.Repositories
@@ -15,6 +16,8 @@ namespace backend.Repositories
         public void Save(User user)
         {
             _appContext.Users.Add(user);
+            Console.WriteLine(string.Join("\n", _appContext.Users));
+            Console.WriteLine();
         }
 
         public List<User> GetAll()

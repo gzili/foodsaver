@@ -18,7 +18,7 @@
 
         public override string ToString()
         {
-            return Id + ", " + Email + ", " + Name + ", " + Password + ", " + Address + ", " + UserType;
+            return $"User{{Id = {Id}, UserType = {UserType}, Email = {Email}, Password = {Password}, Name = {Name}, Address = {Address}}}";
         }
     }
 }

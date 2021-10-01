@@ -1,4 +1,6 @@
-﻿using backend.Models;
+﻿using System.Collections.Generic;
+using backend.DTO;
+using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +16,14 @@ namespace backend.Controllers
         {
             _userService = new UserService();
         }
-        
+
+        // Debug method, must be deleted Later
+        [HttpGet]
+        public IEnumerable<User> Get()
+        {
+            return _userService.GetAll();
+        }
+
         /*
         [HttpGet("{id:int}")] // "api/users/<number>"
         public User Get(int id)
@@ -23,21 +32,32 @@ namespace backend.Controllers
         }*/
 
         [HttpPost("login")] // "api/users/login"
-        public ActionResult<User> Login(User user)
+        public ActionResult<User> Login(CreateUserDto createUserDto)
         {
-            if (_userService.CheckLogin(user))
+            User newUser = FromCreateDto(createUserDto);
+            
+            if (_userService.CheckLogin(newUser))
             {
-                return Ok(user);
+                return Ok(newUser);
             }
             return NotFound();
         }
 
         [HttpPost("register")] // "api/users/register"
-        public ActionResult Register(User user)
+        public ActionResult<User> Register(User user)
         {
             if (!_userService.CheckRegister(user)) return Conflict();
             _userService.Save(user);
-            return Ok();
+            return Ok(user);
         }
+
+        public User FromCreateDto(CreateUserDto createUserDto) => new(
+            _userService.GetAll().Count + 1, // why always 0?
+            createUserDto.Email,
+            createUserDto.Name,
+            createUserDto.Password,
+            createUserDto.Address,
+            createUserDto.UserType
+            );
     }
 }
