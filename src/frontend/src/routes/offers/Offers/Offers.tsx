@@ -1,24 +1,33 @@
 import { Avatar, Box, Flex, Heading, VStack } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
+import { Link as RouterLink } from 'react-router-dom';
+import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
 
 import { FaIcon, faMapMarkerAlt, faUser } from 'components/core';
 
-import { OfferItem/*, offers*/ } from './data/offers';
+import { OfferItem } from './data/offers';
 
 interface IOffer {
   item: OfferItem,
 }
 
-const padZero = (x: number) => (x < 10) ? '0' + x : x;
-
-function Offer(props: IOffer) {
+function OffersListItem(props: IOffer) {
   const { item } = props;
 
-  const parsedDate = new Date(Date.parse(item.creationDate));
-  const date = `${parsedDate.getFullYear()}-${padZero(parsedDate.getMonth() + 1)}-${padZero(parsedDate.getDate())} ${parsedDate.getHours()}:${padZero(parsedDate.getMinutes())}`;
+  const toNow = formatDistanceToNowStrict(parseJSON(item.creationDate), { addSuffix: true });
 
   return (
-    <Box pos="relative" w="100%" h="180px" overflow="hidden" borderRadius="xl" bg={`url('${item.food.imagePath}')`} bgPos="center" bgSize="cover">
+    <Box
+      as={RouterLink}
+      to={`/offers/${item.id}`}
+      pos="relative"
+      w="100%"
+      h="180px"
+      overflow="hidden"
+      bg={`url('${item.food.imagePath}')`}
+      bgPos="center"
+      bgSize="cover"
+      borderRadius="xl">
       <Flex direction="column" justify="space-between" pos="absolute" inset={0} p={4} bg="rgba(0, 0, 0, 0.4)" color="white">
         <Box>
           <Flex align="center">
@@ -27,7 +36,7 @@ function Offer(props: IOffer) {
           </Flex>
         </Box>
         <Box>
-          <Box fontSize="xs" color="rgba(255, 255, 255, 0.8)">{`${item.quantity} ${item.food.unit}`}{' '}•{' '}{date}</Box>
+          <Box fontSize="xs" color="rgba(255, 255, 255, 0.8)">{[item.quantity, item.food.unit, '•', toNow].join(' ')}</Box>
           <Box fontWeight="bold" fontSize="lg">{item.food.name}</Box>
           <Flex fontSize="sm" align="center">
             <Box as={FaIcon} icon={faMapMarkerAlt} mr={2} />
@@ -66,7 +75,7 @@ function OffersList() {
     return (
       <VStack spacing={2}>
         {data.map(offer => (
-          <Offer key={offer.id} item={offer} />
+          <OffersListItem key={offer.id} item={offer} />
         ))}
       </VStack>
     );
@@ -76,7 +85,6 @@ function OffersList() {
 }
 
 export default function Offers() {
-
   return (
     <Box p={4}>
       <Heading as="h1" mb={2}>Offers</Heading>
