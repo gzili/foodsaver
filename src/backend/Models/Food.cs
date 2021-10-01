@@ -15,7 +15,7 @@
 
         public override string ToString()
         {
-            return Id + ", " + Name + ", " + ImagePath + ", " + Unit;
+            return $"Food{{Id = {Id}, Name = {Name}, Unit = {Unit}, ImagePath = {ImagePath}";
         }
     }
 }
