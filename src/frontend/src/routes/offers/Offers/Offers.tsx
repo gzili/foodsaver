@@ -1,17 +1,17 @@
-import { Avatar, Box, Flex, Heading, VStack } from '@chakra-ui/react';
-import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
+import { Avatar, Box, Flex, Heading, VStack } from '@chakra-ui/react';
 
 import { FaIcon, faMapMarkerAlt, faUser } from 'components/core';
 
-import { OfferItem } from './data/offers';
+import { IOfferDto } from 'dto/offer';
 
-interface IOffer {
-  item: OfferItem,
+interface IOffersListItem {
+  item: IOfferDto,
 }
 
-function OffersListItem(props: IOffer) {
+function OffersListItem(props: IOffersListItem) {
   const { item } = props;
 
   const toNow = formatDistanceToNowStrict(parseJSON(item.creationDate), { addSuffix: true });
@@ -48,16 +48,14 @@ function OffersListItem(props: IOffer) {
   );
 }
 
-async function fetchOffers() {
+async function fetchOffers(): Promise<IOfferDto[]> {
   const res = await fetch('api/offers');
 
   if (!res.ok) {
-    throw new Error(`Error getting offers: server responded with status ${res.status} ${res.statusText}`)
+    throw new Error(`Unable to fetch offers: server responded with status ${res.status} ${res.statusText}`)
   }
 
-  const offers: OfferItem[] = await res.json();
-
-  return offers;
+  return res.json();
 }
 
 function OffersList() {

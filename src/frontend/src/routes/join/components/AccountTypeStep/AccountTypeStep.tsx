@@ -3,7 +3,7 @@ import { Box, Button } from '@chakra-ui/react';
 import { faHandHoldingHeart, FaIcon, faStore, faUser } from 'components/core';
 import { useState } from 'react';
 
-import { IStep, AccountTypeData } from '../interfaces';
+import { IStep, UserTypeData } from '../interfaces';
 import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 import AccountTypeRadioGroup, { AccountTypeOption } from './components/AccountTypeRadioGroup';
 
@@ -28,7 +28,7 @@ const accountTypeOptions: AccountTypeOption[] = [
   }
 ];
 
-export default function AccountTypeFlow(props: IStep<AccountTypeData>) {
+export default function AccountTypeFlow(props: IStep<UserTypeData>) {
   const {
     currentStep,
     stepCount,
@@ -36,17 +36,17 @@ export default function AccountTypeFlow(props: IStep<AccountTypeData>) {
     onNext
   } = props;
 
-  const [accountType, setAccountType] = useState(data.accountType ?? 0);
+  const [userType, setUserType] = useState(data.userType ?? 0);
 
   const handleSubmit = () => {
-    onNext({ accountType });
+    onNext({ userType });
   };
 
   return (
     <StepContainer>
       <StepHeader title="Account Type" description="Choose your account type for optimal experience" />
       <StepContent>
-        <AccountTypeRadioGroup options={accountTypeOptions} value={accountType} onChange={v => setAccountType(v)} />
+        <AccountTypeRadioGroup options={accountTypeOptions} value={userType} onChange={v => setUserType(v)} />
       </StepContent>
       <BottomBar>
         <ProgressIndicator count={stepCount} activeIndex={currentStep} />

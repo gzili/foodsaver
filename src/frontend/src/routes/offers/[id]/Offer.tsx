@@ -1,10 +1,10 @@
 import { Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { Box, Code, Grid, GridItem, Heading, Image, Text } from '@chakra-ui/react';
 import { format, formatDistanceToNowStrict, parseJSON } from 'date-fns';
+import { Box, Code, Grid, GridItem, Heading, Image, Text } from '@chakra-ui/react';
 
-import { OfferItem } from '../Offers/data/offers'; // bad structure, will refactor eventually
+import { IOfferDto } from 'dto/offer';
 
 async function fetchOfferById(id: string) {
   if (!/\d+/.test(id)) {
@@ -28,7 +28,7 @@ interface IOfferGridItem {
 export default function Offer() {
   const { id } = useParams<{ id: string }>();
 
-  const { isLoading, isError, data: offer, error } = useQuery<OfferItem>(['todos', id], () => fetchOfferById(id), {
+  const { isLoading, isError, data: offer, error } = useQuery<IOfferDto>(['todos', id], () => fetchOfferById(id), {
     refetchOnWindowFocus: false,
   });
 

@@ -1,22 +1,7 @@
-export enum AccountType {
-  Individual,
-  Business,
-  Nonprofit
-}
+import { UserType } from 'dto/user';
 
-export interface RegisterUserDto {
-  userType: AccountType,
-  name: string,
-  address: {
-    streetAddress: string,
-    city: string,
-  },
-  email: string,
-  password: string
-}
-
-export interface AccountTypeData {
-  accountType: AccountType
+export interface UserTypeData {
+  userType: UserType
 }
 
 export interface PublicProfileData {
@@ -31,7 +16,7 @@ export interface LoginCredentialsData {
   confirmPassword: string,
 }
 
-export type FormData = AccountTypeData & PublicProfileData & LoginCredentialsData;
+export type FormData = UserTypeData & PublicProfileData & LoginCredentialsData;
 
 export interface IStep<T> {
   data: Partial<FormData>,

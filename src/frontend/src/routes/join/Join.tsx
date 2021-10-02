@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
 
-import { AccountTypeData, PublicProfileData, LoginCredentialsData } from './components/interfaces';
+import { UserTypeData, PublicProfileData, LoginCredentialsData } from './components/interfaces';
 
 import AccountTypeStep from './components/AccountTypeStep';
 import PublicProfileStep from './components/PublicProfileStep';
@@ -12,7 +12,7 @@ const steps = [
   LoginCredentialsStep
 ];
 
-type FormData = Partial<AccountTypeData & PublicProfileData & LoginCredentialsData>;
+type FormData = Partial<UserTypeData & PublicProfileData & LoginCredentialsData>;
 
 interface State {
   step: number,

@@ -4,9 +4,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Resolver, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 
+import { ICreateUserDto } from 'dto/user';
 import { FieldWithController, Input } from 'components/form';
 
-import { IStep, LoginCredentialsData, RegisterUserDto } from '../interfaces';
+import { IStep, LoginCredentialsData } from '../interfaces';
 import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 
 const publicProfileSchema = yup.object().shape({
@@ -17,7 +18,7 @@ const publicProfileSchema = yup.object().shape({
 
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
 
-async function registerUser(data: RegisterUserDto) {
+async function registerUser(data: ICreateUserDto) {
   let res;
 
   try {
@@ -70,7 +71,6 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
       });
     },
     onError: (e: Error) => {
-      // console.log(e.message);
       toast({
         title: 'Failed to create account',
         description: e.message,
@@ -83,13 +83,8 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   });
 
   const handleNext = (values: LoginCredentialsData) => {
-    // console.log({
-    //   ...data,
-    //   ...values,
-    // });
-
     const {
-      accountType,
+      userType: accountType,
       name,
       street,
       city
@@ -116,7 +111,10 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
 
   return (
     <StepContainer>
-      <StepHeader title="Login credentials" description="Please provide the login credentials you will use to access your account" />
+      <StepHeader
+        title="Login credentials"
+        description="Please provide the login credentials you will use to access your account"
+      />
       <StepContent>
         <form id="login-credentials-form" onSubmit={handleSubmit(handleNext)}>
           <VStack spacing={4}>
