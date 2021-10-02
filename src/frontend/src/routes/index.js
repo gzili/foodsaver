@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Grid, GridItem, Heading, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 
-import logo from 'resources/foodsaver_logo.jpg';
+import logo from 'resources/foodsaver_logo.png';
 
 export default function Home() {
   return (
