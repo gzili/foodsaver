@@ -29,7 +29,7 @@ namespace backend.Services
             _offersRepository.Save(offer);
         }
 
-        public List<Offer> GetAllAvailableOffers()
+        public List<Offer> GetAllActiveOffers()
         {
             var list = new List<Offer>();
             foreach (Offer offer in GetAll())
