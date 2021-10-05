@@ -1,4 +1,5 @@
-﻿using backend.Models;
+﻿using System;
+using backend.Models;
 using backend.Repositories;
 using System.Collections.Generic;
 
@@ -26,6 +27,18 @@ namespace backend.Services
         public void Save(Offer offer)
         {
             _offersRepository.Save(offer);
+        }
+
+        public List<Offer> GetAllAvailableOffers()
+        {
+            var list = new List<Offer>();
+            foreach (Offer offer in GetAll())
+            {
+                if (offer.ExpirationDate > DateTime.Now) 
+                    list.Add(offer);
+            }
+
+            return list;
         }
     }
 }
