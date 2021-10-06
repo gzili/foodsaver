@@ -7,7 +7,10 @@ export enum AccountType {
 export interface RegisterUserDto {
   userType: AccountType,
   name: string,
-  location: string,
+  address: {
+    streetAddress: string,
+    city: string,
+  },
   email: string,
   password: string
 }

@@ -23,7 +23,7 @@ namespace backend.Models
 
         public override string ToString()
         {
-            return Id + ", " + Food + ", " + Giver + ", " + Quantity + ", " + ExpirationDate + ", " + CreationDate + ", " + Description;
+            return $"Offer{{Id = {Id}, Giver = {Giver}, Food = {Food}, Quantity = {Quantity}, Description = {Description}, CreationDate = {CreationDate}, ExpirationDate = {ExpirationDate}";
         }
     }
 }

@@ -21,19 +21,22 @@ async function registerUser(data: RegisterUserDto) {
   let res;
 
   try {
-    res = await fetch('/api/register', {
+    res = await fetch('api/users/register', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (err) {
     throw new Error(`Server is unreachable`);
   }
 
-  if (res.ok) {
-    return true;
-  } else {
+  if (!res.ok) {
     throw new Error(`Server responded with status code ${res.status} ${res.statusText}`);
   }
+
+  return await res.json();
 }
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
@@ -57,6 +60,15 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   const toast = useToast();
 
   const { mutate, isLoading } = useMutation(registerUser, {
+    onSuccess: (data: any) => {
+      console.log(data);
+      toast({
+        title: 'Account created successfully',
+        status: 'success',
+        position: 'top',
+        duration: 3000,
+      });
+    },
     onError: (e: Error) => {
       // console.log(e.message);
       toast({
@@ -91,7 +103,10 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     mutate({
       userType: accountType,
       name,
-      location: [street, city].join(', '),
+      address: {
+        streetAddress: street,
+        city,
+      },
       email,
       password
     });
