@@ -4,6 +4,7 @@ using backend.DTO;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -18,6 +19,7 @@ namespace backend.Controllers
             _offersService = new OffersService();
         }
 
+        [Authorize]
         [HttpGet] // "api/offers"
         public IEnumerable<OfferDto> Get()
         {
@@ -25,6 +27,7 @@ namespace backend.Controllers
             return _offersService.GetAll().Select(ToDto);
         }
 
+        [Authorize]
         [HttpGet("{id:int}")] // "api/offers/<number>"
         public ActionResult<OfferDto> Get(int id)
         {
@@ -33,6 +36,7 @@ namespace backend.Controllers
             return (offer != null) ? Ok(ToDto(offer)) : NotFound();
         }
         
+        [Authorize]
         [HttpPost("add")]// "api/offers/add"
         public void PostOffer(Offer offer)
         {
