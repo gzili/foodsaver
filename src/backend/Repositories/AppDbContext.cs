@@ -26,9 +26,9 @@ namespace backend.Repositories
         {
             Users = new List<User>
             {
-                new User(1, "edvinas@gmail.com", "Edvinas", "pass", new Address{StreetAddress = "Perkūno g. 10", City = "Vilniaus r."}, UserType.Individual),
-                new User(2, "andrius123@lidl.com", "Lidl", "parkside", new Address{StreetAddress = "Vytauto g. 111A", City = "Ukmergė"}, UserType.Enterprise),
-                new User(3, "inga@etnodvaras.lt", "Etno dvaras", "manozepelinas", new Address{StreetAddress = "Ukmergės g. 369", City = "Vilnius"}, UserType.Enterprise)
+                new User(1, "edvinas@gmail.com", "Edvinas", "$2a$12$cvSl/uRwdzPSZSHSWCfjleP6r9ShUXKuTy7eJ6IKQxSvKYYNKJsfi", new Address{StreetAddress = "Perkūno g. 10", City = "Vilniaus r."}, UserType.Individual), //pass -> pass
+                new User(2, "andrius123@lidl.com", "Lidl", "$2a$12$vCAbO6KDewtXbU52lJAm..CoDMoTgS9b85b15Q1lk0MrTEDm3830C", new Address{StreetAddress = "Vytauto g. 111A", City = "Ukmergė"}, UserType.Enterprise), //pass -> parkside
+                new User(3, "inga@etnodvaras.lt", "Etno dvaras", "$2a$12$HQ2IgAaIaqvIXLX7hqP4uuzESajwdsojqiVVsRz2FSh.C22qiyQ0i", new Address{StreetAddress = "Ukmergės g. 369", City = "Vilnius"}, UserType.Enterprise) //pass -> manozepelinas
             };
             Foods = new List<Food>
             {
