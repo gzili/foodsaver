@@ -3,6 +3,7 @@ using backend.DTO;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Controllers
 {
@@ -32,20 +33,16 @@ namespace backend.Controllers
         }*/
 
         [HttpPost("login")] // "api/users/login"
-        public ActionResult<User> Login(CreateUserDto createUserDto)
+        public ActionResult<User> Login(User newUser)
         {
-            User newUser = FromCreateDto(createUserDto);
-            
-            if (_userService.CheckLogin(newUser))
-            {
-                return Ok(newUser);
-            }
-            return NotFound();
+            User user = _userService.CheckLogin(newUser);
+            return user == null ? Conflict() : Ok(user);
         }
 
         [HttpPost("register")] // "api/users/register"
-        public ActionResult<User> Register(User user)
+        public ActionResult<User> Register(CreateUserDto createUserDto)
         {
+            User user = FromCreateDto(createUserDto);
             if (!_userService.CheckRegister(user)) return Conflict();
             _userService.Save(user);
             return Ok(user);
@@ -55,7 +52,7 @@ namespace backend.Controllers
             _userService.GetAll().Count + 1, // why always 0?
             createUserDto.Email,
             createUserDto.Name,
-            createUserDto.Password,
+            BC.HashPassword(createUserDto.Password),
             createUserDto.Address,
             createUserDto.UserType
             );

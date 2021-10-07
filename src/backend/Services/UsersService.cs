@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using backend.Models;
 using backend.Repositories;
+using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Services
 {
@@ -27,9 +28,10 @@ namespace backend.Services
             _userRepository.Save(user);
         }
 
-        public bool CheckLogin(User user)
+        public User CheckLogin(User user)
         {
-            return _userRepository.CheckLogin(user);
+            var dbUser = _userRepository.GetByEmail(user.Email);
+            return dbUser != null && BC.Verify(user.Password, dbUser.Password) ? dbUser : null;
         }
 
         public bool CheckRegister(User user)
@@ -39,7 +41,7 @@ namespace backend.Services
 
         private bool CheckRegisterInner(User user)
         {
-            return _userRepository.GetByEmail(user.Email);
+            return _userRepository.GetByEmail(user.Email) == null;
         }
     }
 }

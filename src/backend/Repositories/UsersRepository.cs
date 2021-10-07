@@ -16,8 +16,6 @@ namespace backend.Repositories
         public void Save(User user)
         {
             _appContext.Users.Add(user);
-            Console.WriteLine(string.Join("\n", _appContext.Users));
-            Console.WriteLine();
         }
 
         public List<User> GetAll()
@@ -30,14 +28,9 @@ namespace backend.Repositories
             return _appContext.Users.Find(x => x.Id == id); 
         }
 
-        public bool CheckLogin(User user)
+        public User GetByEmail(string email)
         {
-            return _appContext.Users.Contains(user);
-        }
-
-        public bool GetByEmail(string email)
-        {
-            return _appContext.Users.Find(x => x.Email.Equals(email)) == null;
+            return _appContext.Users.Find(x => x.Email.Equals(email));
         }
     }
 }
