@@ -1,6 +1,6 @@
 ﻿namespace backend.Models
 {
-    public class Food : ModelClass
+    public class Food : EntityModel
     {
         public Food(int id, string name, string imagePath, string unit) : base(id)
         {

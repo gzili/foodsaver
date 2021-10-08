@@ -2,6 +2,8 @@
 using backend.DTO;
 using backend.Models;
 using backend.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BC = BCrypt.Net.BCrypt;
 
@@ -42,6 +44,7 @@ namespace backend.Controllers
         [HttpPost("register")] // "api/users/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
+            HttpContext.SignOutAsync();
             User user = FromCreateDto(createUserDto);
             if (!_userService.CheckRegister(user)) return Conflict();
             _userService.Save(user);
