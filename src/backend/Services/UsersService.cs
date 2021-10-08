@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using backend.DTO;
+using backend.DTO.Users;
 using backend.Models;
 using backend.Repositories;
 using BC = BCrypt.Net.BCrypt;
