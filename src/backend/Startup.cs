@@ -1,3 +1,4 @@
+using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +20,14 @@ namespace backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.EventsType = typeof(CustomCookieAuthenticationEvents);
+                });
+
+            services.AddScoped<CustomCookieAuthenticationEvents>();
+            
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
