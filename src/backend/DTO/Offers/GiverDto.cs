@@ -1,6 +1,6 @@
 using backend.Models;
 
-namespace backend.DTO
+namespace backend.DTO.Offers
 {
     public class GiverDto
     {

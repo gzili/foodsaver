@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using backend.DTO;
+using backend.DTO.Offers;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -17,24 +18,23 @@ namespace backend.Controllers
         {
             _offersService = new OffersService();
         }
-
+        
         [HttpGet] // "api/offers"
-        public IEnumerable<OfferDto> Get()
+        public IEnumerable<OfferDto> FindAll()
         {
-            // should return a list of all user-posted offers
             return _offersService.GetAll().Select(ToDto);
         }
-
+        
         [HttpGet("{id:int}")] // "api/offers/<number>"
-        public ActionResult<OfferDto> Get(int id)
+        public ActionResult<OfferDto> FindById(int id)
         {
-            // should return an offer having a specified id
             Offer offer = _offersService.GetById(id);
             return (offer != null) ? Ok(ToDto(offer)) : NotFound();
         }
         
+        [Authorize]
         [HttpPost("add")]// "api/offers/add"
-        public void PostOffer(Offer offer)
+        public void Create(Offer offer)
         {
             _offersService.Save(offer);
         }
