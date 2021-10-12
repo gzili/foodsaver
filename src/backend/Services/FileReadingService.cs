@@ -17,7 +17,12 @@ namespace backend.Services
 
         public static string ReadAnyFileToString(string filePath)
         {
-            return File.ReadAllText(filePath);
+            string allText;
+            using (var streamReader = new StreamReader(filePath))
+            {
+                allText = streamReader.ReadToEnd();
+            }
+            return allText;
         }
         public static T DeserializeJSON(string jsonString)
         {
@@ -34,7 +39,10 @@ namespace backend.Services
 
         public static void WriteStringToAnyFile(string filePath, string text)
         {
-            File.WriteAllText(filePath, text);
+            using (var streamWriter = new StreamWriter(filePath))
+            {
+                streamWriter.Write(text);
+            }
         }
 
         public static string SerializeJson(T value)
