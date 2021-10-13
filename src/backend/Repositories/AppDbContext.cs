@@ -22,6 +22,29 @@ namespace backend.Repositories
         public List<User> Users { get; set; }
         public List<Food> Foods { get; set; }
 
+        public Object this[string fieldName]
+        {
+            get 
+            { 
+                if (Equals(fieldName, "offers"))
+                {
+                    return Offers;
+                }
+                else if (Equals(fieldName, "users"))
+                {
+                    return Users;
+                }
+                else if (Equals(fieldName, "foods"))
+                {
+                    return Foods;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         private void Initialize()
         {
             Users = new List<User>
