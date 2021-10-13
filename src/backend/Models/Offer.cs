@@ -2,7 +2,7 @@ using System;
 
 namespace backend.Models
 {
-    public class Offer : ModelClass
+    public class Offer : EntityModel
     {
         public Offer(int id, Food food, User giver, int quantity, DateTime expirationDate, DateTime creationDate, string description) : base(id)
         {

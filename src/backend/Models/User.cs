@@ -1,6 +1,6 @@
 ﻿namespace backend.Models
 {
-    public class User : ModelClass
+    public class User : EntityModel
     {
         public User(int id, string email, string name, string password, Address address, UserType userType) : base(id)
         {

@@ -67,7 +67,7 @@ namespace backend.Repositories
             };
         }
 
-        private T GetById<T> (List<T> list, int id) where T  : ModelClass
+        private T GetById<T> (List<T> list, int id) where T : EntityModel
         {
             return list.Find(x => x.Id == id);
         }

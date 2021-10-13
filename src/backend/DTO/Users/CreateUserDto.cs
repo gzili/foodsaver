@@ -1,6 +1,6 @@
 using backend.Models;
 
-namespace backend.DTO
+namespace backend.DTO.Users
 {
     public class CreateUserDto
     {
