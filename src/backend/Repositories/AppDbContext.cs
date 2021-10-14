@@ -57,13 +57,15 @@ namespace backend.Repositories
             {
                 new Food(1, "Marcipaninis sukutis", "images/sukutis.jpg", "vnt."),
                 new Food(2, "Bananai", "images/bananas.jpg", "kg"),
-                new Food(3, "Cepelinai", "images/cepelinai.jpg", "vnt.")
+                new Food(3, "Cepelinai", "images/cepelinai.jpg", "vnt."),
+                new Food(4, "Pizzas", "", "boxes")
             };
             Offers = new List<Offer>
             {
                 new Offer(1, GetById(Foods, 1), GetById(Users, 2), 3, DateTime.Now, DateTime.Now, "Leftover buns from the last day"),
                 new Offer(2, GetById(Foods, 2), GetById(Users, 1), 1, DateTime.Now, DateTime.Now, "Have nowhere to put these bananas"),
-                new Offer(3, GetById(Foods, 3), GetById(Users, 3), 2, DateTime.Now, DateTime.Now, "Delicious serving made by mistake")
+                new Offer(3, GetById(Foods, 3), GetById(Users, 3), 2, DateTime.Now, DateTime.Now, "Delicious serving made by mistake"),
+                new Offer(2, GetById(Foods, 4), GetById(Users, 1), 4, DateTime.Now, DateTime.Now, "Giving away a few pizzas due to cancelled party")
             };
         }
 

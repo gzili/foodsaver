@@ -39,6 +39,12 @@ namespace backend.Controllers
             _offersService.Save(offer);
         }
 
+        [HttpGet("byUser")]
+        public Dictionary<int, IEnumerable<Offer>> FindGrouped()
+        {
+            return _offersService.GetGrouped();
+        }
+
         public OfferDto ToDto(Offer offer) => new()
         {
             Id = offer.Id,

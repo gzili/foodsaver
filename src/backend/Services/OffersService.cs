@@ -19,6 +19,11 @@ namespace backend.Services
             return _offersRepository.GetById(id);
         }
 
+        public Dictionary<int, IEnumerable<Offer>> GetGrouped()
+        {
+            return _offersRepository.OffersByUser;
+        }
+
         public List<Offer> GetAll()
         {
             return _offersRepository.GetAll();
