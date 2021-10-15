@@ -17,9 +17,9 @@ namespace backend.Controllers
     {
         private readonly UserService _userService;
 
-        public UsersController()
+        public UsersController(UserService userService)
         {
-            _userService = new UserService();
+            _userService = userService;
         }
 
         [Authorize]
@@ -61,7 +61,7 @@ namespace backend.Controllers
 
         public User FromCreateDto(CreateUserDto createUserDto)
         {
-            return new(
+            return new User(
                 _userService.GetAll().Count + 1,
                 createUserDto.Email,
                 createUserDto.Name,

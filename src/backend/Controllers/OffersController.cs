@@ -14,9 +14,9 @@ namespace backend.Controllers
     {
         private readonly OffersService _offersService;
 
-        public OffersController()
+        public OffersController(OffersService offersService)
         {
-            _offersService = new OffersService();
+            _offersService = offersService;
         }
 
         [HttpGet] // "api/offers"
