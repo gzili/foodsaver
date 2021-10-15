@@ -18,22 +18,22 @@ namespace backend.Controllers
         {
             _offersService = new OffersService();
         }
-        
+
         [HttpGet] // "api/offers"
         public IEnumerable<OfferDto> FindAll()
         {
             return _offersService.GetAll().Select(ToDto);
         }
-        
+
         [HttpGet("{id:int}")] // "api/offers/<number>"
         public ActionResult<OfferDto> FindById(int id)
         {
-            Offer offer = _offersService.GetById(id);
-            return (offer != null) ? Ok(ToDto(offer)) : NotFound();
+            var offer = _offersService.GetById(id);
+            return offer != null ? Ok(ToDto(offer)) : NotFound();
         }
-        
+
         [Authorize]
-        [HttpPost("add")]// "api/offers/add"
+        [HttpPost("add")] // "api/offers/add"
         public void Create(Offer offer)
         {
             _offersService.Save(offer);

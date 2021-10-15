@@ -15,7 +15,7 @@ namespace backend.Models
         {
             return Id == other?.Id;
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as EntityModel);

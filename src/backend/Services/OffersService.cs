@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using backend.Models;
 using backend.Repositories;
-using System.Collections.Generic;
 
 namespace backend.Services
 {
     public class OffersService : IService<Offer>
     {
-
         private readonly OffersRepository _offersRepository;
+
         public OffersService()
         {
             _offersRepository = new OffersRepository();
         }
 
-        public Offer GetById( int id)
+        public Offer GetById(int id)
         {
             return _offersRepository.GetById(id);
         }
@@ -37,11 +37,9 @@ namespace backend.Services
         public List<Offer> GetAllActiveOffers()
         {
             var list = new List<Offer>();
-            foreach (Offer offer in GetAll())
-            {
-                if (offer.ExpirationDate > DateTime.Now) 
+            foreach (var offer in GetAll())
+                if (offer.ExpirationDate > DateTime.Now)
                     list.Add(offer);
-            }
 
             return list;
         }

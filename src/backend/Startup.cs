@@ -21,20 +21,14 @@ namespace backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.EventsType = typeof(CustomCookieAuthenticationEvents);
-                });
+                .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthenticationEvents); });
 
             services.AddScoped<CustomCookieAuthenticationEvents>();
-            
+
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "../frontend/build";
-            });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../frontend/build"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,19 +54,13 @@ namespace backend
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "../frontend";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-                }
+                if (env.IsDevelopment()) spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
             });
         }
     }

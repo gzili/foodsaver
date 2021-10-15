@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using backend.Models;
 
 namespace backend.Repositories
@@ -25,7 +24,7 @@ namespace backend.Repositories
 
         public User GetById(int id)
         {
-            return _appContext.Users.Find(x => x.Id == id); 
+            return _appContext.Users.Find(x => x.Id == id);
         }
 
         public User GetByEmail(string email)

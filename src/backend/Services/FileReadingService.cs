@@ -11,20 +11,18 @@ namespace backend.Services
     {
         public static T ReadJson(string filePath)
         {
-            string JsonString = ReadAnyFileToString(filePath);
-            return DeserializeJSON(JsonString);
+            var jsonString = ReadAnyFileToString(filePath);
+            return DeserializeJson(jsonString);
         }
 
-        public static string ReadAnyFileToString(string filePath)
+        private static string ReadAnyFileToString(string filePath)
         {
-            string allText;
-            using (var streamReader = new StreamReader(filePath))
-            {
-                allText = streamReader.ReadToEnd();
-            }
+            using var streamReader = new StreamReader(filePath);
+            var allText = streamReader.ReadToEnd();
             return allText;
         }
-        public static T DeserializeJSON(string jsonString)
+
+        private static T DeserializeJson(string jsonString)
         {
             return JsonConvert.DeserializeObject<T>(jsonString);
         }
@@ -33,19 +31,17 @@ namespace backend.Services
 
         public static void WriteJson(string filePath, T value)
         {
-            string jsonString = SerializeJson(value);
+            var jsonString = SerializeJson(value);
             WriteStringToAnyFile(jsonString, filePath);
         }
 
-        public static void WriteStringToAnyFile(string filePath, string text)
+        private static void WriteStringToAnyFile(string filePath, string text)
         {
-            using (var streamWriter = new StreamWriter(filePath))
-            {
-                streamWriter.Write(text);
-            }
+            using var streamWriter = new StreamWriter(filePath);
+            streamWriter.Write(text);
         }
 
-        public static string SerializeJson(T value)
+        private static string SerializeJson(T value)
         {
             return JsonConvert.SerializeObject(value);
         }

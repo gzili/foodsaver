@@ -1,9 +1,5 @@
-﻿using backend.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using backend.Services;
+﻿using System.Collections.Generic;
+using backend.Models;
 
 namespace backend.Services
 {
@@ -12,6 +8,7 @@ namespace backend.Services
         private const string offersPath = "OFFERS PATH HERE";
         private const string usersPath = "USERS PATH HERE";
         private const string foodsPath = "FOODS PATH HERE";
+
         public static List<Offer> LoadOffers()
         {
             return FileService<List<Offer>>.ReadJson(offersPath);
