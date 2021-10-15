@@ -1,14 +1,13 @@
-using backend.Models;
 using System.Collections.Generic;
-using System.Linq;
+using backend.Models;
 
 namespace backend.Repositories
 {
     public class OffersRepository : IRepository<Offer>
     {
-
         private readonly AppDbContext _appDbContext;
         public Dictionary<int, IEnumerable<Offer>> OffersByUser { get; private set; }
+        
         public OffersRepository()
         {
             _appDbContext = AppDbContext.GetObject();
@@ -17,8 +16,8 @@ namespace backend.Repositories
 
         private void GroupOffersByUser()
         {
-            var byUser = _appDbContext.Users.GroupJoin(
-                _appDbContext.Offers,
+            var byUser = _appDbContext.DbLists.Users.GroupJoin(
+                _appDbContext.DbLists.Offers,
                 user => user,
                 offer => offer.Giver,
                 (user, offerCollection) =>
@@ -32,17 +31,18 @@ namespace backend.Repositories
 
         public void Save(Offer newOffer)
         {
-            _appDbContext.Offers.Add(newOffer);
+            _appDbContext.DbLists.Offers.Add(newOffer);
             GroupOffersByUser();
         }
 
         public Offer GetById(int id)
         {
-            return _appDbContext.Offers.Find(x => x.Id == id);
+            return _appDbContext.DbLists.Offers.Find(x => x.Id == id);
         }
+
         public List<Offer> GetAll()
         {
-            return _appDbContext.Offers;
+            return _appDbContext.DbLists.Offers;
         }
     }
 }
