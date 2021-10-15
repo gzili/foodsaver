@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using backend.Models;
-using backend.Repositories;
+﻿using backend.Repositories;
 
 namespace backend.Services
 {
     public static class DataLoadingService
     {
-        private const string DbListsPath = "wwwroot/dblists.json";
+        private const string DbListsPath = "data/dblists.json";
 
         public static DbLists LoadDbLists()
         {
