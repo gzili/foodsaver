@@ -22,26 +22,17 @@ namespace backend.Repositories
         public List<User> Users { get; set; }
         public List<Food> Foods { get; set; }
 
-        public Object this[string fieldName]
+        public object this[string fieldName]
         {
-            get 
-            { 
-                if (Equals(fieldName, "offers"))
+            get
+            {
+                return fieldName switch
                 {
-                    return Offers;
-                }
-                else if (Equals(fieldName, "users"))
-                {
-                    return Users;
-                }
-                else if (Equals(fieldName, "foods"))
-                {
-                    return Foods;
-                }
-                else
-                {
-                    return null;
-                }
+                    "offers" => Offers,
+                    "users" => Users,
+                    "foods" => Foods,
+                    _ => null
+                };
             }
         }
 
@@ -67,7 +58,7 @@ namespace backend.Repositories
             };
         }
 
-        private T GetById<T> (List<T> list, int id) where T : EntityModel
+        private static T GetById<T> (List<T> list, int id) where T : EntityModel
         {
             return list.Find(x => x.Id == id);
         }
