@@ -14,17 +14,17 @@ namespace backend.Repositories
 
         public void Save(Food food)
         {
-            _appDbContext.Foods.Add(food);
+            _appDbContext.DbLists.Foods.Add(food);
         }
 
         public List<Food> GetAll()
         {
-            return _appDbContext.Foods;
+            return _appDbContext.DbLists.Foods;
         }
 
         public Food GetById(int id)
         {
-            return _appDbContext.Foods.Find(x => x.Id == id);
+            return _appDbContext.DbLists.Foods.Find(x => x.Id == id);
         }
     }
 }

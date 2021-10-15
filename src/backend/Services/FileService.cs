@@ -26,13 +26,11 @@ namespace backend.Services
         {
             return JsonConvert.DeserializeObject<T>(jsonString);
         }
-
-
-
+        
         public static void WriteJson(string filePath, T value)
         {
             var jsonString = SerializeJson(value);
-            WriteStringToAnyFile(jsonString, filePath);
+            WriteStringToAnyFile(filePath, jsonString);
         }
 
         private static void WriteStringToAnyFile(string filePath, string text)
@@ -43,7 +41,8 @@ namespace backend.Services
 
         private static string SerializeJson(T value)
         {
-            return JsonConvert.SerializeObject(value);
+            return JsonConvert.SerializeObject(value, Formatting.Indented,
+                new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
         }
     }
 }

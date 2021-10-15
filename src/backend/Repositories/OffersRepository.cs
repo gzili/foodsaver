@@ -14,17 +14,17 @@ namespace backend.Repositories
 
         public void Save(Offer offer)
         {
-            _appDbContext.Offers.Add(offer);
+            _appDbContext.DbLists.Offers.Add(offer);
         }
 
         public Offer GetById(int id)
         {
-            return _appDbContext.Offers.Find(x => x.Id == id);
+            return _appDbContext.DbLists.Offers.Find(x => x.Id == id);
         }
 
         public List<Offer> GetAll()
         {
-            return _appDbContext.Offers;
+            return _appDbContext.DbLists.Offers;
         }
     }
 }

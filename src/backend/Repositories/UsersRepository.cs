@@ -14,22 +14,22 @@ namespace backend.Repositories
 
         public void Save(User user)
         {
-            _appContext.Users.Add(user);
+            _appContext.DbLists.Users.Add(user);
         }
 
         public List<User> GetAll()
         {
-            return _appContext.Users;
+            return _appContext.DbLists.Users;
         }
 
         public User GetById(int id)
         {
-            return _appContext.Users.Find(x => x.Id == id);
+            return _appContext.DbLists.Users.Find(x => x.Id == id);
         }
 
         public User GetByEmail(string email)
         {
-            return _appContext.Users.Find(x => x.Email.Equals(email));
+            return _appContext.DbLists.Users.Find(x => x.Email.Equals(email));
         }
     }
 }
