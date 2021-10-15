@@ -26,18 +26,19 @@ namespace backend.Controllers
         [HttpGet]
         public ActionResult<User> Get() // "api/users"
         {
-            int userId = int.Parse(HttpContext.User.Identity.Name);
-            User user = _userService.GetById(userId);
+            var userId = int.Parse(HttpContext.User.Identity.Name);
+            var user = _userService.GetById(userId);
             return Ok(user);
         }
 
         [HttpPost("login")] // "api/users/login"
         public ActionResult<User> Login(LoginUserDto loginUserDto)
         {
-            User user = _userService.CheckLogin(loginUserDto);
+            var user = _userService.CheckLogin(loginUserDto);
             if (user == null) return Unauthorized();
-            var claims = new List<Claim> { new Claim("id", user.Id.ToString()) };
-            HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
+            var claims = new List<Claim> {new("id", user.Id.ToString())};
+            HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
+                CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
             return NoContent();
         }
 
@@ -53,18 +54,21 @@ namespace backend.Controllers
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
             if (_userService.EmailRegistered(createUserDto.Email)) return Conflict();
-            User user = FromCreateDto(createUserDto);
+            var user = FromCreateDto(createUserDto);
             _userService.Save(user);
             return Ok(user);
         }
 
-        public User FromCreateDto(CreateUserDto createUserDto) => new(
-            _userService.GetAll().Count + 1,
-            createUserDto.Email,
-            createUserDto.Name,
-            BC.HashPassword(createUserDto.Password),
-            createUserDto.Address,
-            createUserDto.UserType
+        public User FromCreateDto(CreateUserDto createUserDto)
+        {
+            return new(
+                _userService.GetAll().Count + 1,
+                createUserDto.Email,
+                createUserDto.Name,
+                BC.HashPassword(createUserDto.Password),
+                createUserDto.Address,
+                createUserDto.UserType
             );
+        }
     }
 }

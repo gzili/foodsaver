@@ -1,12 +1,12 @@
-﻿using backend.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using backend.Models;
 
 namespace backend.Repositories
 {
     public class OffersRepository : IRepository<Offer>
     {
-
         private readonly AppDbContext _appDbContext;
+
         public OffersRepository()
         {
             _appDbContext = AppDbContext.GetObject();
@@ -21,6 +21,7 @@ namespace backend.Repositories
         {
             return _appDbContext.Offers.Find(x => x.Id == id);
         }
+
         public List<Offer> GetAll()
         {
             return _appDbContext.Offers;

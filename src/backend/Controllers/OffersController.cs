@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using backend.DTO.Offers;
 using backend.Models;
-using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
@@ -18,41 +18,44 @@ namespace backend.Controllers
         {
             _offersService = new OffersService();
         }
-        
+
         [HttpGet] // "api/offers"
         public IEnumerable<OfferDto> FindAll()
         {
             return _offersService.GetAll().Select(ToDto);
         }
-        
+
         [HttpGet("{id:int}")] // "api/offers/<number>"
         public ActionResult<OfferDto> FindById(int id)
         {
-            Offer offer = _offersService.GetById(id);
-            return (offer != null) ? Ok(ToDto(offer)) : NotFound();
+            var offer = _offersService.GetById(id);
+            return offer != null ? Ok(ToDto(offer)) : NotFound();
         }
-        
+
         [Authorize]
-        [HttpPost("add")]// "api/offers/add"
+        [HttpPost("add")] // "api/offers/add"
         public void Create(Offer offer)
         {
             _offersService.Save(offer);
         }
 
-        public OfferDto ToDto(Offer offer) => new()
+        public OfferDto ToDto(Offer offer)
         {
-            Id = offer.Id,
-            Food = offer.Food,
-            CreationDate = offer.CreationDate,
-            Description = offer.Description,
-            ExpirationDate = offer.ExpirationDate,
-            Quantity = offer.Quantity,
-            Giver = new GiverDto
+            return new()
             {
-                Id = offer.Giver.Id,
-                Address = offer.Giver.Address,
-                Name = offer.Giver.Name
-            }
-        };
+                Id = offer.Id,
+                Food = offer.Food,
+                CreationDate = offer.CreationDate,
+                Description = offer.Description,
+                ExpirationDate = offer.ExpirationDate,
+                Quantity = offer.Quantity,
+                Giver = new GiverDto
+                {
+                    Id = offer.Giver.Id,
+                    Address = offer.Giver.Address,
+                    Name = offer.Giver.Name
+                }
+            };
+        }
     }
 }

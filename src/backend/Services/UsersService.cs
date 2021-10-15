@@ -14,6 +14,7 @@ namespace backend.Services
         {
             _userRepository = new UserRepository();
         }
+
         public User GetById(int id)
         {
             return _userRepository.GetById(id);
