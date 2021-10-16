@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.DTO.Offers;
 using backend.Models;
 using backend.Repositories;
 
@@ -8,10 +9,13 @@ namespace backend.Services
     public class OffersService : IService<Offer>
     {
         private readonly OffersRepository _offersRepository;
+        
+        private readonly FoodService _foodService;
 
-        public OffersService()
+        public OffersService(OffersRepository offersRepository, FoodService foodService)
         {
-            _offersRepository = new OffersRepository();
+            _offersRepository = offersRepository;
+            _foodService = foodService;
         }
 
         public Offer GetById(int id)
@@ -33,6 +37,11 @@ namespace backend.Services
         {
             _offersRepository.Save(offer);
         }
+        
+        public void SaveDto(OfferCreateDto offerCreateDto, User user)
+        {
+            _offersRepository.Save(GetOfferFromCreateDto(offerCreateDto, user));
+        }
 
         public List<Offer> GetAllActiveOffers()
         {
@@ -43,5 +52,31 @@ namespace backend.Services
 
             return list;
         }
+
+        public Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
+        {
+            Food = _foodService.GetFromDto(offerCreateDto.FoodDto),
+            CreationDate = DateTime.Now,
+            Description = offerCreateDto.Description,
+            ExpirationDate = offerCreateDto.ExpirationDate,
+            Quantity = offerCreateDto.Quantity,
+            Giver = user
+        };
+
+        public OfferDto ToDto(Offer offer) => new()
+        {
+            Id = offer.Id,
+            Food = offer.Food,
+            CreationDate = offer.CreationDate,
+            Description = offer.Description,
+            ExpirationDate = offer.ExpirationDate,
+            Quantity = offer.Quantity,
+            Giver = new GiverDto
+            {
+                Id = offer.Giver.Id,
+                Address = offer.Giver.Address,
+                Name = offer.Giver.Name
+            }
+        };
     }
 }

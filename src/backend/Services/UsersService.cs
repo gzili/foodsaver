@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
 using backend.Repositories;
@@ -9,7 +10,7 @@ namespace backend.Services
     public class UserService : IService<User>
     {
         private readonly UserRepository _userRepository;
-
+        
         public UserService()
         {
             _userRepository = new UserRepository();
@@ -54,6 +55,20 @@ namespace backend.Services
         private bool CheckRegisterInner(User user)
         {
             return _userRepository.GetByEmail(user.Email) == null;
+        }
+        
+        public User FromCreateDto(CreateUserDto createUserDto)
+        {
+            return new User(
+                //TODO this is bad practice, because realistically it should query all users, which would add a lot of work on DB
+                //TODO we should find something similar to JPA IDENTITY 
+                GetAll().Count + 1,
+                createUserDto.Email,
+                createUserDto.Name,
+                BC.HashPassword(createUserDto.Password),
+                createUserDto.Address,
+                createUserDto.UserType
+            );
         }
     }
 }
