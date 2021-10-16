@@ -16,11 +16,5 @@
         public string Password { get; set; }
         public Address Address { get; set; }
         public UserType UserType { get; set; }
-
-        public override string ToString()
-        {
-            return
-                $"User{{Id = {Id}, UserType = {UserType}, Email = {Email}, Password = {Password}, Name = {Name}, Address = {Address}}}";
-        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.DTO.Offers;
@@ -14,29 +15,38 @@ namespace backend.Controllers
     {
         private readonly OffersService _offersService;
 
-        public OffersController()
+        private readonly UserService _userService;
+
+        public OffersController(OffersService offersService, UserService userService)
         {
-            _offersService = new OffersService();
+            _offersService = offersService;
+            _userService = userService;
         }
 
         [HttpGet] // "api/offers"
         public IEnumerable<OfferDto> FindAll()
         {
-            return _offersService.GetAll().Select(ToDto);
+            return _offersService.GetAll().Select(_offersService.ToDto);
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"
         public ActionResult<OfferDto> FindById(int id)
         {
             var offer = _offersService.GetById(id);
-            return offer != null ? Ok(ToDto(offer)) : NotFound();
+            return offer != null ? Ok(_offersService.ToDto(offer)) : NotFound();
         }
 
         [Authorize]
         [HttpPost("add")] // "api/offers/add"
-        public void Create(Offer offer)
+        public void Create(OfferCreateDto offerCreateDto)
         {
-            _offersService.Save(offer);
+            var userId = int.Parse(HttpContext.User.Identity.Name);
+            _offersService.SaveDto(offerCreateDto, _userService.GetById(userId));
+            //TODO remove debug thingy
+            foreach (var VARIABLE in _offersService.GetAll())
+            {
+                Console.WriteLine(VARIABLE.Id + " " + VARIABLE.Food.Name);
+            }
         }
 
         [HttpGet("byUser")]
@@ -44,21 +54,5 @@ namespace backend.Controllers
         {
             return _offersService.GetGrouped();
         }
-
-        public OfferDto ToDto(Offer offer) => new()
-        {
-            Id = offer.Id,
-            Food = offer.Food,
-            CreationDate = offer.CreationDate,
-            Description = offer.Description,
-            ExpirationDate = offer.ExpirationDate,
-            Quantity = offer.Quantity,
-            Giver = new GiverDto
-            {
-                Id = offer.Giver.Id,
-                Address = offer.Giver.Address,
-                Name = offer.Giver.Name
-            }
-        };
     }
 }

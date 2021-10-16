@@ -54,21 +54,9 @@ namespace backend.Controllers
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
             if (_userService.EmailRegistered(createUserDto.Email)) return Conflict();
-            var user = FromCreateDto(createUserDto);
+            var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             return Ok(user);
-        }
-
-        public User FromCreateDto(CreateUserDto createUserDto)
-        {
-            return new(
-                _userService.GetAll().Count + 1,
-                createUserDto.Email,
-                createUserDto.Name,
-                BC.HashPassword(createUserDto.Password),
-                createUserDto.Address,
-                createUserDto.UserType
-            );
         }
     }
 }

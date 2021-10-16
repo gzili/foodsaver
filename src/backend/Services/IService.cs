@@ -5,8 +5,8 @@ namespace backend.Services
 {
     public interface IService<T> where T : EntityModel
     {
-        T GetById(int id);
-        List<T> GetAll();
-        void Save(T t);
+        public T GetById(int id);
+        public List<T> GetAll();
+        public void Save(T t);
     }
 }

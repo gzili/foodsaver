@@ -1,3 +1,5 @@
+using backend.Controllers;
+using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +26,11 @@ namespace backend
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthenticationEvents); });
 
             services.AddScoped<CustomCookieAuthenticationEvents>();
+
+            services.AddScoped<OffersService>();
+            services.AddScoped<OffersRepository>();
+            services.AddScoped<FoodService>();
+            services.AddScoped<UserService>();
 
             services.AddControllersWithViews();
 
