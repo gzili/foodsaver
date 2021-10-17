@@ -37,24 +37,14 @@ namespace backend.Services
             return dbUser != null && BC.Verify(user.Password, dbUser.Password) ? dbUser : null;
         }
 
-        public bool EmailRegistered(string email)
+        private bool CheckEmailForRegistration(string email)
         {
-            return EmailRegisteredInner(email);
+            return _userRepository.GetByEmail(email) == null;
         }
 
-        private bool EmailRegisteredInner(string email)
+        public bool CheckRegister(CreateUserDto createUserDto)
         {
-            return _userRepository.GetByEmail(email) != null;
-        }
-
-        public bool CheckRegister(User user)
-        {
-            return CheckRegisterInner(user);
-        }
-
-        private bool CheckRegisterInner(User user)
-        {
-            return _userRepository.GetByEmail(user.Email) == null;
+            return CheckEmailForRegistration(createUserDto.Email);
         }
         
         public User FromCreateDto(CreateUserDto createUserDto)
