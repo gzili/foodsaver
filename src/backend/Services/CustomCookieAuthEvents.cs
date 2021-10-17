@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace backend.Services
 {
-    public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
+    public class CustomCookieAuthEvents : CookieAuthenticationEvents
     {
         public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {

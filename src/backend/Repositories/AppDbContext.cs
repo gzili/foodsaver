@@ -13,7 +13,7 @@ namespace backend.Repositories
 
         public static AppDbContext GetObject()
         {
-            //if _appDbContext is null, returns new, if not null, returns _appDbContext
+            // if creates new AppDbContext if null, else returns existing
             return _appDbContext ??= new AppDbContext();
         }
 

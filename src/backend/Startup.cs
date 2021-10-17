@@ -23,9 +23,11 @@ namespace backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthenticationEvents); });
+                .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
 
-            services.AddScoped<CustomCookieAuthenticationEvents>();
+            services.AddScoped<CustomCookieAuthEvents>();
+            services.AddScoped<UserService>();
+            services.AddScoped<OffersService>();
 
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();

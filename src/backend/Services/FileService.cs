@@ -3,10 +3,6 @@ using System.IO;
 
 namespace backend.Services
 {
-    /// <summary>
-    /// NEEDS A COMMENT ABOUT EXCEPTIONS!
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
     public static class FileService<T> where T : class
     {
         public static T ReadJson(string filePath)

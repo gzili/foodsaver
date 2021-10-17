@@ -17,9 +17,9 @@ namespace backend.Controllers
     {
         private readonly UserService _userService;
 
-        public UsersController()
+        public UsersController(UserService userService)
         {
-            _userService = new UserService();
+            _userService = userService;
         }
 
         [Authorize]
@@ -57,6 +57,17 @@ namespace backend.Controllers
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             return Ok(user);
+        }
+        public User FromCreateDto(CreateUserDto createUserDto)
+        {
+            return new User(
+                _userService.GetAll().Count + 1,
+                createUserDto.Email,
+                createUserDto.Name,
+                BC.HashPassword(createUserDto.Password),
+                createUserDto.Address,
+                createUserDto.UserType
+            );
         }
     }
 }
