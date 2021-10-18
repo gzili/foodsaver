@@ -73,7 +73,7 @@
       "Giver": {
         "$ref": "4"
       },
-      "Quantity": 3,
+      "Quantity": 3.0,
       "ExpirationDate": "2021-10-15T13:55:46.8534319+03:00",
       "CreationDate": "2021-10-15T13:55:46.8551661+03:00",
       "Description": "Leftover buns from the last day",
@@ -87,7 +87,7 @@
       "Giver": {
         "$ref": "2"
       },
-      "Quantity": 1,
+      "Quantity": 1.0,
       "ExpirationDate": "2021-10-15T13:55:46.8556215+03:00",
       "CreationDate": "2021-10-15T13:55:46.8556228+03:00",
       "Description": "Have nowhere to put these bananas",
@@ -96,16 +96,30 @@
     {
       "$id": "13",
       "Food": {
-        "$ref": "10"
+        "$ref": "8"
       },
       "Giver": {
-        "$ref": "6"
+        "$ref": "2"
       },
-      "Quantity": 2,
-      "ExpirationDate": "2021-10-15T13:55:46.8556238+03:00",
-      "CreationDate": "2021-10-15T13:55:46.855624+03:00",
-      "Description": "Delicious serving made by mistake",
-      "Id": 3
+      "Quantity": 1.0,
+      "ExpirationDate": "2021-10-18T11:42:16.8460303+03:00",
+      "CreationDate": "2021-10-18T11:42:16.8459162+03:00",
+      "Description": "A",
+      "Id": 4
+    },
+    {
+      "$id": "14",
+      "Food": {
+        "$ref": "8"
+      },
+      "Giver": {
+        "$ref": "2"
+      },
+      "Quantity": 1.0,
+      "ExpirationDate": "2021-10-18T11:43:35.4623324+03:00",
+      "CreationDate": "2021-10-18T11:43:35.4622512+03:00",
+      "Description": "A",
+      "Id": 4
     }
   ]
 }

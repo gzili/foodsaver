@@ -1,4 +1,7 @@
-﻿using backend.Services;
+﻿using System;
+using backend.DTO.Offers;
+using backend.Models;
+using backend.Services;
 
 namespace backend.Repositories
 {
@@ -13,7 +16,7 @@ namespace backend.Repositories
 
         public static AppDbContext GetObject()
         {
-            // if creates new AppDbContext if null, else returns existing
+            // creates new AppDbContext if null, else returns existing
             return _appDbContext ??= new AppDbContext();
         }
 

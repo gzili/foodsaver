@@ -43,7 +43,7 @@ namespace backend.Controllers
             if (offerCreateDto.ExpirationDate < DateTime.Now)
                 return Conflict(offerCreateDto);
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            _offersService.SaveDto(offerCreateDto, _userService.GetById(userId));
+            _offersService.SaveDto(user: _userService.GetById(userId), offerCreateDto: offerCreateDto);
             return Ok();
         }
 
