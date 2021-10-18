@@ -56,7 +56,7 @@ namespace backend.Services
 
         private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
         {
-            Food = _foodService.GetFromDto(offerCreateDto.FoodDto),
+            Food = _foodService.GetFromDto(offerCreateDto),
             CreationDate = DateTime.Now,
             Description = offerCreateDto.Description,
             ExpirationDate = offerCreateDto.ExpirationDate,

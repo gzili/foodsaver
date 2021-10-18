@@ -29,11 +29,11 @@ namespace backend.Services
             _foodRepository.Save(food);
         }
 
-        public Food GetFromDto(OfferCreateDto.FoodDtoClass foodDto) => new(GetAll().Count + 1)
+        public Food GetFromDto(OfferCreateDto offerCreateDto) => new(GetAll().Count + 1)
         {
-            Name = foodDto.Name,
-            ImagePath = foodDto.ImagePath,
-            Unit = foodDto.Unit
+            Name = offerCreateDto.FoodName,
+            ImagePath = offerCreateDto.FoodImagePath,
+            Unit = offerCreateDto.FoodUnit
         };
     }
 }
