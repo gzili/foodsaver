@@ -39,7 +39,7 @@ namespace backend.Controllers
             var claims = new List<Claim> {new("id", user.Id.ToString())};
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
-            return NoContent();
+            return Ok(user);
         }
 
         [Authorize]

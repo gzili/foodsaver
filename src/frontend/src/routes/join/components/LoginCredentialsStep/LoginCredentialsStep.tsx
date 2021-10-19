@@ -1,8 +1,11 @@
-import { Button, HStack, useToast, VStack } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertDescription, Button, HStack, VStack } from '@chakra-ui/react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Resolver, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { HTTPError } from 'ky';
+import { useHistory } from 'react-router';
+import api from 'contexts/api.context';
 
 import { ICreateUserDto } from 'dto/user';
 import { FieldWithController, Input } from 'components/form';
@@ -18,26 +21,8 @@ const publicProfileSchema = yup.object().shape({
 
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
 
-async function registerUser(data: ICreateUserDto) {
-  let res;
-
-  try {
-    res = await fetch('api/users/register', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } catch (err) {
-    throw new Error(`Server is unreachable`);
-  }
-
-  if (!res.ok) {
-    throw new Error(`Server responded with status code ${res.status} ${res.statusText}`);
-  }
-
-  return await res.json();
+function registerUser(data: ICreateUserDto) {
+  return api.post('users/register', { json: data }).json<any>();
 }
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
@@ -46,7 +31,6 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     currentStep,
     stepCount,
     onPrev,
-    // onNext
   } = props;
 
   const { control, getValues, handleSubmit } = useForm<LoginCredentialsData>({
@@ -58,27 +42,14 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     resolver,
   });
 
-  const toast = useToast();
+  const history = useHistory();
 
-  const { mutate, isLoading } = useMutation(registerUser, {
-    onSuccess: (data: any) => {
-      console.log(data);
-      toast({
-        title: 'Account created successfully',
-        status: 'success',
-        position: 'top',
-        duration: 3000,
-      });
+  const { mutate, isLoading, isError, error } = useMutation<any, HTTPError, any>(registerUser, {
+    onSuccess: () => {
+      history.replace('/login');
     },
-    onError: (e: Error) => {
-      toast({
-        title: 'Failed to create account',
-        description: e.message,
-        status: 'error',
-        position: 'top',
-        duration: 3000,
-        isClosable: true
-      });
+    onError: (e: HTTPError) => {
+      console.log(e);
     },
   });
 
@@ -105,8 +76,6 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
       email,
       password
     });
-
-    // onNext(data);
   }
 
   return (
@@ -116,6 +85,12 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
         description="Please provide the login credentials you will use to access your account"
       />
       <StepContent>
+        {isError && (
+          <Alert status="error" mb={2} borderRadius="md">
+            <AlertIcon />
+            <AlertDescription>{error!.message}</AlertDescription>
+          </Alert>
+        )}
         <form id="login-credentials-form" onSubmit={handleSubmit(handleNext)}>
           <VStack spacing={4}>
             <FieldWithController control={control} name="email" label="Email">
