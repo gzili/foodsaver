@@ -96,30 +96,16 @@
     {
       "$id": "13",
       "Food": {
-        "$ref": "8"
+        "$ref": "10"
       },
       "Giver": {
-        "$ref": "2"
+        "$ref": "6"
       },
       "Quantity": 1.0,
       "ExpirationDate": "2021-10-18T11:42:16.8460303+03:00",
       "CreationDate": "2021-10-18T11:42:16.8459162+03:00",
-      "Description": "A",
-      "Id": 4
-    },
-    {
-      "$id": "14",
-      "Food": {
-        "$ref": "8"
-      },
-      "Giver": {
-        "$ref": "2"
-      },
-      "Quantity": 1.0,
-      "ExpirationDate": "2021-10-18T11:43:35.4623324+03:00",
-      "CreationDate": "2021-10-18T11:43:35.4622512+03:00",
-      "Description": "A",
-      "Id": 4
+      "Description": "Delicious serving made by mistake",
+      "Id": 3
     }
   ]
 }
