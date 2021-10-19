@@ -54,7 +54,7 @@ namespace backend.Controllers
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
             if (_userService.Validate(createUserDto)) return Conflict();
-            if (_userService.CheckRegister(createUserDto)) return Forbid();
+            if (_userService.IsValidRegister(createUserDto)) return Conflict();
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             return Ok(user);
