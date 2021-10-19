@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from 'contexts/auth.context';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import theme from './theme';
 
@@ -24,7 +26,9 @@ ReactDOM.render(
       <ChakraProvider theme={theme}>
         <BrowserRouter>
           <AuthProvider>
-            <App />
+            <DndProvider backend={HTML5Backend}>
+              <App />
+            </DndProvider>
           </AuthProvider>
         </BrowserRouter>
       </ChakraProvider>
