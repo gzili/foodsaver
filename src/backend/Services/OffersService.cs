@@ -30,6 +30,7 @@ namespace backend.Services
 
         public List<Offer> GetAll()
         {
+            
             return _offersRepository.GetAll();
         }
 
@@ -53,9 +54,9 @@ namespace backend.Services
             return list;
         }
 
-        public Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
+        private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
         {
-            Food = _foodService.GetFromDto(offerCreateDto.FoodDto),
+            Food = _foodService.GetFromDto(offerCreateDto),
             CreationDate = DateTime.Now,
             Description = offerCreateDto.Description,
             ExpirationDate = offerCreateDto.ExpirationDate,

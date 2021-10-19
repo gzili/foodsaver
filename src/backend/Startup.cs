@@ -26,8 +26,6 @@ namespace backend
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
 
             services.AddScoped<CustomCookieAuthEvents>();
-            services.AddScoped<UserService>();
-            services.AddScoped<OffersService>();
 
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();

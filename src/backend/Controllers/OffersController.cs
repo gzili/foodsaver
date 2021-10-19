@@ -38,15 +38,13 @@ namespace backend.Controllers
 
         [Authorize]
         [HttpPost("add")] // "api/offers/add"
-        public void Create(OfferCreateDto offerCreateDto)
+        public ActionResult<OfferCreateDto> Create(OfferCreateDto offerCreateDto)
         {
+            if (offerCreateDto.ExpirationDate < DateTime.Now)
+                return Conflict(offerCreateDto);
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            _offersService.SaveDto(offerCreateDto, _userService.GetById(userId));
-            //TODO remove debug thingy
-            foreach (var VARIABLE in _offersService.GetAll())
-            {
-                Console.WriteLine(VARIABLE.Id + " " + VARIABLE.Food.Name);
-            }
+            _offersService.SaveDto(user: _userService.GetById(userId), offerCreateDto: offerCreateDto);
+            return Ok();
         }
 
         [HttpGet("byUser")]

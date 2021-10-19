@@ -1,4 +1,5 @@
-﻿using backend.Repositories;
+﻿using System;
+using backend.Repositories;
 
 namespace backend.Services
 {
@@ -13,7 +14,7 @@ namespace backend.Services
         
         public static void SaveDbLists(DbLists dbLists)
         {
-            FileService<DbLists>.WriteJson(DbListsPath, dbLists);
+            FileService<DbLists>.WriteJsonWithReferences(DbListsPath, dbLists);
         }
     }
 }

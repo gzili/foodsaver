@@ -10,7 +10,7 @@ namespace backend.Services
     public class UserService : IService<User>
     {
         private readonly UserRepository _userRepository;
-        
+
         public UserService()
         {
             _userRepository = new UserRepository();
@@ -45,6 +45,10 @@ namespace backend.Services
         public bool IsValidRegister(CreateUserDto createUserDto)
         {
             return IsValidEmailRegistration(createUserDto.Email);
+        }
+        public bool Validate(CreateUserDto createUserDto)
+        {
+            return ValidationService.validateUser(createUserDto);
         }
         
         public User FromCreateDto(CreateUserDto createUserDto)

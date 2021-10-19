@@ -22,10 +22,16 @@ namespace backend.Services
         {
             return JsonConvert.DeserializeObject<T>(jsonString);
         }
+
+        public static void WriteJsonWithReferences(string filePath, T value)
+        {
+            var jsonString = SerializeJson(value, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+            WriteStringToAnyFile(filePath, jsonString);
+        }
         
         public static void WriteJson(string filePath, T value)
         {
-            var jsonString = SerializeJson(value);
+            var jsonString = SerializeJson(value, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
             WriteStringToAnyFile(filePath, jsonString);
         }
 
@@ -35,10 +41,9 @@ namespace backend.Services
             streamWriter.Write(text);
         }
 
-        private static string SerializeJson(T value)
+        private static string SerializeJson(T value, JsonSerializerSettings jsonSerializerSettings = null)
         {
-            return JsonConvert.SerializeObject(value, Formatting.Indented,
-                new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+            return JsonConvert.SerializeObject(value, Formatting.Indented, jsonSerializerSettings);
         }
     }
 }
