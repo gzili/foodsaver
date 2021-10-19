@@ -1,9 +1,12 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
-import { Avatar, Box, Flex, Heading, VStack } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+import { useAuth } from 'contexts/auth.context';
 
 import { FaIcon, faMapMarkerAlt, faUser } from 'components/core';
+import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 import { IOfferDto } from 'dto/offer';
 
@@ -71,7 +74,7 @@ function OffersList() {
 
   if (data) {
     return (
-      <VStack spacing={2}>
+      <VStack spacing={2} pb="80px">
         {data.map(offer => (
           <OffersListItem key={offer.id} item={offer} />
         ))}
@@ -83,10 +86,24 @@ function OffersList() {
 }
 
 export default function Offers() {
+  const { user } = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box p={4}>
       <Heading as="h1" mb={2}>Offers</Heading>
       <OffersList />
+      <IconButton
+        icon={<AddIcon />}
+        aria-label="Create offer"
+        onClick={onOpen}
+        colorScheme="brand"
+        pos="fixed"
+        right={8}
+        bottom={8}
+        borderRadius="full"
+      />
+      <CreateOfferDrawer isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 }
