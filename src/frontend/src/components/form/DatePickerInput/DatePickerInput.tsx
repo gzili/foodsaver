@@ -55,7 +55,7 @@ interface DatePickerProps {
   disableCloseOnPick?: boolean,
   disableFuture?: boolean,
   disablePast?: boolean,
-  isDisabled: boolean,
+  isDisabled?: boolean,
   smallestUnit?: DateUnit,
   viewOnOpen?: DateUnit,
   weekStartsOnMonday?: boolean,
