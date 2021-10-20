@@ -53,8 +53,8 @@ namespace backend.Controllers
         [HttpPost("register")] // "api/users/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
-            if (_userService.Validate(createUserDto)) return Conflict();
-            if (_userService.IsValidRegister(createUserDto)) return Conflict();
+            if (!_userService.Validate(createUserDto)) return Conflict();
+            if (!_userService.IsValidRegister(createUserDto)) return Conflict();
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             return Ok(user);
