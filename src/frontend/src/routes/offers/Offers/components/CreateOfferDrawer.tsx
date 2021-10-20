@@ -3,6 +3,9 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { DatePickerInput, FieldWithController, FilePicker, Input, TextAutocomplete } from 'components';
+import api from 'contexts/api.context';
+import { useMutation, useQueryClient } from 'react-query';
+import { endOfDay } from 'date-fns';
 
 interface ICreateOfferDrawer {
   isOpen: boolean,
@@ -23,8 +26,8 @@ const validationSchema = yup.object({
   foodPhoto: yup.array().length(1, "Please upload a photo"),
   foodUnit: yup.string().required("Please choose a unit"),
   offerQuantity: yup.number().typeError("Please provide the quantity"),
+  offerExpirationDate: yup.date().typeError("Please set an expiration date"),
   offerDescription: yup.string(),
-  offerExpirationDate: yup.date().nullable(),
 });
 
 const resolver = yupResolver(validationSchema) as any;
@@ -38,7 +41,11 @@ const units = [
   'pcs',
 ].sort();
 
-function CreateOfferContent() {
+function createOffer(data: FormData) {
+  return api.post('offers/add', { body: data });
+}
+
+function CreateOfferContent({ onClose }: { onClose: () => void }) {
   const { control, handleSubmit: onSubmit } = useForm<FormValues>({
     resolver,
     defaultValues: {
@@ -51,8 +58,27 @@ function CreateOfferContent() {
     }
   });
 
+  const queryClient = useQueryClient();
+  const { mutate, isLoading } = useMutation(createOffer, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('offers');
+      onClose();
+    },
+    onError: (error: Error) => {
+      console.log(error);
+    },
+  });
+
   const handleSubmit = (data: FormValues) => {
     console.log(data);
+    const formData = new FormData();
+    formData.append('foodName', data.foodName);
+    formData.append('foodPhoto', data.foodPhoto![0]);
+    formData.append('foodUnit', data.foodUnit);
+    formData.append('quantity', data.offerQuantity.toString());
+    formData.append('expirationDate', endOfDay(data.offerExpirationDate!).toJSON());
+    formData.append('description', data.offerDescription);
+    mutate(formData);
   };
 
   return (
@@ -60,11 +86,11 @@ function CreateOfferContent() {
       <DrawerBody>
         <form id="create-offer-form" onSubmit={onSubmit(handleSubmit)}>
           <VStack spacing={2}>
-            <FieldWithController control={control} name="foodName" label="Food">
+            <FieldWithController control={control} name="foodName" label="Title">
               {props => <Input {...props} />}
             </FieldWithController>
             <FieldWithController control={control} name="foodPhoto" label="Photo">
-              {(props, state) => <FilePicker {...props} {...state} />}
+              {(props, state) => <FilePicker {...props} {...state} accept="image/*" />}
             </FieldWithController>
             <FieldWithController control={control} name="offerQuantity" label="Quantity">
               {props => <Input {...props} />}
@@ -96,7 +122,8 @@ function CreateOfferContent() {
         </form>
       </DrawerBody>
       <DrawerFooter>
-        <Button colorScheme="brand" type="submit" form="create-offer-form">Create</Button>
+        <Button isDisabled={isLoading} onClick={onClose} mr={2}>Cancel</Button>
+        <Button colorScheme="brand" type="submit" form="create-offer-form" isLoading={isLoading}>Create</Button>
       </DrawerFooter>
     </>
   );
@@ -114,7 +141,7 @@ export function CreateOfferDrawer(props: ICreateOfferDrawer) {
       <DrawerContent>
         <DrawerCloseButton />
         <DrawerHeader>Create offer</DrawerHeader>
-        <CreateOfferContent />
+        <CreateOfferContent onClose={onClose} />
       </DrawerContent>
     </Drawer>
   );

@@ -1,6 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
+import { compareDesc, formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Avatar, Box, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useAuth } from 'contexts/auth.context';
@@ -27,7 +27,7 @@ function OffersListItem(props: IOffersListItem) {
       w="100%"
       h="180px"
       overflow="hidden"
-      bg={`url('${item.food.imagePath}')`}
+      bg={`url('${item.food.imagePath.replaceAll('\\', '/')}')`}
       bgPos="center"
       bgSize="cover"
       borderRadius="xl">
@@ -75,7 +75,7 @@ function OffersList() {
   if (data) {
     return (
       <VStack spacing={2} pb="80px">
-        {data.map(offer => (
+        {data.sort((a, b) => compareDesc(parseJSON(a.creationDate), parseJSON(b.creationDate))).map(offer => (
           <OffersListItem key={offer.id} item={offer} />
         ))}
       </VStack>
