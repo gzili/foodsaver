@@ -55,7 +55,7 @@ const TextAutocomplete = forwardRef<HTMLInputElement, TextAutocompleteProps>((pr
   const { getData, isLoading, isError, data: items } = useAsyncOrLocalData(itemsProp);
 
   const inputItems = useMemo(() => {
-    if (value !== '' && items) {
+    if (items) {
       return items.filter(item => item.toLowerCase().startsWith(value.toLowerCase()));
     } else {
       return [];
