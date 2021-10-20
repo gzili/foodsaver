@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using backend.DTO.Offers;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -38,10 +40,30 @@ namespace backend.Controllers
 
         [Authorize]
         [HttpPost("add")] // "api/offers/add"
-        public ActionResult<OfferCreateDto> Create(OfferCreateDto offerCreateDto)
+        public async Task<ActionResult<OfferCreateDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            if (offerCreateDto.ExpirationDate < DateTime.Now)
-                return Conflict(offerCreateDto);
+            if (createOfferDto.ExpirationDate < DateTime.Now)
+                return Conflict(createOfferDto);
+            var file = createOfferDto.FoodPhoto;
+            if (file == null)
+                return BadRequest("No photo provided");
+            if (file.Length == 0)
+                return BadRequest("Upload of a directory is not allowed");
+            var path = Path.Combine("images", Path.GetRandomFileName() + Path.GetExtension(file.FileName));
+            var fullPath = Path.Combine("wwwroot", path);
+            await using (var stream = System.IO.File.Create(fullPath))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var offerCreateDto = new OfferCreateDto
+            {
+                FoodName = createOfferDto.FoodName,
+                FoodUnit = createOfferDto.FoodUnit,
+                Quantity = createOfferDto.Quantity,
+                ExpirationDate = createOfferDto.ExpirationDate,
+                Description = createOfferDto.Description,
+                FoodImagePath = path
+            };
             var userId = int.Parse(HttpContext.User.Identity.Name);
             _offersService.SaveDto(user: _userService.GetById(userId), offerCreateDto: offerCreateDto);
             return Ok();
