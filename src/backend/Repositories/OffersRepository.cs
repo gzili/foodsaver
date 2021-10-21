@@ -45,7 +45,7 @@ namespace backend.Repositories
 
         public List<Offer> GetAll()
         {
-            return _appDbContext.DbLists.Offers;
+            return (List<Offer>) _appDbContext["offers"];
         }
     }
 }

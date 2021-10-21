@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
 using backend.Services;
@@ -70,9 +72,12 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpGet("offers")] // "api/user/offers"
-        public IEnumerable<Offer> FindByUser()
+        public IEnumerable<OfferDto> FindByUser()
         {
-            return _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
+            var userOffers = _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
+            return
+                (from userOffer in userOffers
+                    select _offersService.ToDto(userOffer)).ToList();
         }
     }
 }
