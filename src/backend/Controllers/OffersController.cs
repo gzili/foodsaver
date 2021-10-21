@@ -39,22 +39,12 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("add")] // "api/offers/add"
+        [HttpPost] // "api/offers"
         public async Task<ActionResult<OfferCreateDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
             if (createOfferDto.ExpirationDate < DateTime.Now)
-                return Conflict(createOfferDto);
-            /*var file = createOfferDto.FoodPhoto;
-            if (file == null)
-                return BadRequest("No photo provided");
-            if (file.Length == 0)
-                return BadRequest("Upload of a directory is not allowed");
-            var path = Path.Combine("images", Path.GetRandomFileName() + Path.GetExtension(file.FileName));
-            var fullPath = Path.Combine("wwwroot", path);
-            await using (var stream = System.IO.File.Create(fullPath))
-            {
-                await file.CopyToAsync(stream);
-            }*/
+                return BadRequest("Invalid expiration date");
+
             var path = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
             
             if (path == null)
