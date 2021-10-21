@@ -12,6 +12,7 @@ import { FieldWithController, Input } from 'components/form';
 
 import { IStep, LoginCredentialsData } from '../interfaces';
 import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
+import { useState } from 'react';
 
 const publicProfileSchema = yup.object().shape({
   email: yup.string().email('Please provide a valid email').required(),
@@ -43,13 +44,19 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   });
 
   const history = useHistory();
+  const [error, setError] = useState('');
 
-  const { mutate, isLoading, isError, error } = useMutation<any, HTTPError, any>(registerUser, {
+  const { mutate, isLoading, isError } = useMutation<any, HTTPError, any>(registerUser, {
     onSuccess: () => {
       history.replace('/login');
     },
-    onError: (e: HTTPError) => {
-      console.log(e);
+    onError: async (e: HTTPError) => {
+      if (e.response) {
+        const message = await e.response.json();
+        setError(message);
+      } else {
+        setError(e.message);
+      }
     },
   });
 
@@ -88,7 +95,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
         {isError && (
           <Alert status="error" mb={2} borderRadius="md">
             <AlertIcon />
-            <AlertDescription>{error!.message}</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
         <form id="login-credentials-form" onSubmit={handleSubmit(handleNext)}>

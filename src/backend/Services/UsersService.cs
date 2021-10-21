@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
 using backend.Repositories;
@@ -46,16 +45,21 @@ namespace backend.Services
         {
             return IsValidEmailRegistration(createUserDto.Email);
         }
-        public bool Validate(CreateUserDto createUserDto)
+        public string GetFirstValidationError(CreateUserDto createUserDto)
         {
-            return ValidationService.validateUser(createUserDto);
+            if (!ValidationService.IsEmail(createUserDto.Email))
+                return "This email does not conform to our company standards";
+            
+            if (string.IsNullOrWhiteSpace(createUserDto.Password))
+                return "Password must be non-blank";
+            
+            return null;
         }
         
         public User FromCreateDto(CreateUserDto createUserDto)
         {
             return new User(
-                //TODO this is bad practice, because realistically it should query all users, which would add a lot of work on DB
-                //TODO we should find something similar to JPA IDENTITY 
+                // Real database will automatically assign a user id, this is temporary
                 GetAll().Count + 1,
                 createUserDto.Email,
                 createUserDto.Name,

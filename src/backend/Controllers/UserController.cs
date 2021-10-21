@@ -27,10 +27,14 @@ namespace backend.Controllers
         [HttpPost("register")] // "api/user/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
-            if (!_userService.Validate(createUserDto)) return Conflict();
-            if (!_userService.IsValidRegister(createUserDto)) return Conflict();
+            var validationError = _userService.GetFirstValidationError(createUserDto);
+            if (validationError != null) return BadRequest(validationError);
+            
+            if (!_userService.IsValidRegister(createUserDto)) return Conflict("User with the same email already exists");
+            
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
+            
             return Ok(user);
         }
         
@@ -39,9 +43,11 @@ namespace backend.Controllers
         {
             var user = _userService.CheckLogin(loginUserDto);
             if (user == null) return Unauthorized();
+            
             var claims = new List<Claim> { new("id", user.Id.ToString()) };
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
+            
             return Ok(user);
         }
 
@@ -67,18 +73,6 @@ namespace backend.Controllers
         public IEnumerable<Offer> FindByUser()
         {
             return _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
-        }
-
-        public User FromCreateDto(CreateUserDto createUserDto)
-        {
-            return new User(
-                _userService.GetAll().Count + 1,
-                createUserDto.Email,
-                createUserDto.Name,
-                BC.HashPassword(createUserDto.Password),
-                createUserDto.Address,
-                createUserDto.UserType
-            );
         }
     }
 }
