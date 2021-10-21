@@ -27,7 +27,10 @@ namespace backend.Controllers
         [HttpGet] // "api/offers"
         public IEnumerable<OfferDto> FindAll()
         {
-            return _offersService.GetAll().Select(_offersService.ToDto);
+            var offers = Request.Query.ContainsKey("showExpired")
+                ? _offersService.GetAll()
+                : _offersService.GetAllActiveOffers();
+            return offers.Select(_offersService.ToDto);
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"

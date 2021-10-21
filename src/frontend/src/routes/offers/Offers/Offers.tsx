@@ -53,7 +53,7 @@ function OffersListItem(props: IOffersListItem) {
 }
 
 async function fetchOffers(): Promise<IOfferDto[]> {
-  const res = await fetch('api/offers');
+  const res = await fetch('api/offers?showExpired');
 
   if (!res.ok) {
     throw new Error(`Unable to fetch offers: server responded with status ${res.status} ${res.statusText}`)
