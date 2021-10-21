@@ -470,7 +470,7 @@ const TriggerWithPopover = (props: CalendarTriggerProps) => {
   };
 
   return (
-    <Popover isOpen={isOpen} onClose={onClose} isLazy gutter={12}>
+    <Popover isOpen={isOpen} onClose={onClose} isLazy gutter={12} placement="top-end">
       <PopoverTrigger>
         <IconButton
           aria-label="Trigger calendar"
@@ -489,6 +489,9 @@ const TriggerWithPopover = (props: CalendarTriggerProps) => {
           border: false,
           borderRadius: false,
           boxShadow: false,
+        }}
+        _focus={{
+          boxShadow: "none",
         }}
       >
           <CalendarWidget onChange={handleChange} {...widgetProps} />
