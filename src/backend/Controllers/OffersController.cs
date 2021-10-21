@@ -24,9 +24,15 @@ namespace backend.Controllers
         }
 
         [HttpGet] // "api/offers"
-        public IEnumerable<OfferDto> FindAll()
+        public IEnumerable<OfferDto> FindAllActive()
         {
-            return _offersService.GetAll().Select(_offersService.ToDto);
+            return _offersService.GetAllActive().Select(_offersService.ToDto);
+        }
+        
+        [HttpGet("{showExpired:bool}")] // "api/offers/<showExpired>"
+        public IEnumerable<OfferDto> FindAll(bool showExpired)
+        {
+            return showExpired ? _offersService.GetAll().Select(_offersService.ToDto) : _offersService.GetAllActive().Select(_offersService.ToDto);
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"

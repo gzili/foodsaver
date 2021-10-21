@@ -44,7 +44,7 @@ namespace backend.Services
             _offersRepository.Save(GetOfferFromCreateDto(offerCreateDto, user));
         }
 
-        public List<Offer> GetAllActiveOffers()
+        public List<Offer> GetAllActive()
         {
             var list = new List<Offer>();
             foreach (var offer in GetAll())
