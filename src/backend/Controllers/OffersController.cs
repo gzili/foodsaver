@@ -29,10 +29,11 @@ namespace backend.Controllers
             return _offersService.GetAllActive().Select(_offersService.ToDto);
         }
         
-        [HttpGet("{showExpired:bool}")] // "api/offers/<showExpired>"
-        public IEnumerable<OfferDto> FindAll(bool showExpired)
+        [HttpGet("showExpired")] // "api/offers/<showExpired>"
+        public IEnumerable<OfferDto> FindAll()
         {
-            return showExpired ? _offersService.GetAll().Select(_offersService.ToDto) : _offersService.GetAllActive().Select(_offersService.ToDto);
+            return _offersService.GetAll().Select(_offersService.ToDto);
+            //return showExpired ? _offersService.GetAll().Select(_offersService.ToDto) : _offersService.GetAllActive().Select(_offersService.ToDto);
         }
 
         [HttpGet("{id:int}")] // "api/offers/<number>"

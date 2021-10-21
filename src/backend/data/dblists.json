@@ -88,7 +88,7 @@
         "$ref": "2"
       },
       "Quantity": 1.0,
-      "ExpirationDate": "2021-10-15T13:55:46.8556215+03:00",
+      "ExpirationDate": "2022-10-25T13:55:46.8556215+03:00",
       "CreationDate": "2021-10-15T13:55:46.8556228+03:00",
       "Description": "Have nowhere to put these bananas",
       "Id": 2
@@ -102,24 +102,10 @@
         "$ref": "2"
       },
       "Quantity": 1.0,
-      "ExpirationDate": "2021-10-18T11:42:16.8460303+03:00",
+      "ExpirationDate": "2022-10-18T11:42:16.8460303+03:00",
       "CreationDate": "2021-10-18T11:42:16.8459162+03:00",
       "Description": "A",
-      "Id": 4
-    },
-    {
-      "$id": "14",
-      "Food": {
-        "$ref": "8"
-      },
-      "Giver": {
-        "$ref": "2"
-      },
-      "Quantity": 1.0,
-      "ExpirationDate": "2021-10-18T11:43:35.4623324+03:00",
-      "CreationDate": "2021-10-18T11:43:35.4622512+03:00",
-      "Description": "A",
-      "Id": 4
+      "Id": 3
     }
   ]
 }

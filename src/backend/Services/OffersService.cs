@@ -30,8 +30,16 @@ namespace backend.Services
 
         public List<Offer> GetAll()
         {
-            
             return _offersRepository.GetAll();
+        }
+        
+        public IEnumerable<Offer> GetAllActive()
+        {
+            var list = new List<Offer>();
+            foreach (var offer in GetAll())
+                if (offer.ExpirationDate > DateTime.Now)
+                    list.Add(offer);
+            return list;
         }
 
         public void Save(Offer offer)
@@ -42,16 +50,6 @@ namespace backend.Services
         public void SaveDto(OfferCreateDto offerCreateDto, User user)
         {
             _offersRepository.Save(GetOfferFromCreateDto(offerCreateDto, user));
-        }
-
-        public List<Offer> GetAllActive()
-        {
-            var list = new List<Offer>();
-            foreach (var offer in GetAll())
-                if (offer.ExpirationDate > DateTime.Now)
-                    list.Add(offer);
-
-            return list;
         }
 
         private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
