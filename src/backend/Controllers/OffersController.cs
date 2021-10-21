@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.DTO.Offers;
@@ -15,12 +14,13 @@ namespace backend.Controllers
     [Route("api/[controller]")] // "api/offers"
     public class OffersController : ControllerBase
     {
+        private readonly FileUploadService _fileUploadService;
         private readonly OffersService _offersService;
-
         private readonly UserService _userService;
 
-        public OffersController(OffersService offersService, UserService userService)
+        public OffersController(FileUploadService fileUploadService, OffersService offersService, UserService userService)
         {
+            _fileUploadService = fileUploadService;
             _offersService = offersService;
             _userService = userService;
         }
@@ -44,7 +44,7 @@ namespace backend.Controllers
         {
             if (createOfferDto.ExpirationDate < DateTime.Now)
                 return Conflict(createOfferDto);
-            var file = createOfferDto.FoodPhoto;
+            /*var file = createOfferDto.FoodPhoto;
             if (file == null)
                 return BadRequest("No photo provided");
             if (file.Length == 0)
@@ -54,7 +54,12 @@ namespace backend.Controllers
             await using (var stream = System.IO.File.Create(fullPath))
             {
                 await file.CopyToAsync(stream);
-            }
+            }*/
+            var path = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
+            
+            if (path == null)
+                return BadRequest("Invalid image file");
+            
             var offerCreateDto = new OfferCreateDto
             {
                 FoodName = createOfferDto.FoodName,
@@ -66,6 +71,7 @@ namespace backend.Controllers
             };
             var userId = int.Parse(HttpContext.User.Identity.Name);
             _offersService.SaveDto(user: _userService.GetById(userId), offerCreateDto: offerCreateDto);
+            
             return Ok();
         }
 
