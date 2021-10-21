@@ -136,9 +136,9 @@ export function CreateOfferDrawer(props: ICreateOfferDrawer) {
   } = props;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="xl">
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="full" isCentered>
       <ModalOverlay />
-      <ModalContent maxW="90%">
+      <ModalContent maxH="90%" w="90%" sx={{ minH: false }}>
         <ModalCloseButton />
         <ModalHeader>Create offer</ModalHeader>
         <CreateOfferContent onClose={onClose} />
