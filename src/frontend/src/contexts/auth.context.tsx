@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 
 import api from './api.context';
 
@@ -24,6 +24,7 @@ export interface LoginData {
 interface AuthContextValue {
   user: User | null,
   setUser: (user: User) => void,
+  signOut: () => void,
 }
 
 const AuthContext = createContext<AuthContextValue>(null!);
@@ -38,6 +39,10 @@ const fetchUser = () => {
   return api.get('users').json<User>();
 }
 
+const fetchSignOut = () => {
+  return api.post('users/logout');
+}
+
 function useAuthProvider() {
   const [user, setUser] = useState<User | null>(null);
 
@@ -47,9 +52,16 @@ function useAuthProvider() {
     }
   });
 
+   const { mutate: signOut } = useMutation(fetchSignOut, {
+    onSuccess: () => {
+      setUser(null);
+    },
+  });
+
   return {
     user,
     setUser,
+    signOut,
   };
 }
 
