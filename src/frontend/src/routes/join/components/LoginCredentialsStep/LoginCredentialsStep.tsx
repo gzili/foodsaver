@@ -22,7 +22,7 @@ const publicProfileSchema = yup.object().shape({
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
 
 function registerUser(data: ICreateUserDto) {
-  return api.post('users/register', { json: data }).json<any>();
+  return api.post('user/register', { json: data }).json<any>();
 }
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {

@@ -15,6 +15,8 @@ namespace backend.Repositories
             GroupOffersByUser();
         }
 
+        public IEnumerable<Offer> this[int id] => OffersByUser[id];
+
         private void GroupOffersByUser()
         {
             var byUser = _appDbContext.DbLists.Users.GroupJoin(

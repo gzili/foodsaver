@@ -13,44 +13,18 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : Controller
+    public class UserController : Controller
     {
+        private readonly OffersService _offersService;
         private readonly UserService _userService;
 
-        public UsersController(UserService userService)
+        public UserController(OffersService offersService, UserService userService)
         {
+            _offersService = offersService;
             _userService = userService;
         }
 
-        [Authorize]
-        [HttpGet]
-        public ActionResult<User> Get() // "api/users"
-        {
-            var userId = int.Parse(HttpContext.User.Identity.Name);
-            var user = _userService.GetById(userId);
-            return Ok(user);
-        }
-
-        [HttpPost("login")] // "api/users/login"
-        public ActionResult<User> Login(LoginUserDto loginUserDto)
-        {
-            var user = _userService.CheckLogin(loginUserDto);
-            if (user == null) return Unauthorized();
-            var claims = new List<Claim> {new("id", user.Id.ToString())};
-            HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
-                CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
-            return Ok(user);
-        }
-
-        [Authorize]
-        [HttpPost("logout")] // "api/users/logout"
-        public ActionResult LogOut()
-        {
-            HttpContext.SignOutAsync();
-            return Ok();
-        }
-
-        [HttpPost("register")] // "api/users/register"
+        [HttpPost("register")] // "api/user/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
             if (!_userService.Validate(createUserDto)) return Conflict();
@@ -58,6 +32,41 @@ namespace backend.Controllers
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             return Ok(user);
+        }
+        
+        [HttpPost("login")] // "api/user/login"
+        public ActionResult<User> Login(LoginUserDto loginUserDto)
+        {
+            var user = _userService.CheckLogin(loginUserDto);
+            if (user == null) return Unauthorized();
+            var claims = new List<Claim> { new("id", user.Id.ToString()) };
+            HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
+                CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
+            return Ok(user);
+        }
+
+        [Authorize]
+        [HttpPost("logout")] // "api/user/logout"
+        public ActionResult LogOut()
+        {
+            HttpContext.SignOutAsync();
+            return Ok();
+        }
+        
+        [Authorize]
+        [HttpGet]
+        public ActionResult<User> Get() // "api/user"
+        {
+            var userId = int.Parse(HttpContext.User.Identity.Name);
+            var user = _userService.GetById(userId);
+            return Ok(user);
+        }
+        
+        [Authorize]
+        [HttpGet("offers")] // "api/user/offers"
+        public IEnumerable<Offer> FindByUser()
+        {
+            return _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
         }
 
         public User FromCreateDto(CreateUserDto createUserDto)

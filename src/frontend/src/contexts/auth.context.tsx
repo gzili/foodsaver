@@ -31,16 +31,12 @@ const AuthContext = createContext<AuthContextValue>(null!);
 
 export const useAuth = () => useContext(AuthContext);
 
-// const fetchLogin = async (data: LoginData) => {
-//   return api.post('users/login', { json: data }).json<User>();
-// }
-
 const fetchUser = () => {
-  return api.get('users').json<User>();
+  return api.get('user').json<User>();
 }
 
 const fetchSignOut = () => {
-  return api.post('users/logout');
+  return api.post('user/logout');
 }
 
 function useAuthProvider() {

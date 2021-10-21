@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.DTO.Offers;
-using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -63,12 +62,6 @@ namespace backend.Controllers
             _offersService.SaveDto(user: _userService.GetById(userId), offerCreateDto: offerCreateDto);
             
             return Ok();
-        }
-
-        [HttpGet("byUser")]
-        public Dictionary<int, IEnumerable<Offer>> FindGrouped()
-        {
-            return _offersService.GetGrouped();
         }
     }
 }
