@@ -1,4 +1,4 @@
-import { Button, Drawer, DrawerOverlay, DrawerBody, DrawerCloseButton, DrawerHeader, DrawerContent, DrawerFooter, Textarea, VStack } from '@chakra-ui/react';
+import { Button, Modal, ModalOverlay, ModalBody, ModalCloseButton, ModalHeader, ModalContent, ModalFooter, Textarea, VStack } from '@chakra-ui/react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -83,7 +83,7 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
 
   return (
     <>
-      <DrawerBody>
+      <ModalBody overflowX="hidden">
         <form id="create-offer-form" onSubmit={onSubmit(handleSubmit)}>
           <VStack spacing={2}>
             <FieldWithController control={control} name="foodName" label="Title">
@@ -120,11 +120,11 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
             </FieldWithController>
           </VStack>
         </form>
-      </DrawerBody>
-      <DrawerFooter>
+      </ModalBody>
+      <ModalFooter>
         <Button isDisabled={isLoading} onClick={onClose} mr={2}>Cancel</Button>
         <Button colorScheme="brand" type="submit" form="create-offer-form" isLoading={isLoading}>Create</Button>
-      </DrawerFooter>
+      </ModalFooter>
     </>
   );
 }
@@ -136,13 +136,13 @@ export function CreateOfferDrawer(props: ICreateOfferDrawer) {
   } = props;
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size="full" placement="bottom">
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader>Create offer</DrawerHeader>
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="xl">
+      <ModalOverlay />
+      <ModalContent maxW="90%">
+        <ModalCloseButton />
+        <ModalHeader>Create offer</ModalHeader>
         <CreateOfferContent onClose={onClose} />
-      </DrawerContent>
-    </Drawer>
+      </ModalContent>
+    </Modal>
   );
 } 
