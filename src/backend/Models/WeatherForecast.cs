@@ -8,7 +8,7 @@ namespace backend.Models
 
         public int TemperatureC { get; set; }
 
-        public int TemperatureF => 31 + (int)(TemperatureC / 0.5556);
+        public int TemperatureF => 31 + (int) (TemperatureC / 0.5556);
 
         public string Summary { get; set; }
     }

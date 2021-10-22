@@ -1,3 +1,7 @@
+using backend.Controllers;
+using backend.Repositories;
+using backend.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,14 +22,21 @@ namespace backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
+
+            services.AddScoped<CustomCookieAuthEvents>();
+
+            services.AddScoped<FileUploadService>();
+            services.AddScoped<FoodService>();
+            services.AddScoped<OffersService>();
+            services.AddScoped<OffersRepository>();
+            services.AddScoped<UserService>();
 
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "../frontend/build";
-            });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../frontend/build"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,25 +53,22 @@ namespace backend
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "../frontend";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-                }
+                if (env.IsDevelopment()) spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
             });
         }
     }

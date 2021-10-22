@@ -1,0 +1,111 @@
+{
+  "$id": "1",
+  "Users": [
+    {
+      "$id": "2",
+      "Email": "edvinas@gmail.com",
+      "Name": "Edvinas",
+      "Password": "$2a$12$cvSl/uRwdzPSZSHSWCfjleP6r9ShUXKuTy7eJ6IKQxSvKYYNKJsfi",
+      "Address": {
+        "$id": "3",
+        "StreetAddress": "Perkūno g. 10",
+        "City": "Vilniaus r."
+      },
+      "UserType": 0,
+      "Id": 1
+    },
+    {
+      "$id": "4",
+      "Email": "andrius123@lidl.com",
+      "Name": "Lidl",
+      "Password": "$2a$12$vCAbO6KDewtXbU52lJAm..CoDMoTgS9b85b15Q1lk0MrTEDm3830C",
+      "Address": {
+        "$id": "5",
+        "StreetAddress": "Vytauto g. 111A",
+        "City": "Ukmergė"
+      },
+      "UserType": 1,
+      "Id": 2
+    },
+    {
+      "$id": "6",
+      "Email": "inga@etnodvaras.lt",
+      "Name": "Etno dvaras",
+      "Password": "$2a$12$HQ2IgAaIaqvIXLX7hqP4uuzESajwdsojqiVVsRz2FSh.C22qiyQ0i",
+      "Address": {
+        "$id": "7",
+        "StreetAddress": "Ukmergės g. 369",
+        "City": "Vilnius"
+      },
+      "UserType": 1,
+      "Id": 3
+    }
+  ],
+  "Foods": [
+    {
+      "$id": "8",
+      "Name": "Marcipaninis sukutis",
+      "ImagePath": "images/sukutis.jpg",
+      "Unit": "vnt.",
+      "Id": 1
+    },
+    {
+      "$id": "9",
+      "Name": "Bananai",
+      "ImagePath": "images/bananas.jpg",
+      "Unit": "kg",
+      "Id": 2
+    },
+    {
+      "$id": "10",
+      "Name": "Cepelinai",
+      "ImagePath": "images/cepelinai.jpg",
+      "Unit": "vnt.",
+      "Id": 3
+    }
+  ],
+  "Offers": [
+    {
+      "$id": "11",
+      "Food": {
+        "$ref": "8"
+      },
+      "Giver": {
+        "$ref": "4"
+      },
+      "Quantity": 3.0,
+      "ExpirationDate": "2021-10-15T13:55:46.8534319+03:00",
+      "CreationDate": "2021-10-15T13:55:46.8551661+03:00",
+      "Description": "Leftover buns from the last day",
+      "Id": 1
+    },
+    {
+      "$id": "12",
+      "Food": {
+        "$ref": "9"
+      },
+      "Giver": {
+        "$ref": "2"
+      },
+      "Quantity": 1.0,
+      "ExpirationDate": "2021-10-15T13:55:46.8556215+03:00",
+      "CreationDate": "2021-10-15T13:55:46.8556228+03:00",
+      "Description": "Have nowhere to put these bananas",
+      "Id": 2
+    },
+    {
+      "$id": "13",
+      "Food": {
+        "$ref": "10"
+      },
+      "Giver": {
+        "$ref": "6"
+      },
+      "Quantity": 1.0,
+      "ExpirationDate": "2021-10-18T11:42:16.8460303+03:00",
+      "CreationDate": "2021-10-18T11:42:16.8459162+03:00",
+      "Description": "Delicious serving made by mistake",
+      "Id": 3
+    }
+  ]
+}
