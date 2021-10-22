@@ -42,7 +42,7 @@ const units = [
 ].sort();
 
 function createOffer(data: FormData) {
-  return api.post('offers/add', { body: data });
+  return api.post('offers', { body: data });
 }
 
 function CreateOfferContent({ onClose }: { onClose: () => void }) {

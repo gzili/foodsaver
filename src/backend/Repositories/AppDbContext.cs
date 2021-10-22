@@ -1,7 +1,4 @@
-﻿using System;
-using backend.DTO.Offers;
-using backend.Models;
-using backend.Services;
+﻿using backend.Services;
 
 namespace backend.Repositories
 {

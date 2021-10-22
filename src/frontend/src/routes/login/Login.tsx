@@ -28,7 +28,7 @@ const defaultValues = {
 }
 
 function loginUser(data: FormValues) {
-  return api.post('users/login', { json: data }).json<User>();
+  return api.post('user/login', { json: data }).json<User>();
 }
 
 function Login() {

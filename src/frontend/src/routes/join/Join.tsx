@@ -1,7 +1,9 @@
 import { useReducer } from 'react';
+import { Redirect } from 'react-router-dom';
+
+import { useAuth } from 'contexts/auth.context';
 
 import { UserTypeData, PublicProfileData, LoginCredentialsData } from './components/interfaces';
-
 import AccountTypeStep from './components/AccountTypeStep';
 import PublicProfileStep from './components/PublicProfileStep';
 import LoginCredentialsStep from './components/LoginCredentialsStep';
@@ -48,10 +50,18 @@ function reducer(state: State, action: Action) {
 }
 
 function Join() {
+  const { user } = useAuth();
+
   const [state, dispatch] = useReducer(reducer, {
     step: 0,
     data: {}
   });
+
+  if (user) {
+    return (
+      <Redirect to="/offers" />
+    );
+  }
 
   const StepComponent = steps[state.step];
 

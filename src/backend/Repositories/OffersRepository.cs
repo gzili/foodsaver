@@ -15,6 +15,8 @@ namespace backend.Repositories
             GroupOffersByUser();
         }
 
+        public IEnumerable<Offer> this[int id] => OffersByUser[id];
+
         private void GroupOffersByUser()
         {
             var byUser = _appDbContext.DbLists.Users.GroupJoin(
@@ -43,7 +45,7 @@ namespace backend.Repositories
 
         public List<Offer> GetAll()
         {
-            return _appDbContext.DbLists.Offers;
+            return (List<Offer>) _appDbContext["offers"];
         }
     }
 }
