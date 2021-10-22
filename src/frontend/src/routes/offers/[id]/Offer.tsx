@@ -5,6 +5,7 @@ import { format, formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Box, Code, Grid, GridItem, Heading, Image, Text } from '@chakra-ui/react';
 
 import { IOfferDto } from 'dto/offer';
+import { LoadingOverlay } from 'components/layout';
 
 async function fetchOfferById(id: string) {
   if (!/\d+/.test(id)) {
@@ -33,7 +34,7 @@ export default function Offer() {
   });
 
   if (isLoading) {
-    return <>Loading offer...</>;
+    return <LoadingOverlay message="Loading offer" />;
   }
 
   if (isError) {

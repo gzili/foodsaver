@@ -6,6 +6,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { useAuth } from 'contexts/auth.context';
 
 import { FaIcon, faMapMarkerAlt, faUser } from 'components/core';
+import { LoadingOverlay } from 'components/layout';
 import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 import { IOfferDto } from 'dto/offer';
@@ -66,7 +67,7 @@ function OffersList() {
   const { isLoading, isError, data, error } = useQuery('offers', fetchOffers);
 
   if (isLoading) {
-    return <Box>{"Loading offers..."}</Box>;
+    return <LoadingOverlay message="Loading offers" />
   }
 
   if (isError) {
