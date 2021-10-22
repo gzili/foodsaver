@@ -27,9 +27,10 @@ namespace backend
 
             services.AddScoped<CustomCookieAuthEvents>();
 
+            services.AddScoped<FileUploadService>();
+            services.AddScoped<FoodService>();
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
-            services.AddScoped<FoodService>();
             services.AddScoped<UserService>();
 
             services.AddControllersWithViews();
@@ -52,7 +53,7 @@ namespace backend
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
