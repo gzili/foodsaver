@@ -101,7 +101,7 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
         <form id="login-credentials-form" onSubmit={handleSubmit(handleNext)}>
           <VStack spacing={4}>
             <FieldWithController control={control} name="email" label="Email">
-              {field => <Input {...field} />}
+              {field => <Input {...field} type="email" />}
             </FieldWithController>
             <FieldWithController control={control} name="password" label="Password">
               {field => <Input {...field} type="password" />}

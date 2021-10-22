@@ -71,7 +71,7 @@ function Login() {
           <form onSubmit={handleSubmit(handleLogin)}>
             <VStack spacing="2">
               <FieldWithController control={control} name="email" label="Email" optional>
-                {(props) => <Input {...props} />}
+                {(props) => <Input {...props} type="email" />}
               </FieldWithController>
               <FieldWithController control={control} name="password" label="Password" optional>
                 {(props) => <Input {...props} type="password" />}
