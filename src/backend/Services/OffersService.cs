@@ -27,7 +27,7 @@ namespace backend.Services
 
         public List<Offer> GetAllActiveOffers()
         {
-            throw new NotImplementedException();
+            return _offersRepository.GetAllActive();
         }
 
         public Offer SaveDto(CreateOfferDto offerCreateDto, string imagePath, User user)

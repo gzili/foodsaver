@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.Data;
@@ -23,6 +24,11 @@ namespace backend.Repositories
         public Offer GetById(int id)
         {
             return _db.Offers.Find(id);
+        }
+
+        public List<Offer> GetAllActive()
+        {
+            return _db.Offers.Where(offer => offer.ExpiresAt > DateTime.Now).ToList();
         }
 
         public List<Offer> GetAll()
