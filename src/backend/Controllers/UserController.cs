@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
@@ -19,22 +20,29 @@ namespace backend.Controllers
     {
         private readonly OffersService _offersService;
         private readonly UserService _userService;
+        private readonly FileUploadService _fileUploadService;
 
-        public UserController(OffersService offersService, UserService userService)
+        public UserController(OffersService offersService, UserService userService, FileUploadService fileUploadService)
         {
             _offersService = offersService;
             _userService = userService;
+            _fileUploadService = fileUploadService;
         }
 
         [HttpPost("register")] // "api/user/register"
-        public ActionResult<User> Register(CreateUserDto createUserDto)
+        public async Task<ActionResult<User>> RegisterAsync(CreateUserDto createUserDto)
         {
             var validationError = _userService.GetFirstValidationError(createUserDto);
             if (validationError != null) return BadRequest(validationError);
             
             if (!_userService.IsValidRegister(createUserDto)) return Conflict("User with the same email already exists");
-            
+
+            var path = await _fileUploadService.UploadFormFileAsync(createUserDto.Avatar, "avatars");
+            if (path == null)
+                return BadRequest("Invalid image file");
+
             var user = _userService.FromCreateDto(createUserDto);
+            user.AvatarPath = path;
             _userService.Save(user);
             
             return Ok(user);
