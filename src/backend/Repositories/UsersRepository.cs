@@ -1,40 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using backend.Data;
 using backend.Models;
 
 namespace backend.Repositories
 {
-    public class UserRepository : IRepository<User>
+    public class UsersRepository
     {
-        private readonly AppDbContext _appContext;
+        private readonly AppDbContext _db;
 
-        public UserRepository()
-        {throw new NotImplementedException();
-            /*_appContext = AppDbContext.GetObject();*/
+        public UsersRepository(AppDbContext db)
+        {
+            _db = db;
         }
 
         public void Save(User user)
         {
-            throw new NotImplementedException();
-            /*_appContext.DbLists.Users.Add(user);*/
+            _db.Users.Add(user);
+            _db.SaveChanges();
         }
 
         public List<User> GetAll()
         {
-            throw new NotImplementedException();
-            /*return _appContext.DbLists.Users;*/
+            return _db.Users.ToList();
         }
 
         public User GetById(int id)
         {
-            throw new NotImplementedException();
-            /*return _appContext.DbLists.Users.Find(x => x.Id == id);*/
+            return _db.Users.Find(id);
         }
 
         public User GetByEmail(string email)
         {
-            throw new NotImplementedException();
-            /*return _appContext.DbLists.Users.Find(x => x.Email.Equals(email));*/
+            return _db.Users.FirstOrDefault(user => user.Email == email);
+        }
+
+        public List<Offer> GetOffersByUserId(int id)
+        {
+            return _db.Users.Find(id).Offers.ToList();
         }
     }
 }

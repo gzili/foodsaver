@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using backend.Data;
 using backend.Models;
 
 namespace backend.Repositories
 {
-    public class WeatherForecastRepository : IRepository<WeatherForecast>
+    public class WeatherForecastRepository
     {
         private readonly AppDbContext _appDbContext;
 

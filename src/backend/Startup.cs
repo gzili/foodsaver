@@ -1,4 +1,4 @@
-using backend.Controllers;
+using backend.Data;
 using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -23,18 +23,19 @@ namespace backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("WFContext")));
+            
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
 
             services.AddScoped<CustomCookieAuthEvents>();
 
             services.AddScoped<FileUploadService>();
-            services.AddScoped<FoodService>();
-            services.AddScoped<FoodRepository>();
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
             services.AddScoped<UserService>();
-            services.AddScoped<UserRepository>();
+            services.AddScoped<UsersRepository>();
             
             services.AddScoped<WeatherForecastService>();
             services.AddScoped<WeatherForecastRepository>();
@@ -43,9 +44,6 @@ namespace backend
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../frontend/build"; });
-            
-            services.AddDbContext<AppDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("WFContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

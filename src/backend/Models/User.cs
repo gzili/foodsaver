@@ -1,11 +1,22 @@
-﻿namespace backend.Models
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace backend.Models
 {
-    public class User : EntityModel
+    [Table("user")]
+    public class User
     {
-        public string Email { get; set; }
-        public string Name { get; set; }
-        public string Password { get; set; }
-        public Address Address { get; set; }
+        public int Id { get; set; }
         public UserType UserType { get; set; }
+        [Required]
+        public string Username { get; set; }
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$")]
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; }
+        
+        public Address Address { get; set; }
+        public List<Offer> Offers { get; set; }
     }
 }

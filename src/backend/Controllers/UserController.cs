@@ -29,10 +29,8 @@ namespace backend.Controllers
         [HttpPost("register")] // "api/user/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
-            var validationError = _userService.GetFirstValidationError(createUserDto);
-            if (validationError != null) return BadRequest(validationError);
-            
-            if (!_userService.IsValidRegister(createUserDto)) return Conflict("User with the same email already exists");
+            if (!_userService.IsValidRegister(createUserDto))
+                return Conflict("User with the same email already exists");
             
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
@@ -55,7 +53,7 @@ namespace backend.Controllers
 
         [Authorize]
         [HttpPost("logout")] // "api/user/logout"
-        public ActionResult LogOut()
+        public IActionResult LogOut()
         {
             HttpContext.SignOutAsync();
             return Ok();
@@ -74,10 +72,8 @@ namespace backend.Controllers
         [HttpGet("offers")] // "api/user/offers"
         public IEnumerable<OfferDto> FindByUser()
         {
-            var userOffers = _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
-            return
-                (from userOffer in userOffers
-                    select _offersService.ToDto(userOffer)).ToList();
+            var userId = int.Parse(HttpContext.User.Identity.Name);
+            return _userService.GetOffersByUserId(userId).Select(_offersService.ToDto).ToList();
         }
     }
 }

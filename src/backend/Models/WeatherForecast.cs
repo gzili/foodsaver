@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace backend.Models
 {
     [Table("weather_forecast")]
-    public class WeatherForecast : EntityModel
+    public class WeatherForecast
     {
+        public int Id { get; set; }
         public DateTime Date { get; set; }
 
         public int TemperatureC { get; set; }

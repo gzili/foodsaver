@@ -4,7 +4,7 @@ using backend.Repositories;
 
 namespace backend.Services
 {
-    public class WeatherForecastService : IService<WeatherForecast>
+    public class WeatherForecastService
     {
         private readonly WeatherForecastRepository _weatherForecastRepository;
 

@@ -42,7 +42,7 @@ namespace backend.Controllers
 
         [Authorize]
         [HttpPost] // "api/offers"
-        public async Task<ActionResult<OfferCreateDto>> Create([FromForm] CreateOfferDto createOfferDto)
+        public async Task<ActionResult<CreateOfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
             if (createOfferDto.ExpirationDate < DateTime.Now)
                 return BadRequest("Invalid expiration date");
@@ -52,19 +52,10 @@ namespace backend.Controllers
             if (path == null)
                 return BadRequest("Invalid image file");
             
-            var offerCreateDto = new OfferCreateDto
-            {
-                FoodName = createOfferDto.FoodName,
-                FoodUnit = createOfferDto.FoodUnit,
-                Quantity = createOfferDto.Quantity,
-                ExpirationDate = createOfferDto.ExpirationDate,
-                Description = createOfferDto.Description,
-                FoodImagePath = path
-            };
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            _offersService.SaveDto(user: _userService.GetById(userId), offerCreateDto: offerCreateDto);
-            
-            return Ok();
+            var offer = _offersService.SaveDto(createOfferDto, path, _userService.GetById(userId));
+
+            return Ok(offer);
         }
     }
 }
