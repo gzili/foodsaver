@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using backend.Models;
 
 namespace backend.Repositories
@@ -7,24 +8,24 @@ namespace backend.Repositories
     {
         private readonly AppDbContext _appDbContext;
 
-        public FoodRepository()
+        public FoodRepository(AppDbContext appDbContext)
         {
-            _appDbContext = AppDbContext.GetObject();
+            _appDbContext = appDbContext;
         }
 
         public void Save(Food food)
         {
-            _appDbContext.DbLists.Foods.Add(food);
+            throw new NotImplementedException();
         }
 
         public List<Food> GetAll()
         {
-            return _appDbContext.DbLists.Foods;
+            throw new NotImplementedException();
         }
 
         public Food GetById(int id)
         {
-            return _appDbContext.DbLists.Foods.Find(x => x.Id == id);
+            throw new NotImplementedException();
         }
     }
 }

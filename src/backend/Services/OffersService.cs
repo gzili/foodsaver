@@ -54,8 +54,9 @@ namespace backend.Services
             return list;
         }
 
-        private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
+        private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new()
         {
+            Id = GetAll().Count + 1,
             Food = _foodService.GetFromDto(offerCreateDto),
             CreationDate = DateTime.Now,
             Description = offerCreateDto.Description,

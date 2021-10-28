@@ -16,7 +16,7 @@ namespace backend.Controllers
         private readonly FileUploadService _fileUploadService;
         private readonly OffersService _offersService;
         private readonly UserService _userService;
-
+        
         public OffersController(FileUploadService fileUploadService, OffersService offersService, UserService userService)
         {
             _fileUploadService = fileUploadService;

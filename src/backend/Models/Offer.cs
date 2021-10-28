@@ -1,15 +1,16 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
     public class Offer : EntityModel, IComparable<Offer>
     {
-        public Offer(int Id) : base(Id)
-        {
-        }
         
         public Food Food { get; set; }
-        public User Giver { get; set; }
+        [Column("giver")]
+        public User Giver { get; set; }  // = user.id = 1
+        [Column("receiver")]
+        public User Receiver { get; set; } //= user.id = 2
         public double Quantity { get; set; }
         public DateTime ExpirationDate { get; set; }
         public DateTime CreationDate { get; set; }

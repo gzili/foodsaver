@@ -55,18 +55,16 @@ namespace backend.Services
             
             return null;
         }
-        
-        public User FromCreateDto(CreateUserDto createUserDto)
+
+        public User FromCreateDto(CreateUserDto createUserDto) => new()
         {
-            return new User(
-                // Real database will automatically assign a user id, this is temporary
-                GetAll().Count + 1,
-                createUserDto.Email,
-                createUserDto.Name,
-                BC.HashPassword(createUserDto.Password),
-                createUserDto.Address,
-                createUserDto.UserType
-            );
-        }
+            // Real database will automatically assign a user id, this is temporary
+            Id = GetAll().Count + 1,
+            Email = createUserDto.Email,
+            Name = createUserDto.Name,
+            Password = BC.HashPassword(createUserDto.Password),
+            Address = createUserDto.Address,
+            UserType = createUserDto.UserType
+        };
     }
 }

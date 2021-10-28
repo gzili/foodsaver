@@ -1,27 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using backend.Models;
+using backend.Repositories;
 
 namespace backend.Services
 {
-    public class WeatherForecastService
+    public class WeatherForecastService : IService<WeatherForecast>
     {
-        private static readonly string[] Summaries =
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly WeatherForecastRepository _weatherForecastRepository;
 
-        public IEnumerable<WeatherForecast> GetWeatherForecasts()
+        public WeatherForecastService(WeatherForecastRepository weatherForecastRepository)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-                {
-                    Date = DateTime.Now.AddDays(index),
-                    TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)]
-                })
-                .ToArray();
+            _weatherForecastRepository = weatherForecastRepository;
+        }
+
+        public WeatherForecast GetById(int id)
+        {
+            return _weatherForecastRepository.GetById(id);
+        }
+
+        public List<WeatherForecast> GetAll()
+        {
+            return _weatherForecastRepository.GetAll();
+        }
+
+        public void Save(WeatherForecast t)
+        {
+            _weatherForecastRepository.Save(t);
         }
     }
 }

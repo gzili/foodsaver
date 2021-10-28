@@ -4,6 +4,7 @@ using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,14 +30,22 @@ namespace backend
 
             services.AddScoped<FileUploadService>();
             services.AddScoped<FoodService>();
+            services.AddScoped<FoodRepository>();
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
             services.AddScoped<UserService>();
+            services.AddScoped<UserRepository>();
+            
+            services.AddScoped<WeatherForecastService>();
+            services.AddScoped<WeatherForecastRepository>();
 
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../frontend/build"; });
+            
+            services.AddDbContext<AppDbContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("WFContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

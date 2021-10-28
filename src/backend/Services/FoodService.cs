@@ -9,9 +9,9 @@ namespace backend.Services
     {
         private readonly FoodRepository _foodRepository;
 
-        public FoodService()
+        public FoodService(FoodRepository foodRepository)
         {
-            _foodRepository = new FoodRepository();
+            _foodRepository = foodRepository;
         }
 
         public Food GetById(int id)
@@ -29,8 +29,9 @@ namespace backend.Services
             _foodRepository.Save(food);
         }
 
-        public Food GetFromDto(OfferCreateDto offerCreateDto) => new(GetAll().Count + 1)
+        public Food GetFromDto(OfferCreateDto offerCreateDto) => new()
         {
+            Id = GetAll().Count + 1,
             Name = offerCreateDto.FoodName,
             ImagePath = offerCreateDto.FoodImagePath,
             Unit = offerCreateDto.FoodUnit

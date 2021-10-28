@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.Models;
@@ -11,7 +12,7 @@ namespace backend.Repositories
         
         public OffersRepository()
         {
-            _appDbContext = AppDbContext.GetObject();
+            throw new NotImplementedException();
             GroupOffersByUser();
         }
 
@@ -19,7 +20,8 @@ namespace backend.Repositories
 
         private void GroupOffersByUser()
         {
-            var byUser = _appDbContext.DbLists.Users.GroupJoin(
+            throw new NotImplementedException();
+            /*var byUser = _appDbContext.DbLists.Users.GroupJoin(
                 _appDbContext.DbLists.Offers,
                 user => user,
                 offer => offer.Giver,
@@ -29,23 +31,23 @@ namespace backend.Repositories
                         UserId = user.Id,
                         Offers = offerCollection
                     }).ToDictionary(o => o.UserId, o => o.Offers);
-            OffersByUser = byUser;
+            OffersByUser = byUser;*/
         }
 
         public void Save(Offer newOffer)
-        {
-            _appDbContext.DbLists.Offers.Add(newOffer);
-            GroupOffersByUser();
+        {throw new NotImplementedException();
+            /*_appDbContext.DbLists.Offers.Add(newOffer);
+            GroupOffersByUser();*/
         }
 
         public Offer GetById(int id)
-        {
-            return _appDbContext.DbLists.Offers.Find(x => x.Id == id);
+        {throw new NotImplementedException();
+            /*return _appDbContext.DbLists.Offers.Find(x => x.Id == id);*/
         }
 
         public List<Offer> GetAll()
-        {
-            return (List<Offer>) _appDbContext["offers"];
+        {throw new NotImplementedException();
+            /*return (List<Offer>) _appDbContext["offers"];*/
         }
     }
 }

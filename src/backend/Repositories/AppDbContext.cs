@@ -1,41 +1,14 @@
-﻿using backend.Services;
+﻿using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class AppDbContext
+    public class AppDbContext : DbContext
     {
-        private static AppDbContext _appDbContext;
-
-        private AppDbContext()
+        public AppDbContext(DbContextOptions options) : base(options)
         {
-            Initialize();
         }
 
-        public static AppDbContext GetObject()
-        {
-            // creates new AppDbContext if null, else returns existing
-            return _appDbContext ??= new AppDbContext();
-        }
-
-        public DbLists DbLists { get; set; }
-
-        public object this[string fieldName]
-        {
-            get
-            {
-                return fieldName switch
-                {
-                    "offers" => DbLists.Offers,
-                    "users" => DbLists.Users,
-                    "foods" => DbLists.Foods,
-                    _ => null
-                };
-            }
-        }
-
-        private void Initialize()
-        {
-            DbLists = DataLoadingService.LoadDbLists();
-        }
+        public DbSet<WeatherForecast> WeatherForecastSet { get; set; }
     }
 }

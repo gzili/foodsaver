@@ -1,15 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
     public abstract class EntityModel : IEquatable<EntityModel>
     {
-        protected EntityModel(int id)
-        {
-            Id = id;
-        }
-
-        public int Id { get; }
+        [Column("id")]
+        public int Id { get; set; }
 
         public bool Equals(EntityModel other)
         {
