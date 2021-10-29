@@ -49,8 +49,6 @@ namespace backend.Repositories
                 .Include(u => u.Offers)
                 .ThenInclude(o => o.Food)
                 .Include(u => u.Offers)
-                .ThenInclude(o => o.Giver)
-                .Include(u => u.Offers)
                 .ThenInclude(o => o.Address)
                 .First(u => u.Id == id).Offers;
             return offers;
