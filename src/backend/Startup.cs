@@ -24,7 +24,7 @@ namespace backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("WFContext")));
+                opt.UseNpgsql(Configuration.GetConnectionString("Postgres")));
             
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });

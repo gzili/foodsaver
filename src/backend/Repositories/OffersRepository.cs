@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using backend.Data;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
@@ -23,17 +24,34 @@ namespace backend.Repositories
 
         public Offer GetById(int id)
         {
-            return _db.Offers.Find(id);
+            return _db.Offers
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address)
+                .FirstOrDefault(o => o.Id == id);
         }
 
         public List<Offer> GetAllActive()
         {
-            return _db.Offers.Where(offer => offer.ExpiresAt > DateTime.Now).ToList();
+            return _db.Offers
+                .Where(offer => offer.ExpiresAt > DateTime.Now)
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address)
+                .ToList();
         }
 
         public List<Offer> GetAll()
         {
-            return _db.Offers.ToList();
+            var offers = _db.Offers
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address)
+                .ToList();
+            return offers;
         }
     }
 }

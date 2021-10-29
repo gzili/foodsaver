@@ -21,12 +21,16 @@ namespace backend.Models
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
+            
             var quantityComparison = Quantity.CompareTo(other.Quantity);
             if (quantityComparison != 0) return quantityComparison;
+            
             var expirationDateComparison = ExpiresAt.CompareTo(other.ExpiresAt);
             if (expirationDateComparison != 0) return expirationDateComparison;
+            
             var creationDateComparison = CreatedAt.CompareTo(other.CreatedAt);
             if (creationDateComparison != 0) return creationDateComparison;
+            
             return string.Compare(Description, other.Description, StringComparison.Ordinal);
         }
     }

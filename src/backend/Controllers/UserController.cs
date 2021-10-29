@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using backend.DTO.Address;
 using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
@@ -35,7 +37,7 @@ namespace backend.Controllers
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             
-            return Ok(user);
+            return Ok(ToDto(user));
         }
         
         [HttpPost("login")] // "api/user/login"
@@ -48,7 +50,7 @@ namespace backend.Controllers
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
             
-            return Ok(user);
+            return Ok(ToDto(user));
         }
 
         [Authorize]
@@ -65,7 +67,7 @@ namespace backend.Controllers
         {
             var userId = int.Parse(HttpContext.User.Identity.Name);
             var user = _userService.GetById(userId);
-            return Ok(user);
+            return Ok(ToDto(user));
         }
         
         [Authorize]
@@ -75,5 +77,18 @@ namespace backend.Controllers
             var userId = int.Parse(HttpContext.User.Identity.Name);
             return _userService.GetOffersByUserId(userId).Select(_offersService.ToDto).ToList();
         }
+
+        private UserDto ToDto(User user) => new()
+        {
+            Id = user.Id,
+            UserType = user.UserType,
+            Name = user.Username,
+            Email = user.Email,
+            Address = new AddressDto
+            {
+                StreetAddress = user.Address.Street,
+                City = user.Address.City
+            }
+        };
     }
 }

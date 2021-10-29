@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.DTO.Address;
 using backend.DTO.Offers;
 using backend.Models;
 using backend.Repositories;
@@ -62,7 +63,11 @@ namespace backend.Services
             Giver = new GiverDto
             {
                 Id = offer.Giver.Id,
-                Address = offer.Giver.Address,
+                Address = new AddressDto
+                {
+                    StreetAddress = offer.Giver.Address.Street,
+                    City = offer.Giver.Address.City
+                },
                 Name = offer.Giver.Username
             }
         };

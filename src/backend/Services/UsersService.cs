@@ -20,11 +20,6 @@ namespace backend.Services
             return _usersRepository.GetById(id);
         }
 
-        public List<User> GetAll()
-        {
-            return _usersRepository.GetAll();
-        }
-
         public List<Offer> GetOffersByUserId(int id)
         {
             return _usersRepository.GetOffersByUserId(id);
@@ -38,7 +33,7 @@ namespace backend.Services
         public User CheckLogin(LoginUserDto dto)
         {
             var user = _usersRepository.GetByEmail(dto.Email);
-            return user != null && BC.Verify(user.Password, user.Password) ? user : null;
+            return user != null && BC.Verify(dto.Password, user.Password) ? user : null;
         }
 
         private bool IsValidEmailRegistration(string email)
@@ -56,7 +51,11 @@ namespace backend.Services
             Email = createUserDto.Email,
             Username = createUserDto.Name,
             Password = BC.HashPassword(createUserDto.Password),
-            Address = createUserDto.Address,
+            Address = new Address
+            {
+                Street = createUserDto.Address.StreetAddress,
+                City = createUserDto.Address.City
+            },
             UserType = createUserDto.UserType
         };
     }

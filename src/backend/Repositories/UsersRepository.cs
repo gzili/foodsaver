@@ -2,6 +2,7 @@
 using System.Linq;
 using backend.Data;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
@@ -22,22 +23,37 @@ namespace backend.Repositories
 
         public List<User> GetAll()
         {
-            return _db.Users.ToList();
+            return _db.Users
+                .Include(u => u.Address)
+                .ToList();
         }
 
         public User GetById(int id)
         {
-            return _db.Users.Find(id);
+            return _db.Users
+                .Include(u => u.Address)
+                .FirstOrDefault(user => user.Id == id);
         }
 
         public User GetByEmail(string email)
         {
-            return _db.Users.FirstOrDefault(user => user.Email == email);
+            return _db.Users
+                .Include(u => u.Address)
+                .FirstOrDefault(u => u.Email == email);
         }
 
         public List<Offer> GetOffersByUserId(int id)
         {
-            return _db.Users.Find(id).Offers.ToList();
+            var offers = _db.Users
+                .Include(u => u.Address)
+                .Include(u => u.Offers)
+                .ThenInclude(o => o.Food)
+                .Include(u => u.Offers)
+                .ThenInclude(o => o.Giver)
+                .Include(u => u.Offers)
+                .ThenInclude(o => o.Address)
+                .First(u => u.Id == id).Offers;
+            return offers;
         }
     }
 }

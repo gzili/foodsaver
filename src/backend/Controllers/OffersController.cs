@@ -55,7 +55,7 @@ namespace backend.Controllers
             var userId = int.Parse(HttpContext.User.Identity.Name);
             var offer = _offersService.SaveDto(createOfferDto, path, _userService.GetById(userId));
 
-            return Ok(offer);
+            return Ok(_offersService.ToDto(offer));
         }
     }
 }
