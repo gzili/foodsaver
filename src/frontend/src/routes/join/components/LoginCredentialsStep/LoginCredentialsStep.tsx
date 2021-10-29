@@ -53,7 +53,8 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     onError: async (e: HTTPError) => {
       if (e.response) {
         const message = await e.response.json();
-        setError(message);
+        console.log(message);
+        setError(message?.title ?? String(message));
       } else {
         setError(e.message);
       }

@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.DTO.Address;
 using backend.DTO.Offers;
 using backend.Models;
 using backend.Repositories;
 
 namespace backend.Services
 {
-    public class OffersService : IService<Offer>
+    public class OffersService
     {
         private readonly OffersRepository _offersRepository;
-        
-        private readonly FoodService _foodService;
 
-        public OffersService(OffersRepository offersRepository, FoodService foodService)
+        public OffersService(OffersRepository offersRepository)
         {
             _offersRepository = offersRepository;
-            _foodService = foodService;
         }
 
         public Offer GetById(int id)
@@ -23,60 +21,54 @@ namespace backend.Services
             return _offersRepository.GetById(id);
         }
 
-        public IEnumerable<Offer> GetByUserId(int id)
-        {
-            return _offersRepository[id];
-        }
-
         public List<Offer> GetAll()
         {
-            
             return _offersRepository.GetAll();
-        }
-
-        public void Save(Offer offer)
-        {
-            _offersRepository.Save(offer);
-        }
-        
-        public void SaveDto(OfferCreateDto offerCreateDto, User user)
-        {
-            _offersRepository.Save(GetOfferFromCreateDto(offerCreateDto, user));
         }
 
         public List<Offer> GetAllActiveOffers()
         {
-            var list = new List<Offer>();
-            foreach (var offer in GetAll())
-                if (offer.ExpirationDate > DateTime.Now)
-                    list.Add(offer);
-
-            return list;
+            return _offersRepository.GetAllActive();
         }
 
-        private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
+        public Offer SaveDto(CreateOfferDto offerCreateDto, string imagePath, User user)
         {
-            Food = _foodService.GetFromDto(offerCreateDto),
-            CreationDate = DateTime.Now,
-            Description = offerCreateDto.Description,
-            ExpirationDate = offerCreateDto.ExpirationDate,
-            Quantity = offerCreateDto.Quantity,
-            Giver = user
-        };
+            var offer = new Offer
+            {
+                Food = new Food
+                {
+                    Name = offerCreateDto.FoodName,
+                    Unit = offerCreateDto.FoodUnit,
+                    ImagePath = imagePath
+                },
+                CreatedAt = DateTime.Now,
+                Description = offerCreateDto.Description,
+                ExpiresAt = offerCreateDto.ExpirationDate,
+                Quantity = offerCreateDto.Quantity,
+                Giver = user
+            };
+            
+            _offersRepository.Save(offer);
+            return offer; // returns saved offer with id field generated
+        }
 
         public OfferDto ToDto(Offer offer) => new()
         {
             Id = offer.Id,
             Food = offer.Food,
-            CreationDate = offer.CreationDate,
+            CreationDate = offer.CreatedAt,
             Description = offer.Description,
-            ExpirationDate = offer.ExpirationDate,
+            ExpirationDate = offer.ExpiresAt,
             Quantity = offer.Quantity,
             Giver = new GiverDto
             {
                 Id = offer.Giver.Id,
-                Address = offer.Giver.Address,
-                Name = offer.Giver.Name
+                Address = new AddressDto
+                {
+                    StreetAddress = offer.Giver.Address.Street,
+                    City = offer.Giver.Address.City
+                },
+                Name = offer.Giver.Username
             }
         };
     }

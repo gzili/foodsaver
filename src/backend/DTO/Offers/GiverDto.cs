@@ -1,4 +1,4 @@
-using backend.Models;
+using backend.DTO.Address;
 
 namespace backend.DTO.Offers
 {
@@ -6,6 +6,6 @@ namespace backend.DTO.Offers
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Address Address { get; set; }
+        public AddressDto Address { get; set; }
     }
 }

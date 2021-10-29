@@ -6,67 +6,57 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Services
 {
-    public class UserService : IService<User>
+    public class UserService
     {
-        private readonly UserRepository _userRepository;
+        private readonly UsersRepository _usersRepository;
 
-        public UserService()
+        public UserService(UsersRepository usersRepository)
         {
-            _userRepository = new UserRepository();
+            _usersRepository = usersRepository;
         }
 
         public User GetById(int id)
         {
-            return _userRepository.GetById(id);
+            return _usersRepository.GetById(id);
         }
 
-        public List<User> GetAll()
+        public List<Offer> GetOffersByUserId(int id)
         {
-            return _userRepository.GetAll();
+            return _usersRepository.GetOffersByUserId(id);
         }
 
         public void Save(User user)
         {
-            _userRepository.Save(user);
+            _usersRepository.Save(user);
         }
 
-        public User CheckLogin(LoginUserDto user)
+        public User CheckLogin(LoginUserDto dto)
         {
-            var dbUser = _userRepository.GetByEmail(user.Email);
-            return dbUser != null && BC.Verify(user.Password, dbUser.Password) ? dbUser : null;
+            var user = _usersRepository.GetByEmail(dto.Email);
+            return user != null && BC.Verify(dto.Password, user.Password) ? user : null;
         }
 
         private bool IsValidEmailRegistration(string email)
         {
-            return _userRepository.GetByEmail(email) == null;
+            return _usersRepository.GetByEmail(email) == null;
         }
 
         public bool IsValidRegister(CreateUserDto createUserDto)
         {
             return IsValidEmailRegistration(createUserDto.Email);
         }
-        public string GetFirstValidationError(CreateUserDto createUserDto)
+
+        public User FromCreateDto(CreateUserDto createUserDto) => new()
         {
-            if (!ValidationService.IsEmail(createUserDto.Email))
-                return "This email does not conform to our company standards";
-            
-            if (string.IsNullOrWhiteSpace(createUserDto.Password))
-                return "Password must be non-blank";
-            
-            return null;
-        }
-        
-        public User FromCreateDto(CreateUserDto createUserDto)
-        {
-            return new User(
-                // Real database will automatically assign a user id, this is temporary
-                GetAll().Count + 1,
-                createUserDto.Email,
-                createUserDto.Name,
-                BC.HashPassword(createUserDto.Password),
-                createUserDto.Address,
-                createUserDto.UserType
-            );
-        }
+            Email = createUserDto.Email,
+            Username = createUserDto.Name,
+            Password = BC.HashPassword(createUserDto.Password),
+            Address = new Address
+            {
+                Street = createUserDto.Address.StreetAddress,
+                City = createUserDto.Address.City
+            },
+            UserType = createUserDto.UserType
+        };
     }
 }

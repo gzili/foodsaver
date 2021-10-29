@@ -1,8 +1,15 @@
-﻿namespace backend.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace backend.Models
 {
-    public struct Address
+    [Table("address")]
+    public class Address
     {
-        public string StreetAddress { get; set; }
+        public int Id { get; set; }
+        [Required]
+        public string Street { get; set; }
+        [Required]
         public string City { get; set; }
     }
 }

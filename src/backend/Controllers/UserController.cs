@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using backend.DTO.Address;
 using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
@@ -29,15 +31,13 @@ namespace backend.Controllers
         [HttpPost("register")] // "api/user/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
-            var validationError = _userService.GetFirstValidationError(createUserDto);
-            if (validationError != null) return BadRequest(validationError);
-            
-            if (!_userService.IsValidRegister(createUserDto)) return Conflict("User with the same email already exists");
+            if (!_userService.IsValidRegister(createUserDto))
+                return Conflict("User with the same email already exists");
             
             var user = _userService.FromCreateDto(createUserDto);
             _userService.Save(user);
             
-            return Ok(user);
+            return Ok(ToDto(user));
         }
         
         [HttpPost("login")] // "api/user/login"
@@ -50,12 +50,12 @@ namespace backend.Controllers
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
             
-            return Ok(user);
+            return Ok(ToDto(user));
         }
 
         [Authorize]
         [HttpPost("logout")] // "api/user/logout"
-        public ActionResult LogOut()
+        public IActionResult LogOut()
         {
             HttpContext.SignOutAsync();
             return Ok();
@@ -67,17 +67,28 @@ namespace backend.Controllers
         {
             var userId = int.Parse(HttpContext.User.Identity.Name);
             var user = _userService.GetById(userId);
-            return Ok(user);
+            return Ok(ToDto(user));
         }
         
         [Authorize]
         [HttpGet("offers")] // "api/user/offers"
         public IEnumerable<OfferDto> FindByUser()
         {
-            var userOffers = _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
-            return
-                (from userOffer in userOffers
-                    select _offersService.ToDto(userOffer)).ToList();
+            var userId = int.Parse(HttpContext.User.Identity.Name);
+            return _userService.GetOffersByUserId(userId).Select(_offersService.ToDto).ToList();
         }
+
+        private UserDto ToDto(User user) => new()
+        {
+            Id = user.Id,
+            UserType = user.UserType,
+            Name = user.Username,
+            Email = user.Email,
+            Address = new AddressDto
+            {
+                StreetAddress = user.Address.Street,
+                City = user.Address.City
+            }
+        };
     }
 }

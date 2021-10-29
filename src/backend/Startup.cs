@@ -1,9 +1,10 @@
-using backend.Controllers;
+using backend.Data;
 using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,16 +23,22 @@ namespace backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("Postgres")));
+            
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
 
             services.AddScoped<CustomCookieAuthEvents>();
 
             services.AddScoped<FileUploadService>();
-            services.AddScoped<FoodService>();
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
             services.AddScoped<UserService>();
+            services.AddScoped<UsersRepository>();
+            
+            services.AddScoped<WeatherForecastService>();
+            services.AddScoped<WeatherForecastRepository>();
 
             services.AddControllersWithViews();
 

@@ -10,20 +10,38 @@ namespace backend.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        private readonly WeatherForecastService _wfService;
+        
+        private static readonly string[] Summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+
         private readonly ILogger<WeatherForecastController> _logger;
 
-        private readonly WeatherForecastService _weatherForecastService;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, WeatherForecastService wfService)
         {
             _logger = logger;
-            _weatherForecastService = new WeatherForecastService();
+            _wfService = wfService;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecast> GetAll()
         {
-            return _weatherForecastService.GetWeatherForecasts();
+            return _wfService.GetAll();
+        }
+        
+        [HttpGet("{id:int}")]
+        public WeatherForecast Get(int id)
+        {
+            return _wfService.GetById(id);
+        }
+        
+        [HttpPost("add")]
+        public ActionResult<WeatherForecast> Get(WeatherForecast weatherForecast)
+        {
+            _wfService.Save(weatherForecast);
+            return Ok(weatherForecast);
         }
     }
 }

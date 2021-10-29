@@ -1,51 +1,57 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using backend.Data;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class OffersRepository : IRepository<Offer>
+    public class OffersRepository
     {
-        private readonly AppDbContext _appDbContext;
-        public Dictionary<int, IEnumerable<Offer>> OffersByUser { get; private set; }
-        
-        public OffersRepository()
+        private readonly AppDbContext _db;
+
+        public OffersRepository(AppDbContext db)
         {
-            _appDbContext = AppDbContext.GetObject();
-            GroupOffersByUser();
+            _db = db;
         }
 
-        public IEnumerable<Offer> this[int id] => OffersByUser[id];
-
-        private void GroupOffersByUser()
+        public void Save(Offer offer)
         {
-            var byUser = _appDbContext.DbLists.Users.GroupJoin(
-                _appDbContext.DbLists.Offers,
-                user => user,
-                offer => offer.Giver,
-                (user, offerCollection) =>
-                    new
-                    {
-                        UserId = user.Id,
-                        Offers = offerCollection
-                    }).ToDictionary(o => o.UserId, o => o.Offers);
-            OffersByUser = byUser;
-        }
-
-        public void Save(Offer newOffer)
-        {
-            _appDbContext.DbLists.Offers.Add(newOffer);
-            GroupOffersByUser();
+            _db.Offers.Add(offer);
+            _db.SaveChanges();
         }
 
         public Offer GetById(int id)
         {
-            return _appDbContext.DbLists.Offers.Find(x => x.Id == id);
+            return _db.Offers
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address)
+                .FirstOrDefault(o => o.Id == id);
+        }
+
+        public List<Offer> GetAllActive()
+        {
+            return _db.Offers
+                .Where(offer => offer.ExpiresAt > DateTime.Now)
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address)
+                .ToList();
         }
 
         public List<Offer> GetAll()
         {
-            return (List<Offer>) _appDbContext["offers"];
+            var offers = _db.Offers
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address)
+                .ToList();
+            return offers;
         }
     }
 }
