@@ -15,13 +15,13 @@ namespace backend.Controllers
     {
         private readonly FileUploadService _fileUploadService;
         private readonly OffersService _offersService;
-        private readonly UserService _userService;
+        private readonly UsersService _usersService;
         
-        public OffersController(FileUploadService fileUploadService, OffersService offersService, UserService userService)
+        public OffersController(FileUploadService fileUploadService, OffersService offersService, UsersService usersService)
         {
             _fileUploadService = fileUploadService;
             _offersService = offersService;
-            _userService = userService;
+            _usersService = usersService;
         }
 
         [HttpGet] // "api/offers"
@@ -53,7 +53,7 @@ namespace backend.Controllers
                 return BadRequest("Invalid image file");
             
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            var offer = _offersService.SaveDto(createOfferDto, path, _userService.GetById(userId));
+            var offer = _offersService.SaveDto(createOfferDto, path, _usersService.GetById(userId));
 
             return Ok(_offersService.ToDto(offer));
         }

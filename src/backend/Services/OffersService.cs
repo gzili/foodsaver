@@ -65,7 +65,7 @@ namespace backend.Services
                 Id = offer.Giver.Id,
                 Address = new AddressDto
                 {
-                    StreetAddress = offer.Giver.Address.Street,
+                    Street = offer.Giver.Address.Street,
                     City = offer.Giver.Address.City
                 },
                 Name = offer.Giver.Username

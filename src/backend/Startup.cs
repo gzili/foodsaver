@@ -29,12 +29,14 @@ namespace backend
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
 
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddScoped<CustomCookieAuthEvents>();
 
             services.AddScoped<FileUploadService>();
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
-            services.AddScoped<UserService>();
+            services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
             
             services.AddScoped<WeatherForecastService>();

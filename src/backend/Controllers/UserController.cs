@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using AutoMapper;
 using backend.DTO.Address;
 using backend.DTO.Offers;
 using backend.DTO.Users;
@@ -19,38 +20,43 @@ namespace backend.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly OffersService _offersService;
-        private readonly UserService _userService;
+        private readonly UsersService _usersService;
 
-        public UserController(OffersService offersService, UserService userService)
+        public UserController(IMapper mapper, OffersService offersService, UsersService usersService)
         {
+            _mapper = mapper;
             _offersService = offersService;
-            _userService = userService;
+            _usersService = usersService;
         }
 
         [HttpPost("register")] // "api/user/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
-            if (!_userService.IsValidRegister(createUserDto))
+            if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
             
-            var user = _userService.FromCreateDto(createUserDto);
-            _userService.Save(user);
+            var user = _mapper.Map<User>(createUserDto);
+            _usersService.Create(user);
             
-            return Ok(ToDto(user));
+            return Ok(_mapper.Map<UserDto>(user));
         }
         
         [HttpPost("login")] // "api/user/login"
         public ActionResult<User> Login(LoginUserDto loginUserDto)
         {
-            var user = _userService.CheckLogin(loginUserDto);
+            if (HttpContext.User.Identity.IsAuthenticated)
+                return Conflict("User is already authenticated");
+            
+            var user = _usersService.IsValidLogin(loginUserDto.Email, loginUserDto.Password);
             if (user == null) return Unauthorized();
             
             var claims = new List<Claim> { new("id", user.Id.ToString()) };
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
             
-            return Ok(ToDto(user));
+            return Ok(_mapper.Map<UserDto>(user));
         }
 
         [Authorize]
@@ -66,8 +72,8 @@ namespace backend.Controllers
         public ActionResult<User> Get() // "api/user"
         {
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            var user = _userService.GetById(userId);
-            return Ok(ToDto(user));
+            var user = _usersService.GetById(userId);
+            return Ok(_mapper.Map<UserDto>(user));
         }
         
         [Authorize]
@@ -75,20 +81,7 @@ namespace backend.Controllers
         public IEnumerable<OfferDto> FindByUser()
         {
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            return _userService.GetOffersByUserId(userId).Select(_offersService.ToDto).ToList();
+            return _usersService.GetOffersByUserId(userId).Select(_offersService.ToDto).ToList();
         }
-
-        private UserDto ToDto(User user) => new()
-        {
-            Id = user.Id,
-            UserType = user.UserType,
-            Name = user.Username,
-            Email = user.Email,
-            Address = new AddressDto
-            {
-                StreetAddress = user.Address.Street,
-                City = user.Address.City
-            }
-        };
     }
 }
