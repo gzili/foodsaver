@@ -60,8 +60,7 @@ namespace backend.Controllers
             if (imagePath == null)
                 return BadRequest("Invalid image file");
             
-            var userId = int.Parse(HttpContext.User.Identity.Name);
-            var user = _usersService.GetById(userId);
+            var user = (User) HttpContext.Items["user"];
             
             var offer = _mapper.Map<Offer>(createOfferDto);
             offer.CreatedAt = DateTime.Now;

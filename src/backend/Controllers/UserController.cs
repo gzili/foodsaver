@@ -67,8 +67,7 @@ namespace backend.Controllers
         [HttpGet]
         public ActionResult<User> Get() // "api/user"
         {
-            var userId = int.Parse(HttpContext.User.Identity.Name);
-            var user = _usersService.GetById(userId);
+            var user = (User) HttpContext.Items["user"];
             return Ok(_mapper.Map<UserDto>(user));
         }
         
@@ -76,8 +75,8 @@ namespace backend.Controllers
         [HttpGet("offers")] // "api/user/offers"
         public IEnumerable<OfferDto> FindByUser()
         {
-            var userId = int.Parse(HttpContext.User.Identity.Name);
-            return _usersService.GetOffersByUserId(userId).Select(_mapper.Map<OfferDto>).ToList();
+            var user = (User) HttpContext.Items["user"];
+            return _usersService.GetOffersByUserId(user.Id).Select(_mapper.Map<OfferDto>).ToList();
         }
     }
 }
