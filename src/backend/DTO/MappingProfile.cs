@@ -1,5 +1,6 @@
 using AutoMapper;
 using backend.DTO.Address;
+using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
 
@@ -12,9 +13,14 @@ namespace backend.DTO
             CreateMap<User, UserDto>();
             CreateMap<User, CreateUserDto>()
                 .ReverseMap();
+            CreateMap<User, GiverDto>();
             
             CreateMap<Models.Address, AddressDto>(); // wtf
             CreateMap<Models.Address, AddressDto>()
+                .ReverseMap();
+
+            CreateMap<Offer, OfferDto>();
+            CreateMap<Offer, CreateOfferDto>()
                 .ReverseMap();
         }
     }

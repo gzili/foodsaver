@@ -9,7 +9,7 @@ namespace backend.DTO.Offers
         public IFormFile FoodPhoto { get; set; }
         public string FoodUnit { get; set; }
         public double Quantity { get; set; }
-        public DateTime ExpirationDate { get; set; }
+        public DateTime ExpiresAt { get; set; }
         public string Description { get; set; }
     }
 }

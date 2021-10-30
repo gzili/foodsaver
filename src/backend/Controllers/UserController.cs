@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using AutoMapper;
-using backend.DTO.Address;
 using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
@@ -21,13 +19,11 @@ namespace backend.Controllers
     public class UserController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly OffersService _offersService;
         private readonly UsersService _usersService;
 
-        public UserController(IMapper mapper, OffersService offersService, UsersService usersService)
+        public UserController(IMapper mapper, UsersService usersService)
         {
             _mapper = mapper;
-            _offersService = offersService;
             _usersService = usersService;
         }
 
@@ -81,7 +77,7 @@ namespace backend.Controllers
         public IEnumerable<OfferDto> FindByUser()
         {
             var userId = int.Parse(HttpContext.User.Identity.Name);
-            return _usersService.GetOffersByUserId(userId).Select(_offersService.ToDto).ToList();
+            return _usersService.GetOffersByUserId(userId).Select(_mapper.Map<OfferDto>).ToList();
         }
     }
 }
