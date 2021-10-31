@@ -15,8 +15,8 @@ import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } 
 import { useState } from 'react';
 
 const publicProfileSchema = yup.object().shape({
-  email: yup.string().email('Please provide a valid email').required(),
-  password: yup.string().min(6, 'Password must be at least 6 characters long'),
+  email: yup.string().email('Please provide a valid email').required('Please provide your email'),
+  password: yup.string().required('Please choose a password'),
   confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
 });
 
@@ -63,8 +63,8 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
 
   const handleNext = (values: LoginCredentialsData) => {
     const {
-      userType: accountType,
-      name,
+      userType,
+      username,
       street,
       city
     } = data as Required<typeof data>;
@@ -75,10 +75,10 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     } = values;
 
     mutate({
-      userType: accountType,
-      name,
+      userType,
+      username,
       address: {
-        streetAddress: street,
+        street,
         city,
       },
       email,

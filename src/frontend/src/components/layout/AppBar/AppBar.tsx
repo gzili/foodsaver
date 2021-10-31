@@ -30,11 +30,11 @@ export default function AppBar() {
       {user ? (
         <Menu autoSelect={false} gutter={16} placement="bottom-end">
           <MenuButton>
-            <Avatar name={user.name} size="xs" />
+            <Avatar name={user.username} size="xs" />
           </MenuButton>
           <MenuList>
             <MenuItem icon={<FaIcon icon={faHandHoldingHeart} />}>My offers</MenuItem>
-            {(user.userType !== UserType.Nonprofit) && <MenuItem icon={<AddIcon />}>New offer</MenuItem>}
+            {(user.userType !== UserType.Charity) && <MenuItem icon={<AddIcon />}>New offer</MenuItem>}
             <MenuDivider />
             <MenuItem icon={<FaIcon icon={faSignOutAlt} />} onClick={signOut}>Sign out</MenuItem>
           </MenuList>

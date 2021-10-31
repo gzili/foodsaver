@@ -52,13 +52,13 @@ export default function Offer() {
     },
     {
       title: 'Expiration date',
-      value: format(parseJSON(offer.expirationDate), 'yyyy-MM-dd HH:mm'),
+      value: format(parseJSON(offer.expiresAt), 'yyyy-MM-dd HH:mm'),
     },
   ];
 
   const mapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-  const encodedAddress = encodeURIComponent([offer.giver.address.streetAddress, offer.giver.address.city].join(', '));
-  const createdToNow = formatDistanceToNowStrict(parseJSON(offer.creationDate), { addSuffix: true });
+  const encodedAddress = encodeURIComponent([offer.giver.address.street, offer.giver.address.city].join(', '));
+  const createdToNow = formatDistanceToNowStrict(parseJSON(offer.createdAt), { addSuffix: true });
 
   return (
     <Box>

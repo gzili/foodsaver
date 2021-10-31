@@ -5,9 +5,9 @@ import { useState } from 'react';
 
 import { IStep, UserTypeData } from '../interfaces';
 import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
-import AccountTypeRadioGroup, { AccountTypeOption } from './components/AccountTypeRadioGroup';
+import UserTypeRadioGroup, { UserTypeOption } from './components/UserTypeRadioGroup';
 
-const accountTypeOptions: AccountTypeOption[] = [
+const userTypeOptions: UserTypeOption[] = [
   {
     icon: <FaIcon icon={faUser} fixedWidth />,
     title: 'Individual',
@@ -22,8 +22,8 @@ const accountTypeOptions: AccountTypeOption[] = [
   },
   {
     icon: <FaIcon icon={faHandHoldingHeart} fixedWidth />,
-    title: 'Non-profit',
-    description: 'For representatives of non-profit organizations',
+    title: 'Charity',
+    description: 'For representatives of charities',
     value: '2'
   }
 ];
@@ -46,7 +46,7 @@ export default function AccountTypeFlow(props: IStep<UserTypeData>) {
     <StepContainer>
       <StepHeader title="Account Type" description="Choose your account type for optimal experience" />
       <StepContent>
-        <AccountTypeRadioGroup options={accountTypeOptions} value={userType} onChange={v => setUserType(v)} />
+        <UserTypeRadioGroup options={userTypeOptions} value={userType} onChange={v => setUserType(v)} />
       </StepContent>
       <BottomBar>
         <ProgressIndicator count={stepCount} activeIndex={currentStep} />
