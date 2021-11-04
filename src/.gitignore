@@ -233,3 +233,6 @@ _Pvt_Extensions
 
 # Rider
 .idea/
+
+# DB migrations
+Migrations/
