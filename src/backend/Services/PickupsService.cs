@@ -12,10 +12,15 @@ namespace backend.Services
         {
             _pickupsRepository = pickupsRepository;
         }
-        
+
         public void Save(Pickup pickup)
         {
             _pickupsRepository.Save(pickup);
+        }
+
+        public void Delete(Pickup pickup)
+        {
+            _pickupsRepository.Delete(pickup);
         }
 
         public Pickup GetById(int id)

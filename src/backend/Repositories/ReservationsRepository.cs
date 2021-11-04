@@ -21,6 +21,12 @@ namespace backend.Repositories
             _db.Reservations.Add(reservation);
             _db.SaveChanges();
         }
+        
+        public void Delete(Reservation reservation)
+        {
+            _db.Reservations.Remove(reservation);
+            _db.SaveChanges();
+        }
 
         public Reservation GetById(int id)
         {

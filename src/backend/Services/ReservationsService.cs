@@ -17,6 +17,11 @@ namespace backend.Services
         {
             _reservationsRepository.Save(reservation);
         }
+        
+        public void Delete(Reservation reservation)
+        {
+            _reservationsRepository.Delete(reservation);
+        }
 
         public Reservation GetById(int id)
         {

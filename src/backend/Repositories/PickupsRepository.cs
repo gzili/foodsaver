@@ -21,6 +21,12 @@ namespace backend.Repositories
             _db.Pickups.Add(pickup);
             _db.SaveChanges();
         }
+        
+        public void Delete(Pickup pickup)
+        {
+            _db.Pickups.Remove(pickup);
+            _db.SaveChanges();
+        }
 
         public Pickup GetById(int id)
         {
