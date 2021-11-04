@@ -14,7 +14,6 @@ namespace backend.Models
         public bool UserConfirmed { get; set; }
         [Required]
         public bool GiverConfirmed { get; set; }
-        [Required]
         public DateTime CompletedAt { get; set; }
     }
 }

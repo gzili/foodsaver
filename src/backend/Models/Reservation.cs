@@ -8,7 +8,6 @@ namespace backend.Models
     public class Reservation
     {
         public int Id { get; set; }
-        [Required]
         public DateTime CreatedAt { get; set; }
         [Required]
         public User User { get; set; }
