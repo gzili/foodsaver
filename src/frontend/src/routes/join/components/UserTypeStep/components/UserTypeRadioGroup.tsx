@@ -1,6 +1,6 @@
 import { Box, Flex, useRadio, UseRadioProps, useRadioGroup, VStack } from '@chakra-ui/react';
 
-export interface AccountTypeOption {
+export interface UserTypeOption {
   icon: JSX.Element,
   title: string,
   description: string,
@@ -58,7 +58,7 @@ function AccountTypeRadioCard(props: IAccountTypeRadioCard) {
 }
 
 interface IAccountTypeRadioGroup {
-  options: AccountTypeOption[],
+  options: UserTypeOption[],
   value: number,
   onChange: (value: number) => void
 }

@@ -6,14 +6,14 @@ import api from './api.context';
 export enum UserType {
   Individual,
   Business,
-  Nonprofit
+  Charity
 }
 
 export interface User {
   id: number,
-  email: string,
-  name: string,
   userType: UserType,
+  username: string,
+  email: string,
 }
 
 export interface LoginData {

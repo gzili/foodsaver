@@ -5,7 +5,7 @@ export interface UserTypeData {
 }
 
 export interface PublicProfileData {
-  name: string,
+  username: string,
   street: string,
   city: string,
 }

@@ -76,7 +76,7 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
     formData.append('foodPhoto', data.foodPhoto![0]);
     formData.append('foodUnit', data.foodUnit);
     formData.append('quantity', data.offerQuantity.toString());
-    formData.append('expirationDate', endOfDay(data.offerExpirationDate!).toJSON());
+    formData.append('expiresAt', endOfDay(data.offerExpirationDate!).toJSON());
     formData.append('description', data.offerDescription);
     mutate(formData);
   };

@@ -19,7 +19,7 @@ interface IOffersListItem {
 function OffersListItem(props: IOffersListItem) {
   const { item } = props;
 
-  const toNow = formatDistanceToNowStrict(parseJSON(item.creationDate), { addSuffix: true });
+  const toNow = formatDistanceToNowStrict(parseJSON(item.createdAt), { addSuffix: true });
 
   return (
     <Box
@@ -36,8 +36,8 @@ function OffersListItem(props: IOffersListItem) {
       <Flex direction="column" justify="space-between" pos="absolute" inset={0} p={4} bg="rgba(0, 0, 0, 0.4)" color="white">
         <Box>
           <Flex align="center">
-            <Avatar size="sm" name={item.giver.name} /*src={item.user.avatar}*/ icon={<FaIcon icon={faUser} />} mr={2} />
-            {item.giver.name}
+            <Avatar size="sm" name={item.giver.username} /*src={item.user.avatar}*/ icon={<FaIcon icon={faUser} />} mr={2} />
+            {item.giver.username}
           </Flex>
         </Box>
         <Box>
@@ -45,7 +45,7 @@ function OffersListItem(props: IOffersListItem) {
           <Box fontWeight="bold" fontSize="lg">{item.food.name}</Box>
           <Flex fontSize="sm" align="center">
             <Box as={FaIcon} icon={faMapMarkerAlt} mr={2} />
-            {[item.giver.address.streetAddress, item.giver.address.city].join(', ')}
+            {[item.giver.address.street, item.giver.address.city].join(', ')}
           </Flex>
         </Box>
       </Flex>
@@ -77,7 +77,7 @@ function OffersList() {
   if (data) {
     return (
       <VStack spacing={2} pb="80px">
-        {data.sort((a, b) => compareDesc(parseJSON(a.creationDate), parseJSON(b.creationDate))).map(offer => (
+        {data.sort((a, b) => compareDesc(parseJSON(a.createdAt), parseJSON(b.createdAt))).map(offer => (
           <OffersListItem key={offer.id} item={offer} />
         ))}
       </VStack>
@@ -95,7 +95,7 @@ export default function Offers() {
     <Box mt={10} pt={2} px={4}>
       <Heading as="h1" mb={2}>Offers</Heading>
       <OffersList />
-      {(user && user.userType !== UserType.Nonprofit) && (
+      {(user && user.userType !== UserType.Charity) && (
         <>
           <IconButton
             icon={<AddIcon />}

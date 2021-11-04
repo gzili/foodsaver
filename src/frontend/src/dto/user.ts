@@ -1,14 +1,14 @@
 export enum UserType {
   Individual,
   Business,
-  Nonprofit
+  Charity
 }
 
 export interface ICreateUserDto {
   userType: UserType,
-  name: string,
+  username: string,
   address: {
-    streetAddress: string,
+    street: string,
     city: string,
   },
   email: string,
