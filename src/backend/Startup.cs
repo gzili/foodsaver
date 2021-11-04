@@ -38,6 +38,10 @@ namespace backend
             services.AddScoped<OffersRepository>();
             services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
+            services.AddScoped<ReservationsService>();
+            services.AddScoped<ReservationsRepository>();
+            services.AddScoped<PickupsService>();
+            services.AddScoped<PickupsRepository>();
             
             services.AddScoped<WeatherForecastService>();
             services.AddScoped<WeatherForecastRepository>();
