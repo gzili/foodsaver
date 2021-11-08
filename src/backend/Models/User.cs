@@ -18,5 +18,6 @@ namespace backend.Models
         
         public Address Address { get; set; }
         public List<Offer> Offers { get; set; }
+        public string AvatarPath { get; set; }
     }
 }
