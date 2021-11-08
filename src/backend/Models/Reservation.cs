@@ -14,6 +14,6 @@ namespace backend.Models
         [Required]
         public Offer Offer { get; set; }
         [Required]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
     }
 }

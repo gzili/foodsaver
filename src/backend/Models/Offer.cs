@@ -8,7 +8,7 @@ namespace backend.Models
     {
         
         public int Id { get; set; }
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }

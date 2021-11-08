@@ -61,7 +61,7 @@ namespace backend.Data
             {
                 new()
                 {
-                    Quantity = 1.0,
+                    Quantity = 5.0m,
                     Description = "Have nowhere to put these bananas",
                     CreatedAt = DateTime.Now,
                     ExpiresAt = DateTime.Now,
@@ -76,7 +76,7 @@ namespace backend.Data
                 },
                 new()
                 {
-                    Quantity = 4.0,
+                    Quantity = 8.0m,
                     Description = "Leftover buns from the last day",
                     CreatedAt = DateTime.Now,
                     ExpiresAt = DateTime.Now,
@@ -91,7 +91,7 @@ namespace backend.Data
                 },
                 new()
                 {
-                    Quantity = 2.0,
+                    Quantity = 2.0m,
                     Description = "Delicious serving made by mistake",
                     CreatedAt = DateTime.Now,
                     ExpiresAt = DateTime.Now,
