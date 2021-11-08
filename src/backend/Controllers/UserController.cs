@@ -28,7 +28,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("register")] // "api/user/register"
-        public ActionResult<User> Register(CreateUserDto createUserDto)
+        public ActionResult<UserDto> Register(CreateUserDto createUserDto)
         {
             if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
@@ -36,11 +36,11 @@ namespace backend.Controllers
             var user = _mapper.Map<User>(createUserDto);
             _usersService.Create(user);
             
-            return Ok(_mapper.Map<UserDto>(user));
+            return _mapper.Map<UserDto>(user);
         }
         
         [HttpPost("login")] // "api/user/login"
-        public ActionResult<User> Login(LoginUserDto loginUserDto)
+        public ActionResult<UserDto> Login(LoginUserDto loginUserDto)
         {
             if (HttpContext.User.Identity.IsAuthenticated)
                 return Conflict("User is already authenticated");
@@ -52,7 +52,7 @@ namespace backend.Controllers
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
             
-            return Ok(_mapper.Map<UserDto>(user));
+            return _mapper.Map<UserDto>(user);
         }
 
         [Authorize]
@@ -65,10 +65,10 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpGet]
-        public ActionResult<User> Get() // "api/user"
+        public ActionResult<UserDto> Get() // "api/user"
         {
             var user = (User) HttpContext.Items["user"];
-            return Ok(_mapper.Map<UserDto>(user));
+            return _mapper.Map<UserDto>(user);
         }
         
         [Authorize]
@@ -76,7 +76,7 @@ namespace backend.Controllers
         public IEnumerable<OfferDto> FindByUser()
         {
             var user = (User) HttpContext.Items["user"];
-            return _usersService.GetOffersByUserId(user.Id).Select(_mapper.Map<OfferDto>).ToList();
+            return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
         }
     }
 }

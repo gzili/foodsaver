@@ -46,12 +46,12 @@ namespace backend.Controllers
         public ActionResult<OfferDto> FindById(int id)
         {
             var offer = _offersService.FindById(id);
-            return offer != null ? Ok(_mapper.Map<OfferDto>(offer)) : NotFound();
+            return offer != null ? _mapper.Map<OfferDto>(offer) : NotFound();
         }
 
         [Authorize]
         [HttpPost] // "api/offers"
-        public async Task<ActionResult<CreateOfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
+        public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
             if (createOfferDto.ExpiresAt < DateTime.Now)
                 return BadRequest("Invalid expiration date");
@@ -70,7 +70,7 @@ namespace backend.Controllers
             
             _offersService.Create(offer);
 
-            return Ok(_mapper.Map<OfferDto>(offer));
+            return _mapper.Map<OfferDto>(offer);
         }
 
         [Authorize]
