@@ -1,4 +1,3 @@
-using backend.DTO.Address;
 using backend.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -10,7 +9,8 @@ namespace backend.DTO.Users
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public AddressDto Address { get; set; }
+        public string AddressStreet { get; set; }
+        public string AddressCity { get; set; }
         public IFormFile Avatar { get; set; }
     }
 }
