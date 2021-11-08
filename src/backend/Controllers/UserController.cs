@@ -38,9 +38,6 @@ namespace backend.Controllers
 
             var avatarPath = await _fileUploadService.UploadFormFileAsync(createUserDto.Avatar, "images");
 
-            if (avatarPath == null)
-                return BadRequest("Invalid image file");
-
             var user = _mapper.Map<User>(createUserDto);
             user.AvatarPath = avatarPath;
             _usersService.Create(user);
