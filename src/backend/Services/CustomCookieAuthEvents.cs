@@ -35,7 +35,7 @@ namespace backend.Services
 
             var userId = int.Parse(userIdString);
 
-            var user = _usersRepository.GetById(userId);
+            var user = _usersRepository.FindByCondition(u => u.Id == userId).FirstOrDefault();
 
             if (user == null)
             {
