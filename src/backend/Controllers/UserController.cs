@@ -30,6 +30,15 @@ namespace backend.Controllers
         [HttpPost("register")] // "api/user/register"
         public ActionResult<User> Register(CreateUserDto createUserDto)
         {
+            if (!ValidationService.ValidUsername(createUserDto.Username))
+                return BadRequest("Incorrect username");
+            if (!ValidationService.ValidEmail(createUserDto.Email))
+                return BadRequest("Incorrect email");
+            if (!ValidationService.ValidPassword(createUserDto.Password))
+                return BadRequest("Incorrect password");
+            if (!ValidationService.ValidAddressDto(createUserDto.Address))
+                return BadRequest("Incorrect address");
+
             if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
             
