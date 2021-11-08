@@ -15,9 +15,9 @@ namespace backend.Models
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
+        public string AvatarPath { get; set; }
         
         public Address Address { get; set; }
         public List<Offer> Offers { get; set; }
-        public string AvatarPath { get; set; }
     }
 }
