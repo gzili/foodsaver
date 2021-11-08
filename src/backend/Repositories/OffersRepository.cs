@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using backend.Data;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class OffersRepository
+    public class OffersRepository : IRepositoryBase<Offer>
     {
         private readonly AppDbContext _db;
 
@@ -16,42 +16,24 @@ namespace backend.Repositories
             _db = db;
         }
 
-        public void Save(Offer offer)
+        public void Create(Offer offer)
         {
             _db.Offers.Add(offer);
             _db.SaveChanges();
         }
 
-        public Offer GetById(int id)
+        public IQueryable<Offer> FindAll()
         {
             return _db.Offers
                 .Include(o => o.Address)
                 .Include(o => o.Food)
                 .Include(o => o.Giver)
-                .ThenInclude(u => u.Address)
-                .FirstOrDefault(o => o.Id == id);
+                .ThenInclude(u => u.Address);
         }
 
-        public List<Offer> GetAllActive()
+        public IQueryable<Offer> FindByCondition(Expression<Func<Offer, bool>> expression)
         {
-            return _db.Offers
-                .Where(offer => offer.ExpiresAt > DateTime.Now)
-                .Include(o => o.Address)
-                .Include(o => o.Food)
-                .Include(o => o.Giver)
-                .ThenInclude(u => u.Address)
-                .ToList();
-        }
-
-        public List<Offer> GetAll()
-        {
-            var offers = _db.Offers
-                .Include(o => o.Address)
-                .Include(o => o.Food)
-                .Include(o => o.Giver)
-                .ThenInclude(u => u.Address)
-                .ToList();
-            return offers;
+            return FindAll().Where(expression);
         }
     }
 }

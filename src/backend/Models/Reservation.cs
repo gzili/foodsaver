@@ -4,15 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
-    [Table(("reservation"))]
+    [Table("reservation")]
     public class Reservation
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        public User User { get; set; }
+        public virtual User User { get; set; }
         [Required]
-        public Offer Offer { get; set; }
+        public virtual Offer Offer { get; set; }
         [Required]
         public decimal Quantity { get; set; }
     }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using backend.Models;
+﻿using backend.Models;
 using backend.Repositories;
 
 namespace backend.Services
@@ -21,16 +20,6 @@ namespace backend.Services
         public void Delete(Reservation reservation)
         {
             _reservationsRepository.Delete(reservation);
-        }
-
-        public Reservation GetById(int id)
-        {
-            return _reservationsRepository.GetById(id);
-        }
-
-        public List<Reservation> GetAll()
-        {
-            return _reservationsRepository.GetAll();
         }
     }
 }

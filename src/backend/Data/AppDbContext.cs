@@ -1,5 +1,6 @@
 ﻿using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace backend.Data
 {
@@ -7,6 +8,24 @@ namespace backend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+            ChangeTracker.StateChanged += AdjustReservedAmount;
+            ChangeTracker.Tracked += AdjustReservedAmount;
+        }
+
+        private void AdjustReservedAmount(object sender, EntityEntryEventArgs e)
+        {
+            if (e.Entry.Entity is Reservation reservation)
+            {
+                switch (e.Entry.State)
+                {
+                    case EntityState.Added:
+                        reservation.Offer.ReservedQuantity += reservation.Quantity;
+                        break;
+                    case EntityState.Deleted:
+                        reservation.Offer.ReservedQuantity -= reservation.Quantity;
+                        break;
+                }
+            }
         }
 
         public DbSet<WeatherForecast> WeatherForecastSet { get; set; }

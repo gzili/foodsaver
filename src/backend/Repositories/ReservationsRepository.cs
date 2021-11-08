@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using backend.Data;
 using backend.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
@@ -26,22 +22,6 @@ namespace backend.Repositories
         {
             _db.Reservations.Remove(reservation);
             _db.SaveChanges();
-        }
-
-        public Reservation GetById(int id)
-        {
-            return _db.Reservations
-                .Include(o => o.User)
-                .Include(o => o.Offer)
-                .FirstOrDefault(o => o.Id == id);
-        }
-
-        public List<Reservation> GetAll()
-        {
-            return _db.Reservations
-                .Include(o => o.User)
-                .Include(o => o.Offer)
-                .ToList();
         }
     }
 }
