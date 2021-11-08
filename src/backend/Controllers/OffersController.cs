@@ -33,7 +33,7 @@ namespace backend.Controllers
             _reservationsService = reservationsService;
         }
 
-        [HttpGet] // "api/offers"
+        [HttpGet] // GET "api/offers"
         public IEnumerable<OfferDto> FindAll()
         {
             var offers = Request.Query.ContainsKey("showExpired")
@@ -42,7 +42,7 @@ namespace backend.Controllers
             return offers.Select(_mapper.Map<OfferDto>);
         }
 
-        [HttpGet("{id:int}")] // "api/offers/<number>"
+        [HttpGet("{id:int}")] // GET "api/offers/<number>"
         public ActionResult<OfferDto> FindById(int id)
         {
             var offer = _offersService.FindById(id);
@@ -50,7 +50,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost] // "api/offers"
+        [HttpPost] // POST "api/offers"
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
             if (createOfferDto.ExpiresAt < DateTime.Now)
@@ -74,7 +74,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("{id:int}/reservations")]
+        [HttpPost("{id:int}/reservations")] // POST "api/offers/<number>/reservations
         public IActionResult CreateReservation(int id, ReservationDto reservationDto)
         {
             var offer = _offersService.FindById(id);
@@ -115,7 +115,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id:int}/reservations")]
+        [HttpDelete("{id:int}/reservations")] // DELETE "api/offers/<number>/reservations
         public IActionResult CancelReservation(int id)
         {
             var offer = _offersService.FindById(id);

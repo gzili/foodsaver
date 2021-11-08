@@ -27,7 +27,7 @@ namespace backend.Controllers
             _usersService = usersService;
         }
 
-        [HttpPost("register")] // "api/user/register"
+        [HttpPost("register")] // POST "api/user/register"
         public ActionResult<UserDto> Register(CreateUserDto createUserDto)
         {
             if (_usersService.GetByEmail(createUserDto.Email) != null)
@@ -39,7 +39,7 @@ namespace backend.Controllers
             return _mapper.Map<UserDto>(user);
         }
         
-        [HttpPost("login")] // "api/user/login"
+        [HttpPost("login")] // POST "api/user/login"
         public ActionResult<UserDto> Login(LoginUserDto loginUserDto)
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -56,7 +56,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout")] // "api/user/logout"
+        [HttpPost("logout")] // POST "api/user/logout"
         public IActionResult LogOut()
         {
             HttpContext.SignOutAsync();
@@ -65,14 +65,14 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpGet]
-        public ActionResult<UserDto> Get() // "api/user"
+        public ActionResult<UserDto> Get() // GET "api/user"
         {
             var user = (User) HttpContext.Items["user"];
             return _mapper.Map<UserDto>(user);
         }
         
         [Authorize]
-        [HttpGet("offers")] // "api/user/offers"
+        [HttpGet("offers")] // GET "api/user/offers"
         public IEnumerable<OfferDto> FindByUser()
         {
             var user = (User) HttpContext.Items["user"];
