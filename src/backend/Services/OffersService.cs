@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using backend.DTO.Offers;
 using backend.Models;
 using backend.Repositories;
 
@@ -32,5 +33,11 @@ namespace backend.Services
         {
             return _offersRepository.GetAllActive();
         }
+
+        public Offer UpdateOffer(Offer oldOffer, UpdateOfferDto newOffer)
+        {
+            return _offersRepository.UpdateOffer(oldOffer, newOffer);
+        }
     }
+
 }

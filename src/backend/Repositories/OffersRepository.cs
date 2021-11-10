@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.Data;
+using backend.DTO.Offers;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,5 +54,16 @@ namespace backend.Repositories
                 .ToList();
             return offers;
         }
+
+        public Offer UpdateOffer (Offer oldOffer, UpdateOfferDto newOffer)
+        {
+            _db.Entry(oldOffer).CurrentValues.SetValues(newOffer);
+            if(newOffer.FoodName != null) oldOffer.Food.Name = newOffer.FoodName;
+            if(newOffer.FoodUnit != null) oldOffer.Food.Unit = newOffer.FoodUnit;
+            
+            _db.SaveChanges();
+            return oldOffer;
+        }
+        
     }
 }

@@ -71,5 +71,22 @@ namespace backend.Controllers
 
             return Ok(_mapper.Map<OfferDto>(offer));
         }
+        
+        
+        [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
+        public async Task<ActionResult<UpdateOfferDto>> Create([FromForm] UpdateOfferDto updateOfferDto, int id)
+        {
+            
+            var oldOffer = _offersService.GetById(id); 
+            
+            //var user = (User) HttpContext.Items["user"];
+            //if( oldOffer.Giver != user) 
+             //   return BadRequest("Invalid offer for this user");
+            
+            var newOffer = _mapper.Map<UpdateOfferDto>(updateOfferDto);
+            _offersService.UpdateOffer(oldOffer, newOffer);
+           
+            return Ok(_mapper.Map<OfferDto>(oldOffer));
+        }
     }
 }
