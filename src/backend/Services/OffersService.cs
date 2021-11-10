@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using backend.Models;
 using backend.Repositories;
 
@@ -13,24 +15,24 @@ namespace backend.Services
             _offersRepository = offersRepository;
         }
         
-        public void Save(Offer offer)
+        public void Create(Offer offer)
         {
-            _offersRepository.Save(offer);
+            _offersRepository.Create(offer);
         }
 
-        public Offer GetById(int id)
+        public Offer FindById(int id)
         {
-            return _offersRepository.GetById(id);
+            return _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
         }
 
-        public List<Offer> GetAll()
+        public IEnumerable<Offer> FindAll()
         {
-            return _offersRepository.GetAll();
+            return _offersRepository.FindAll().ToList();
         }
 
-        public List<Offer> GetAllActiveOffers()
+        public IEnumerable<Offer> FindAllActiveOffers()
         {
-            return _offersRepository.GetAllActive();
+            return _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now).ToList();
         }
     }
 }

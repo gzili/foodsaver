@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using backend.Data;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class UsersRepository
+    public class UsersRepository: IRepositoryBase<User>
     {
         private readonly AppDbContext _db;
 
@@ -15,43 +16,20 @@ namespace backend.Repositories
             _db = db;
         }
 
-        public void Save(User user)
+        public void Create(User user)
         {
             _db.Users.Add(user);
             _db.SaveChanges();
         }
 
-        public List<User> GetAll()
+        public IQueryable<User> FindAll()
         {
-            return _db.Users
-                .Include(u => u.Address)
-                .ToList();
+            return _db.Users.Include(u => u.Address);
         }
 
-        public User GetById(int id)
+        public IQueryable<User> FindByCondition(Expression<Func<User, bool>> expression)
         {
-            return _db.Users
-                .Include(u => u.Address)
-                .FirstOrDefault(user => user.Id == id);
-        }
-
-        public User GetByEmail(string email)
-        {
-            return _db.Users
-                .Include(u => u.Address)
-                .FirstOrDefault(u => u.Email == email);
-        }
-
-        public List<Offer> GetOffersByUserId(int id)
-        {
-            var offers = _db.Users
-                .Include(u => u.Address)
-                .Include(u => u.Offers)
-                .ThenInclude(o => o.Food)
-                .Include(u => u.Offers)
-                .ThenInclude(o => o.Address)
-                .First(u => u.Id == id).Offers;
-            return offers;
+            return FindAll().Where(expression);
         }
     }
 }

@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
-    [Table(("pickup"))]
+    [Table("pickup")]
     public class Pickup
     {
         public int Id { get; set; }
         [Required]
-        public Reservation Reservation { get; set; }
+        public virtual Reservation Reservation { get; set; }
         [Required]
         public bool UserConfirmed { get; set; }
         [Required]

@@ -16,7 +16,7 @@ namespace backend.Models
         [Required]
         public string Password { get; set; }
         
-        public Address Address { get; set; }
-        public List<Offer> Offers { get; set; }
+        public virtual Address Address { get; set; }
+        public virtual List<Offer> Offers { get; set; }
     }
 }
