@@ -6,6 +6,7 @@ namespace backend.DTO.Offers
     {
         public int Id { get; set; }
         public string Username { get; set; }
+        public string AvatarPath { get; set; }
         public AddressDto Address { get; set; }
     }
 }
