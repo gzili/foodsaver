@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using backend.Data;
+using backend.DTO.Offers;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,5 +36,13 @@ namespace backend.Repositories
         {
             return FindAll().Where(expression);
         }
+
+        public void UpdateOffer (Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
+        {
+            _db.Entry(offer).CurrentValues.SetValues(updateOfferDto);
+            _db.Entry(offer.Food).CurrentValues.SetValues(foodDto);
+            _db.SaveChanges();
+        }
+        
     }
 }

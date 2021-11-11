@@ -9,6 +9,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace backend.Controllers
 {
@@ -16,18 +17,15 @@ namespace backend.Controllers
     [Route("api/[controller]")] // "api/offers"
     public class OffersController : ControllerBase
     {
-        private readonly FileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly OffersService _offersService;
         private readonly ReservationsService _reservationsService;
 
         public OffersController(
-            FileUploadService fileUploadService,
             IMapper mapper,
             OffersService offersService,
             ReservationsService reservationsService)
         {
-            _fileUploadService = fileUploadService;
             _mapper = mapper;
             _offersService = offersService;
             _reservationsService = reservationsService;
@@ -56,7 +54,7 @@ namespace backend.Controllers
             if (createOfferDto.ExpiresAt < DateTime.Now)
                 return BadRequest("Invalid expiration date");
 
-            var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
+            var imagePath = await FileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
             
             if (imagePath == null)
                 return BadRequest("Invalid image file");
@@ -139,5 +137,37 @@ namespace backend.Controllers
             return Ok();
         }
         
+        [Authorize]
+        [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
+        public async Task<ActionResult<OfferDto>> Update(
+            int id,
+            [FromForm] UpdateOfferDto updateOfferDto,
+            [FromForm] FoodDto foodDto,
+            IFormFile image)
+        {
+            var offer = _offersService.GetById(id);
+
+            if (offer == null)
+                return NotFound();
+            
+            var user = (User) HttpContext.Items["user"];
+            
+            if(offer.Giver != user)
+                return BadRequest("Offer can only be updated by its owner");
+
+            var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
+
+            // if a new file was uploaded, swap the new path with the old one
+            if (imagePath != null)
+                (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
+
+            _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
+            
+            // delete the old file if changes were saved successfully
+            if (imagePath != null)
+                FileUploadService.DeleteFile(imagePath);
+
+            return _mapper.Map<OfferDto>(offer);
+        }
     }
 }

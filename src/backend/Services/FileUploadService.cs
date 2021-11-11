@@ -8,7 +8,7 @@ namespace backend.Services
     {
         private const string BaseDir = "wwwroot";
 
-        public async Task<string> UploadFormFileAsync(IFormFile file, string dir)
+        public static async Task<string> UploadFormFileAsync(IFormFile file, string dir)
         {
             if (file == null || file.Length == 0)
                 return null;
@@ -22,6 +22,12 @@ namespace backend.Services
             }
 
             return relativePath;
+        }
+
+        public static void DeleteFile(string path)
+        {
+            var fullPath = Path.Combine(BaseDir, path);
+            File.Delete(fullPath);
         }
     }
 }
