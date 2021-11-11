@@ -8,6 +8,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace backend.Controllers
 {
@@ -15,21 +16,13 @@ namespace backend.Controllers
     [Route("api/[controller]")] // "api/offers"
     public class OffersController : ControllerBase
     {
-        private readonly FileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly OffersService _offersService;
-        private readonly UsersService _usersService;
-        
-        public OffersController(
-            FileUploadService fileUploadService,
-            IMapper mapper,
-            OffersService offersService,
-            UsersService usersService)
+
+        public OffersController(IMapper mapper, OffersService offersService)
         {
-            _fileUploadService = fileUploadService;
             _mapper = mapper;
             _offersService = offersService;
-            _usersService = usersService;
         }
 
         [HttpGet] // "api/offers"
@@ -55,7 +48,7 @@ namespace backend.Controllers
             if (createOfferDto.ExpiresAt < DateTime.Now)
                 return BadRequest("Invalid expiration date");
 
-            var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
+            var imagePath = await FileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
             
             if (imagePath == null)
                 return BadRequest("Invalid image file");
@@ -73,20 +66,37 @@ namespace backend.Controllers
         }
         
         
+        [Authorize]
         [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
-        public async Task<ActionResult<UpdateOfferDto>> Create([FromForm] UpdateOfferDto updateOfferDto, int id)
+        public async Task<ActionResult<OfferDto>> Create(
+            int id,
+            [FromForm] UpdateOfferDto updateOfferDto,
+            [FromForm] FoodDto foodDto,
+            IFormFile image)
         {
+            var offer = _offersService.GetById(id);
+
+            if (offer == null)
+                return NotFound();
             
-            var oldOffer = _offersService.GetById(id); 
+            var user = (User) HttpContext.Items["user"];
             
-            //var user = (User) HttpContext.Items["user"];
-            //if( oldOffer.Giver != user) 
-             //   return BadRequest("Invalid offer for this user");
+            if(offer.Giver != user)
+                return BadRequest("Invalid offer for this user");
+
+            var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
+
+            // if a new file was uploaded, swap the new path with the old one
+            if (imagePath != null)
+                (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
+
+            _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
             
-            var newOffer = _mapper.Map<UpdateOfferDto>(updateOfferDto);
-            _offersService.UpdateOffer(oldOffer, newOffer);
-           
-            return Ok(_mapper.Map<OfferDto>(oldOffer));
+            // delete the old file if changes were saved successfully
+            if (imagePath != null)
+                FileUploadService.DeleteFile(imagePath);
+
+            return _mapper.Map<OfferDto>(offer);
         }
     }
 }

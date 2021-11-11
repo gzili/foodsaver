@@ -55,14 +55,11 @@ namespace backend.Repositories
             return offers;
         }
 
-        public Offer UpdateOffer (Offer oldOffer, UpdateOfferDto newOffer)
+        public void UpdateOffer (Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
-            _db.Entry(oldOffer).CurrentValues.SetValues(newOffer);
-            if(newOffer.FoodName != null) oldOffer.Food.Name = newOffer.FoodName;
-            if(newOffer.FoodUnit != null) oldOffer.Food.Unit = newOffer.FoodUnit;
-            
+            _db.Entry(offer).CurrentValues.SetValues(updateOfferDto);
+            _db.Entry(offer.Food).CurrentValues.SetValues(foodDto);
             _db.SaveChanges();
-            return oldOffer;
         }
         
     }

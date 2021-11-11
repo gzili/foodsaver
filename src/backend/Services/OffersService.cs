@@ -34,9 +34,9 @@ namespace backend.Services
             return _offersRepository.GetAllActive();
         }
 
-        public Offer UpdateOffer(Offer oldOffer, UpdateOfferDto newOffer)
+        public void UpdateOffer(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
-            return _offersRepository.UpdateOffer(oldOffer, newOffer);
+            _offersRepository.UpdateOffer(offer, updateOfferDto, foodDto);
         }
     }
 
