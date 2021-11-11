@@ -70,6 +70,39 @@ namespace backend.Controllers
 
             return _mapper.Map<OfferDto>(offer);
         }
+        
+        [Authorize]
+        [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
+        public async Task<ActionResult<OfferDto>> Update(
+            int id,
+            [FromForm] UpdateOfferDto updateOfferDto,
+            [FromForm] FoodDto foodDto,
+            IFormFile image)
+        {
+            var offer = _offersService.FindById(id);
+
+            if (offer == null)
+                return NotFound();
+            
+            var user = (User) HttpContext.Items["user"];
+            
+            if(offer.Giver != user)
+                return BadRequest("Offer can only be updated by its owner");
+
+            var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
+
+            // if a new file was uploaded, swap the new path with the old one
+            if (imagePath != null)
+                (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
+
+            _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
+            
+            // delete the old file if changes were saved successfully
+            if (imagePath != null)
+                FileUploadService.DeleteFile(imagePath);
+
+            return _mapper.Map<OfferDto>(offer);
+        }
 
         [Authorize]
         [HttpPost("{id:int}/reservations")] // POST "api/offers/<number>/reservations
@@ -135,39 +168,6 @@ namespace backend.Controllers
             _reservationsService.Delete(reservation);
 
             return Ok();
-        }
-        
-        [Authorize]
-        [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
-        public async Task<ActionResult<OfferDto>> Update(
-            int id,
-            [FromForm] UpdateOfferDto updateOfferDto,
-            [FromForm] FoodDto foodDto,
-            IFormFile image)
-        {
-            var offer = _offersService.GetById(id);
-
-            if (offer == null)
-                return NotFound();
-            
-            var user = (User) HttpContext.Items["user"];
-            
-            if(offer.Giver != user)
-                return BadRequest("Offer can only be updated by its owner");
-
-            var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
-
-            // if a new file was uploaded, swap the new path with the old one
-            if (imagePath != null)
-                (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
-
-            _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
-            
-            // delete the old file if changes were saved successfully
-            if (imagePath != null)
-                FileUploadService.DeleteFile(imagePath);
-
-            return _mapper.Map<OfferDto>(offer);
         }
     }
 }

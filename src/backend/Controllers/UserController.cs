@@ -21,13 +21,11 @@ namespace backend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly UsersService _usersService;
-        private readonly FileUploadService _fileUploadService;
 
-        public UserController(IMapper mapper, UsersService usersService, FileUploadService fileUploadService)
+        public UserController(IMapper mapper, UsersService usersService)
         {
             _mapper = mapper;
             _usersService = usersService;
-            _fileUploadService = fileUploadService;
         }
 
         [HttpPost("register")] // "api/user/register"
@@ -36,7 +34,7 @@ namespace backend.Controllers
             if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
 
-            var avatarPath = await _fileUploadService.UploadFormFileAsync(createUserDto.Avatar, "images");
+            var avatarPath = await FileUploadService.UploadFormFileAsync(createUserDto.Avatar, "images");
 
             var user = _mapper.Map<User>(createUserDto);
             user.AvatarPath = avatarPath;
@@ -79,7 +77,7 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpGet("offers")] // GET "api/user/offers"
-        public IEnumerable<OfferDto> FindByUser()
+        public IEnumerable<OfferDto> GetUserOffers()
         {
             var user = (User) HttpContext.Items["user"];
             return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
