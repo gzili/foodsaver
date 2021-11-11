@@ -68,7 +68,7 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
-        public async Task<ActionResult<OfferDto>> Create(
+        public async Task<ActionResult<OfferDto>> Update(
             int id,
             [FromForm] UpdateOfferDto updateOfferDto,
             [FromForm] FoodDto foodDto,
@@ -82,7 +82,7 @@ namespace backend.Controllers
             var user = (User) HttpContext.Items["user"];
             
             if(offer.Giver != user)
-                return BadRequest("Invalid offer for this user");
+                return BadRequest("Offer can only be updated by its owner");
 
             var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
 
