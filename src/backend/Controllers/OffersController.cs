@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using backend.DTO.Offers;
 using backend.DTO.Reservation;
+using backend.Exceptions;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
@@ -43,8 +44,15 @@ namespace backend.Controllers
         [HttpGet("{id:int}")] // GET "api/offers/<number>"
         public ActionResult<OfferDto> FindById(int id)
         {
-            var offer = _offersService.FindById(id);
-            return offer != null ? _mapper.Map<OfferDto>(offer) : NotFound();
+            try
+            {
+                var offer = _offersService.FindById(id);
+                return _mapper.Map<OfferDto>(offer);
+            }
+            catch (NoSuchOfferException e)
+            {
+                return NoContent();
+            }
         }
 
         [Authorize]
@@ -55,22 +63,22 @@ namespace backend.Controllers
                 return BadRequest("Invalid expiration date");
 
             var imagePath = await FileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
-            
+
             if (imagePath == null)
                 return BadRequest("Invalid image file");
-            
+
             var user = (User) HttpContext.Items["user"];
-            
+
             var offer = _mapper.Map<Offer>(createOfferDto);
             offer.CreatedAt = DateTime.Now;
             offer.Giver = user;
             offer.Food.ImagePath = imagePath;
-            
+
             _offersService.Create(offer);
 
             return _mapper.Map<OfferDto>(offer);
         }
-        
+
         [Authorize]
         [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
         public async Task<ActionResult<OfferDto>> Update(
@@ -83,10 +91,10 @@ namespace backend.Controllers
 
             if (offer == null)
                 return NotFound();
-            
+
             var user = (User) HttpContext.Items["user"];
-            
-            if(offer.Giver != user)
+
+            if (offer.Giver != user)
                 return BadRequest("Offer can only be updated by its owner");
 
             var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
@@ -96,7 +104,7 @@ namespace backend.Controllers
                 (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
 
             _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
-            
+
             // delete the old file if changes were saved successfully
             if (imagePath != null)
                 FileUploadService.DeleteFile(imagePath);
@@ -114,9 +122,9 @@ namespace backend.Controllers
             {
                 return BadRequest("Invalid offer ID");
             }
-            
+
             var user = (User) HttpContext.Items["user"];
-            
+
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
             if (reservation != null)
@@ -139,7 +147,7 @@ namespace backend.Controllers
                 CreatedAt = DateTime.Now,
                 Quantity = requestedQuantity
             };
-            
+
             _reservationsService.Save(reservation);
 
             return Ok();
@@ -155,7 +163,7 @@ namespace backend.Controllers
             {
                 return BadRequest("Invalid offer ID");
             }
-            
+
             var user = (User) HttpContext.Items["user"];
 
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
@@ -164,7 +172,7 @@ namespace backend.Controllers
             {
                 return BadRequest("User has not reserved this offer");
             }
-            
+
             _reservationsService.Delete(reservation);
 
             return Ok();

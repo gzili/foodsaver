@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.DTO.Offers;
+using backend.Exceptions;
 using backend.Models;
 using backend.Repositories;
 
@@ -20,10 +21,13 @@ namespace backend.Services
         {
             _offersRepository.Create(offer);
         }
-
+        
         public Offer FindById(int id)
         {
-            return _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
+            var offer = _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
+            if (offer == null)
+                throw new NoSuchOfferException(id);
+            return offer;
         }
 
         public IEnumerable<Offer> FindAll()
