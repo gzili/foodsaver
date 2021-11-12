@@ -51,7 +51,7 @@ namespace backend.Controllers
             }
             catch (NoSuchOfferException e)
             {
-                return NoContent();
+                return NotFound();
             }
         }
 
