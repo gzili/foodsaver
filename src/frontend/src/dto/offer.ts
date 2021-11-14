@@ -1,6 +1,7 @@
 export interface IOfferDto {
   id: number,
   quantity: number,
+  availableQuantity: number,
   description: string,
   createdAt: string,
   expiresAt: string,
