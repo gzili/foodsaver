@@ -123,9 +123,9 @@ export default function Offer() {
             )}
             </Box>
         </VStack>
-        {user && <Box h={14} />}
+        {user && user.id !== offer.giver.id && <Box h={14} />}
       </Box>
-      {user && <ReservationBar />}
+      {user && user.id !== offer.giver.id && <ReservationBar />}
     </OfferProvider>
   );
 }

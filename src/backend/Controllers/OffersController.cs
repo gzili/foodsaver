@@ -117,6 +117,11 @@ namespace backend.Controllers
             }
             
             var user = (User) HttpContext.Items["user"];
+
+            if (user == offer.Giver)
+            {
+                return Conflict("Offer cannot be reserved by its giver");
+            }
             
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 

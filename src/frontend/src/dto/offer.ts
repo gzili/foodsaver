@@ -6,6 +6,7 @@ export interface IOfferDto {
   createdAt: string,
   expiresAt: string,
   giver: {
+    id: number,
     username: string,
     address: {
       street: string,
