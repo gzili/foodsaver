@@ -24,7 +24,8 @@ namespace backend.Controllers
         public OffersController(
             IMapper mapper,
             OffersService offersService,
-            ReservationsService reservationsService)
+            ReservationsService reservationsService
+            )
         {
             _mapper = mapper;
             _offersService = offersService;
@@ -105,8 +106,8 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("{id:int}/reservations")] // POST "api/offers/<number>/reservations
-        public IActionResult CreateReservation(int id, ReservationDto reservationDto)
+        [HttpPost("{id:int}/reservation")] // POST "api/offers/<number>/reservation
+        public ActionResult<ReservationDto> CreateReservation(int id, ReservationDto reservationDto)
         {
             var offer = _offersService.FindById(id);
 
@@ -124,10 +125,7 @@ namespace backend.Controllers
                 return BadRequest("User already has an active reservation for this offer");
             }
 
-            var availableQuantity = offer.Quantity - offer.ReservedQuantity;
-            var requestedQuantity = reservationDto.Quantity;
-
-            if (requestedQuantity > availableQuantity)
+            if (reservationDto.Quantity > offer.AvailableQuantity)
             {
                 return BadRequest("Requested quantity is larger than available");
             }
@@ -137,16 +135,34 @@ namespace backend.Controllers
                 Offer = offer,
                 User = user,
                 CreatedAt = DateTime.Now,
-                Quantity = requestedQuantity
+                Quantity = reservationDto.Quantity
             };
             
             _reservationsService.Save(reservation);
 
-            return Ok();
+            return _mapper.Map<ReservationDto>(reservation);
         }
 
         [Authorize]
-        [HttpDelete("{id:int}/reservations")] // DELETE "api/offers/<number>/reservations
+        [HttpGet("{id:int}/reservation")] // GET "api/offers/{id}/reservation
+        public ActionResult<ReservationDto> GetReservation(int id)
+        {
+            var offer = _offersService.FindById(id);
+
+            if (offer == null)
+            {
+                return NotFound($"Could not find offer with ID = {id}");
+            }
+            
+            var user = (User) HttpContext.Items["user"];
+
+            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
+
+            return _mapper.Map<ReservationDto>(reservation);
+        }
+
+        [Authorize]
+        [HttpDelete("{id:int}/reservation")] // DELETE "api/offers/<number>/reservation
         public IActionResult CancelReservation(int id)
         {
             var offer = _offersService.FindById(id);

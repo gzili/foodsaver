@@ -1,4 +1,5 @@
 using backend.Data;
+using backend.Hubs;
 using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,11 +32,14 @@ namespace backend
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
 
-            services.AddAutoMapper(typeof(Startup));
-
             services.AddScoped<CustomCookieAuthEvents>();
+            
+            services.AddAutoMapper(typeof(Startup));
+            services.AddSignalR();
 
-            services.AddScoped<FileUploadService>();
+            services.AddSingleton<OfferEvents>();
+            services.AddSingleton<HubInvoker>();
+            
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
             services.AddScoped<UsersService>();
@@ -77,7 +81,11 @@ namespace backend
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<ReservationsHub>("/hub");
+                endpoints.MapControllers();
+            });
 
             app.UseSpa(spa =>
             {

@@ -12,19 +12,25 @@ namespace backend.Data
             ChangeTracker.Tracked += AdjustReservedAmount;
         }
 
-        private void AdjustReservedAmount(object sender, EntityEntryEventArgs e)
+        private static void AdjustReservedAmount(object sender, EntityEntryEventArgs e)
         {
-            if (e.Entry.Entity is Reservation reservation)
+            switch (e.Entry.Entity)
             {
-                switch (e.Entry.State)
-                {
-                    case EntityState.Added:
-                        reservation.Offer.ReservedQuantity += reservation.Quantity;
-                        break;
-                    case EntityState.Deleted:
-                        reservation.Offer.ReservedQuantity -= reservation.Quantity;
-                        break;
-                }
+                case Reservation reservation:
+                    switch (e.Entry.State)
+                    {
+                        case EntityState.Added:
+                            reservation.Offer.AvailableQuantity -= reservation.Quantity;
+                            break;
+                        case EntityState.Deleted:
+                            reservation.Offer.AvailableQuantity += reservation.Quantity;
+                            break;
+                    }
+
+                    break;
+                case Offer offer when e.Entry.State == EntityState.Added:
+                    offer.AvailableQuantity = offer.Quantity;
+                    break;
             }
         }
 

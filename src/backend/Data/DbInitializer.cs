@@ -13,6 +13,8 @@ namespace backend.Data
             {
                 return;
             }
+
+            var random = new Random();
             
             var users = new User[]
             {
@@ -63,8 +65,8 @@ namespace backend.Data
                 {
                     Quantity = 5.0m,
                     Description = "Have nowhere to put these bananas",
-                    CreatedAt = DateTime.Now,
-                    ExpiresAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
+                    ExpiresAt = DateTime.UtcNow.AddDays(5),
                     Giver = db.Users.Find(1),
                     Address = db.Users.Include(u => u.Address).First(u => u.Id == 1).Address,
                     Food = new Food
@@ -78,8 +80,8 @@ namespace backend.Data
                 {
                     Quantity = 8.0m,
                     Description = "Leftover buns from the last day",
-                    CreatedAt = DateTime.Now,
-                    ExpiresAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
+                    ExpiresAt = DateTime.UtcNow.AddDays(2),
                     Giver = db.Users.Find(2),
                     Address = db.Users.Include(u => u.Address).First(u => u.Id == 2).Address,
                     Food = new Food
@@ -93,8 +95,8 @@ namespace backend.Data
                 {
                     Quantity = 2.0m,
                     Description = "Delicious serving made by mistake",
-                    CreatedAt = DateTime.Now,
-                    ExpiresAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
+                    ExpiresAt = DateTime.UtcNow.AddHours(12),
                     Giver = db.Users.Find(3),
                     Address = db.Users.Include(u => u.Address).First(u => u.Id == 3).Address,
                     Food = new Food
