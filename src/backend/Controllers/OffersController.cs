@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using backend.Data;
 using backend.DTO.Offers;
 using backend.DTO.Reservation;
 using backend.Models;
@@ -145,28 +146,33 @@ namespace backend.Controllers
             {
                 return Conflict("Offer cannot be reserved by its giver");
             }
+
+            Reservation reservation;
+
+            lock (ReservationsLock.Object)
+            {
+                reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
+
+                if (reservation != null)
+                {
+                    return BadRequest("User already has an active reservation for this offer");
+                }
+
+                if (reservationDto.Quantity > offer.AvailableQuantity)
+                {
+                    return BadRequest("Requested quantity is larger than available");
+                }
+
+                reservation = new Reservation
+                {
+                    Offer = offer,
+                    User = user,
+                    CreatedAt = DateTime.Now,
+                    Quantity = reservationDto.Quantity
+                };
             
-            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
-
-            if (reservation != null)
-            {
-                return BadRequest("User already has an active reservation for this offer");
+                _reservationsService.Save(reservation);
             }
-
-            if (reservationDto.Quantity > offer.AvailableQuantity)
-            {
-                return BadRequest("Requested quantity is larger than available");
-            }
-
-            reservation = new Reservation
-            {
-                Offer = offer,
-                User = user,
-                CreatedAt = DateTime.Now,
-                Quantity = reservationDto.Quantity
-            };
-            
-            _reservationsService.Save(reservation);
 
             return _mapper.Map<ReservationDto>(reservation);
         }
@@ -202,14 +208,17 @@ namespace backend.Controllers
             
             var user = (User) HttpContext.Items["user"];
 
-            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
-
-            if (reservation == null)
+            lock (ReservationsLock.Object)
             {
-                return BadRequest("User has not reserved this offer");
-            }
+                var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
+
+                if (reservation == null)
+                {
+                    return BadRequest("User has not reserved this offer");
+                }
             
-            _reservationsService.Delete(reservation);
+                _reservationsService.Delete(reservation);
+            }
 
             return Ok();
         }
