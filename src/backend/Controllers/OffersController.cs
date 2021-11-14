@@ -20,16 +20,18 @@ namespace backend.Controllers
         private readonly IMapper _mapper;
         private readonly OffersService _offersService;
         private readonly ReservationsService _reservationsService;
+        private readonly PushService _pushService;
 
         public OffersController(
             IMapper mapper,
             OffersService offersService,
-            ReservationsService reservationsService
-            )
+            ReservationsService reservationsService,
+            PushService pushService)
         {
             _mapper = mapper;
             _offersService = offersService;
             _reservationsService = reservationsService;
+            _pushService = pushService;
         }
 
         [HttpGet] // GET "api/offers"
@@ -68,6 +70,8 @@ namespace backend.Controllers
             offer.Food.ImagePath = imagePath;
             
             _offersService.Create(offer);
+            
+            _pushService.NotifyOffersChanged();
 
             return _mapper.Map<OfferDto>(offer);
         }
@@ -103,6 +107,25 @@ namespace backend.Controllers
                 FileUploadService.DeleteFile(imagePath);
 
             return _mapper.Map<OfferDto>(offer);
+        }
+
+        [Authorize]
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            var offer = _offersService.FindById(id);
+            
+            if (offer == null)
+            {
+                return NotFound($"Could not find offer with ID = {id}");
+            }
+            
+            _offersService.Delete(offer);
+            
+            _pushService.NotifyOfferDeleted(id);
+            _pushService.NotifyOffersChanged();
+
+            return NoContent();
         }
 
         [Authorize]

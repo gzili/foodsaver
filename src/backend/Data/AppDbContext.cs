@@ -34,6 +34,14 @@ namespace backend.Data
             }
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Offer)
+                .WithMany(o => o.Reservations)
+                .IsRequired();
+        }
+
         public DbSet<WeatherForecast> WeatherForecastSet { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Offer> Offers { get; set; }

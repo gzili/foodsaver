@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Box, Code, Heading, Image, Text, Flex, Avatar, VStack } from '@chakra-ui/react';
@@ -9,7 +9,7 @@ import { LoadingOverlay } from 'components/layout';
 import { useAuth } from 'contexts/auth.context';
 import { useHub } from 'contexts/hubContext';
 import { OfferProvider } from './contexts/OfferContext';
-import { ReservationBar } from './components/ReservationBar/ReservationBar';
+import { OfferBottomBar } from './components';
 
 async function fetchOfferById(id: string) {
   if (!/\d+/.test(id)) {
@@ -44,19 +44,25 @@ export default function Offer() {
     });
   }, [id, queryClient]);
 
+  const handleOfferDelete = useCallback(() => {
+    queryClient.setQueryData(['offer', id], undefined);
+  }, [queryClient, id]);
+
   useEffect(() => {
     if (isConnected) {
-      connection.invoke("ListenOffer", id).then(() => {
-        console.log("Listening on offer %s", id);
+      connection.invoke('ListenOffer', id).then(() => {
+        console.log('Listening on offer %s', id);
       }).catch(err => console.log(err));
     }
 
     connection.on('AvailableQuantityChanged', handleAvailableQuantityChange);
+    connection.on('OfferDeleted', handleOfferDelete);
 
     return () => {
       connection.off('AvailableQuantityChanged', handleAvailableQuantityChange);
+      connection.off('OfferDeleted', handleOfferDelete);
     }
-  }, [isConnected, id, handleAvailableQuantityChange, connection]);
+  }, [isConnected, id, handleAvailableQuantityChange, handleOfferDelete, connection]);
 
   if (isLoading) {
     return <LoadingOverlay message="Loading offer" />;
@@ -67,7 +73,7 @@ export default function Offer() {
   }
 
   if (!offer) {
-    return null;
+    return <Redirect to="/offers" />;
   }
 
   const mapsApiKey = undefined;//process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -123,9 +129,9 @@ export default function Offer() {
             )}
             </Box>
         </VStack>
-        {user && user.id !== offer.giver.id && <Box h={14} />}
+        {user && <Box h={14} />}
       </Box>
-      {user && user.id !== offer.giver.id && <ReservationBar />}
+      {user && <OfferBottomBar />}
     </OfferProvider>
   );
 }

@@ -11,6 +11,8 @@ import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 import { IOfferDto } from 'dto/offer';
 import { UserType } from 'contexts/auth.context';
+import { useHub } from 'contexts/hubContext';
+import { useCallback, useEffect } from 'react';
 
 interface IOffersListItem {
   item: IOfferDto,
@@ -64,7 +66,17 @@ async function fetchOffers(): Promise<IOfferDto[]> {
 }
 
 function OffersList() {
-  const { isLoading, isError, data, error } = useQuery('offers', fetchOffers);
+  const { isLoading, isError, data, error, refetch } = useQuery('offers', fetchOffers);
+
+  const { connection } = useHub();
+
+  const handleOffersChange = useCallback(() => refetch(), [refetch]);
+
+  useEffect(() => {
+    connection.on("OffersChanged", handleOffersChange);
+
+    return () => connection.off("OffersChanged", handleOffersChange);
+  }, [handleOffersChange, connection]);
 
   if (isLoading) {
     return <LoadingOverlay message="Loading offers" />
@@ -82,9 +94,9 @@ function OffersList() {
         ))}
       </VStack>
     );
-  } else {
-    return null;
   }
+
+  return null;
 }
 
 export default function Offers() {

@@ -40,6 +40,11 @@ namespace backend.Services
         {
             _offersRepository.UpdateOffer(offer, updateOfferDto, foodDto);
         }
+
+        public void Delete(Offer offer)
+        {
+            _offersRepository.Delete(offer);
+        }
     }
 
 }

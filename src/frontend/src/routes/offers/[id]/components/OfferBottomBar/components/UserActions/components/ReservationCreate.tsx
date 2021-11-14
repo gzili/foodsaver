@@ -17,7 +17,7 @@ import api from 'contexts/api.context';
 import { useRef, useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
 import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';
-import type { IReservationPrompt, ReservationDto } from '../types';
+import type { IReservationPrompt, ReservationDto } from '../../../types';
 
 function ReservationCreatePrompt(props: IReservationPrompt) {
   const { isOpen, onClose, quantity } = props;

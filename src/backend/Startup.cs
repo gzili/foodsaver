@@ -48,6 +48,7 @@ namespace backend
             services.AddScoped<ReservationsRepository>();
             services.AddScoped<PickupsService>();
             services.AddScoped<PickupsRepository>();
+            services.AddScoped<PushService>();
             
             services.AddScoped<WeatherForecastService>();
             services.AddScoped<WeatherForecastRepository>();
