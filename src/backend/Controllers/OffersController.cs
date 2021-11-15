@@ -48,16 +48,13 @@ namespace backend.Controllers
         public ActionResult<OfferDto> FindById(int id)
         {
             var offer = _offersService.FindById(id);
-            return offer != null ? _mapper.Map<OfferDto>(offer) : NotFound();
+            return _mapper.Map<OfferDto>(offer);
         }
 
         [Authorize]
         [HttpPost] // POST "api/offers"
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            if (createOfferDto.ExpiresAt < DateTime.Now)
-                return BadRequest("Invalid expiration date");
-
             var imagePath = await FileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
             
             if (imagePath == null)
@@ -66,7 +63,7 @@ namespace backend.Controllers
             var user = (User) HttpContext.Items["user"];
             
             var offer = _mapper.Map<Offer>(createOfferDto);
-            offer.CreatedAt = DateTime.Now;
+            offer.CreatedAt = DateTime.UtcNow;
             offer.Giver = user;
             offer.Food.ImagePath = imagePath;
             
@@ -74,7 +71,7 @@ namespace backend.Controllers
             
             _pushService.NotifyOffersChanged();
 
-            return _mapper.Map<OfferDto>(offer);
+            return CreatedAtAction(nameof(FindById), new { id = offer.Id }, _mapper.Map<OfferDto>(offer));
         }
         
         [Authorize]
@@ -87,13 +84,10 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            if (offer == null)
-                return NotFound();
-            
             var user = (User) HttpContext.Items["user"];
             
             if(offer.Giver != user)
-                return BadRequest("Offer can only be updated by its owner");
+                return Conflict("Offer can only be updated by its owner");
 
             var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
 
@@ -115,12 +109,7 @@ namespace backend.Controllers
         public IActionResult Delete(int id)
         {
             var offer = _offersService.FindById(id);
-            
-            if (offer == null)
-            {
-                return NotFound($"Could not find offer with ID = {id}");
-            }
-            
+
             _offersService.Delete(offer);
             
             _pushService.NotifyOfferDeleted(id);
@@ -135,16 +124,11 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            if (offer == null)
-            {
-                return BadRequest("Invalid offer ID");
-            }
-            
             var user = (User) HttpContext.Items["user"];
 
             if (user == offer.Giver)
             {
-                return Conflict("Offer cannot be reserved by its giver");
+                return Conflict("Offer cannot be reserved by its owner");
             }
 
             Reservation reservation;
@@ -155,12 +139,12 @@ namespace backend.Controllers
 
                 if (reservation != null)
                 {
-                    return BadRequest("User already has an active reservation for this offer");
+                    return Conflict("User already has an active reservation for this offer");
                 }
 
                 if (reservationDto.Quantity > offer.AvailableQuantity)
                 {
-                    return BadRequest("Requested quantity is larger than available");
+                    return Conflict("Requested quantity is larger than available");
                 }
 
                 reservation = new Reservation
@@ -174,7 +158,10 @@ namespace backend.Controllers
                 _reservationsService.Save(reservation);
             }
 
-            return _mapper.Map<ReservationDto>(reservation);
+            return CreatedAtAction(
+                nameof(GetReservation),
+                new { id = reservation.Id },
+                _mapper.Map<ReservationDto>(reservation));
         }
 
         [Authorize]
@@ -183,11 +170,6 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            if (offer == null)
-            {
-                return NotFound($"Could not find offer with ID = {id}");
-            }
-            
             var user = (User) HttpContext.Items["user"];
 
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
@@ -201,11 +183,6 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            if (offer == null)
-            {
-                return BadRequest("Invalid offer ID");
-            }
-            
             var user = (User) HttpContext.Items["user"];
 
             lock (ReservationsLock.Object)
@@ -214,7 +191,7 @@ namespace backend.Controllers
 
                 if (reservation == null)
                 {
-                    return BadRequest("User has not reserved this offer");
+                    return Conflict("User has not reserved this offer");
                 }
             
                 _reservationsService.Delete(reservation);
