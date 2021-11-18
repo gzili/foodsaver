@@ -10,12 +10,14 @@ namespace backend.Services
 {
     public class ReservationsService
     {
+        private readonly PushService _pushService;
         private readonly ReservationsRepository _reservationsRepository;
         private readonly OfferEvents _offerEvents;
         private readonly AppDbContext _db;
 
-        public ReservationsService(ReservationsRepository reservationsRepository, OfferEvents offerEvents, AppDbContext db)
+        public ReservationsService(PushService pushService, ReservationsRepository reservationsRepository, OfferEvents offerEvents, AppDbContext db)
         {
+            _pushService = pushService;
             _reservationsRepository = reservationsRepository;
             _offerEvents = offerEvents;
             _db = db;
@@ -32,6 +34,7 @@ namespace backend.Services
             _reservationsRepository.Create(reservation);
             
             NotifyAvailableQuantityChanged(reservation);
+            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
         public Reservation FindById(int id)
@@ -53,12 +56,15 @@ namespace backend.Services
             _reservationsRepository.Delete(reservation);
             
             NotifyAvailableQuantityChanged(reservation);
+            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
         public void Complete(Reservation reservation)
         {
             reservation.CompletedAt = DateTime.UtcNow;
+            
             _db.SaveChanges();
+            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
     }
 }

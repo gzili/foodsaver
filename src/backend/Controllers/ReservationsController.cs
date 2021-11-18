@@ -29,6 +29,11 @@ namespace backend.Controllers
             {
                 return Conflict("Reservation can only be marked as completed by the owner of the offer");
             }
+
+            if (reservation.CompletedAt != null)
+            {
+                return Conflict("Reservation is already completed");
+            }
             
             _reservationsService.Complete(reservation);
 

@@ -1,3 +1,4 @@
+import { UserDto } from 'dto/user';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
@@ -9,21 +10,14 @@ export enum UserType {
   Charity
 }
 
-export interface User {
-  id: number,
-  userType: UserType,
-  username: string,
-  email: string,
-}
-
 export interface LoginData {
   email: string,
   password: string,
 }
 
 interface AuthContextValue {
-  user: User | null,
-  setUser: (user: User) => void,
+  user: UserDto | null,
+  setUser: (user: UserDto) => void,
   signOut: () => void,
 }
 
@@ -32,7 +26,7 @@ const AuthContext = createContext<AuthContextValue>(null!);
 export const useAuth = () => useContext(AuthContext);
 
 const fetchUser = () => {
-  return api.get('user').json<User>();
+  return api.get('user').json<UserDto>();
 }
 
 const fetchSignOut = () => {
@@ -40,10 +34,10 @@ const fetchSignOut = () => {
 }
 
 function useAuthProvider() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserDto | null>(null);
 
   useQuery('user', fetchUser, {
-    onSuccess: (user: User) => {
+    onSuccess: user => {
       setUser(user);
     }
   });

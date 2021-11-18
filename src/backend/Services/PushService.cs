@@ -1,4 +1,5 @@
 using backend.Hubs;
+using backend.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Services
@@ -20,6 +21,11 @@ namespace backend.Services
         public void NotifyOfferDeleted(int id)
         {
             _reservationsHub.Clients.Group(id.ToString()).SendAsync("OfferDeleted");
+        }
+
+        public void NotifyReservationsChanged(Offer offer)
+        {
+            _reservationsHub.Clients.User(offer.Giver.Id.ToString()).SendAsync("ReservationsChanged", offer.Id);
         }
     }
 }

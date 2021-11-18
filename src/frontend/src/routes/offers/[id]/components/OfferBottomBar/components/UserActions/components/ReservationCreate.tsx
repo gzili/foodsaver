@@ -17,7 +17,7 @@ import api from 'contexts/api.context';
 import { useRef, useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
 import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';
-import type { IReservationPrompt, ReservationDto } from '../../../types';
+import type { IReservationPrompt, CreateReservationDto } from '../../../types';
 
 function ReservationCreatePrompt(props: IReservationPrompt) {
   const { isOpen, onClose, quantity } = props;
@@ -29,7 +29,9 @@ function ReservationCreatePrompt(props: IReservationPrompt) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
   const { mutate: reserve, isLoading } = useMutation({
-    mutationFn: (data: ReservationDto) => api.post(`offers/${offer.id}/reservation`, { json: data }).json<ReservationDto>(),
+    mutationFn: (data: CreateReservationDto) => {
+      return api.post(`offers/${offer.id}/reservation`, { json: data }).json<CreateReservationDto>();
+    },
     onSuccess: reservation => {
       queryClient.setQueryData(['reservation', offer.id], reservation);
       onClose();
