@@ -32,7 +32,8 @@ namespace backend
             services.AddDbContext<AppDbContext>(builder =>
                 builder
                     .UseLazyLoadingProxies()
-                    .UseNpgsql(Configuration.GetConnectionString("Postgres")));
+                    .UseNpgsql(Configuration.GetConnectionString("Postgres"))
+                    .UseSnakeCaseNamingConvention());
             
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
@@ -42,21 +43,18 @@ namespace backend
             services.AddAutoMapper(typeof(Startup));
             services.AddSignalR();
 
-            services.AddSingleton<OfferEvents>();
-            services.AddSingleton<HubInvoker>();
-            
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
-            services.AddScoped<UsersService>();
-            services.AddScoped<UsersRepository>();
-            services.AddScoped<ReservationsService>();
-            services.AddScoped<ReservationsRepository>();
             services.AddScoped<PickupsService>();
             services.AddScoped<PickupsRepository>();
-            services.AddScoped<PushService>();
+            services.AddScoped<ReservationsService>();
+            services.AddScoped<ReservationsRepository>();
+            services.AddScoped<UsersService>();
+            services.AddScoped<UsersRepository>();
             
-            services.AddScoped<WeatherForecastService>();
-            services.AddScoped<WeatherForecastRepository>();
+            services.AddSingleton<OfferEvents>();
+            services.AddSingleton<HubInvoker>();
+            services.AddScoped<PushService>();
 
             services.AddControllersWithViews();
 

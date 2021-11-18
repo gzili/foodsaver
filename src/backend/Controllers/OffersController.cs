@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace backend.Controllers
 {
@@ -20,28 +21,26 @@ namespace backend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly OffersService _offersService;
-        private readonly ReservationsService _reservationsService;
         private readonly PushService _pushService;
+        private readonly Lazy<ReservationsService> _lazyReservationsService;
+        private ReservationsService _reservationsService => _lazyReservationsService.Value;
 
         public OffersController(
             IMapper mapper,
             OffersService offersService,
-            ReservationsService reservationsService,
             PushService pushService)
         {
             _mapper = mapper;
             _offersService = offersService;
-            _reservationsService = reservationsService;
             _pushService = pushService;
+            _lazyReservationsService =
+                new Lazy<ReservationsService>(() => HttpContext.RequestServices.GetService<ReservationsService>());
         }
 
         [HttpGet] // GET "api/offers"
-        public IEnumerable<OfferDto> FindAll()
+        public IEnumerable<OfferDto> FindAll(bool showExpired)
         {
-            var offers = Request.Query.ContainsKey("showExpired")
-                ? _offersService.FindAll()
-                : _offersService.FindAllActiveOffers();
-            return offers.Select(_mapper.Map<OfferDto>);
+            return _offersService.FindAll(showExpired).Select(_mapper.Map<OfferDto>);
         }
 
         [HttpGet("{id:int}")] // GET "api/offers/<number>"
