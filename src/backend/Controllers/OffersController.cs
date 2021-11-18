@@ -150,11 +150,11 @@ namespace backend.Controllers
                 {
                     Offer = offer,
                     User = user,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     Quantity = createReservationDto.Quantity
                 };
             
-                _reservationsService.Save(reservation);
+                _reservationsService.Create(reservation);
             }
 
             return CreatedAtAction(
@@ -192,6 +192,11 @@ namespace backend.Controllers
                 {
                     return Conflict("User has not reserved this offer");
                 }
+
+                if (reservation.CompletedAt != null)
+                {
+                    return Conflict("Completed reservation can not be cancelled");
+                }
             
                 _reservationsService.Delete(reservation);
             }
@@ -200,7 +205,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("{id:int}/reservations")]
+        [HttpGet("{id:int}/reservations")]
         public ActionResult<IEnumerable<ReservationDto>> GetAllReservations(int id)
         {
             var offer = _offersService.FindById(id);
