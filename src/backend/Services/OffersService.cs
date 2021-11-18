@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.DTO.Offers;
+using backend.Exceptions;
 using backend.Models;
 using backend.Repositories;
 
@@ -23,17 +24,23 @@ namespace backend.Services
 
         public Offer FindById(int id)
         {
-            return _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
+            var offer = _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
+
+            if (offer == null)
+            {
+                throw new EntityNotFoundException(nameof(offer), id);
+            }
+
+            return offer;
         }
 
-        public IEnumerable<Offer> FindAll()
+        public IEnumerable<Offer> FindAll(bool includeExpired)
         {
-            return _offersRepository.FindAll().ToList();
-        }
+            var offers = includeExpired
+                ? _offersRepository.FindAll()
+                : _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now);
 
-        public IEnumerable<Offer> FindAllActiveOffers()
-        {
-            return _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now).ToList();
+            return offers.ToList();
         }
 
         public void UpdateOffer(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
@@ -43,7 +50,11 @@ namespace backend.Services
 
         public void Delete(Offer offer)
         {
+            var imagePath = offer.Food.ImagePath;
+            
             _offersRepository.Delete(offer);
+            
+            FileUploadService.DeleteFile(imagePath);
         }
     }
 
