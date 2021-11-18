@@ -119,7 +119,7 @@ namespace backend.Controllers
 
         [Authorize]
         [HttpPost("{id:int}/reservation")] // POST "api/offers/<number>/reservation
-        public ActionResult<ReservationDto> CreateReservation(int id, ReservationDto reservationDto)
+        public ActionResult<ReservationDto> CreateReservation(int id, CreateReservationDto createReservationDto)
         {
             var offer = _offersService.FindById(id);
 
@@ -141,7 +141,7 @@ namespace backend.Controllers
                     return Conflict("User already has an active reservation for this offer");
                 }
 
-                if (reservationDto.Quantity > offer.AvailableQuantity)
+                if (createReservationDto.Quantity > offer.AvailableQuantity)
                 {
                     return Conflict("Requested quantity is larger than available");
                 }
@@ -151,7 +151,7 @@ namespace backend.Controllers
                     Offer = offer,
                     User = user,
                     CreatedAt = DateTime.Now,
-                    Quantity = reservationDto.Quantity
+                    Quantity = createReservationDto.Quantity
                 };
             
                 _reservationsService.Save(reservation);
@@ -197,6 +197,22 @@ namespace backend.Controllers
             }
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("{id:int}/reservations")]
+        public ActionResult<IEnumerable<ReservationDto>> GetAllReservations(int id)
+        {
+            var offer = _offersService.FindById(id);
+            
+            var user = (User) HttpContext.Items["user"];
+
+            if (offer.Giver != user)
+            {
+                return Conflict("Reservations can only be listed by the owner");
+            }
+
+            return Ok(offer.Reservations.Select(_mapper.Map<ReservationDto>));
         }
     }
 }

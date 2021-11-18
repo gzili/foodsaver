@@ -1,6 +1,6 @@
 namespace backend.DTO.Reservation
 {
-    public class ReservationDto
+    public class CreateReservationDto
     {
         public decimal Quantity { get; set; }
     }

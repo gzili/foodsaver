@@ -9,6 +9,7 @@ namespace backend.Models
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
         [Required]
         public virtual User User { get; set; }
         [Required]

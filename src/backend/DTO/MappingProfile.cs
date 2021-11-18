@@ -24,6 +24,7 @@ namespace backend.DTO
             CreateMap<Offer, CreateOfferDto>()
                 .ReverseMap();
 
+            CreateMap<Models.Reservation, CreateReservationDto>();
             CreateMap<Models.Reservation, ReservationDto>();
         }
     }
