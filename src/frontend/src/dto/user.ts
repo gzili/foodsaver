@@ -17,5 +17,6 @@ export interface UserDto {
 }
 
 export interface ICreateUserDto extends Omit<UserDto, 'id' | 'avatarPath'> {
+  avatar?: File,
   password: string,
 }

@@ -6,6 +6,7 @@ export interface UserTypeData {
 
 export interface PublicProfileData {
   username: string,
+  avatar: File[],
   street: string,
   city: string,
 }

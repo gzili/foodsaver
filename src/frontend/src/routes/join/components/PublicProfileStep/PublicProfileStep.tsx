@@ -3,13 +3,14 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Resolver, useForm } from 'react-hook-form';
 
-import { FieldWithController, Input } from 'components/form';
+import { FieldWithController, FilePicker, Input } from 'components';
 
 import { IStep, PublicProfileData } from '../interfaces';
 import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } from '../layout';
 
 const publicProfileSchema = yup.object().shape({
   username: yup.string().required('Please choose a display name'),
+  avatar: yup.array().max(1),
   street: yup.string().required('Please provide your street address'),
   city: yup.string().required('Please provide the city / region'),
 });
@@ -28,6 +29,7 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
   const { control, getValues, handleSubmit } = useForm<PublicProfileData>({
     defaultValues: {
       username: data.username ?? '',
+      avatar: data.avatar ?? [],
       street: data.street ?? '',
       city: data.city ?? '',
     },
@@ -46,6 +48,9 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
           <VStack spacing={4}>
             <FieldWithController control={control} name="username" label="Display name">
               {field => <Input {...field} />}
+            </FieldWithController>
+            <FieldWithController control={control} name="avatar" label="Profile picture / logo">
+              {(field, state) => <FilePicker accept="image/*" {...field} {...state} />}
             </FieldWithController>
             <FieldWithController control={control} name="street" label="Street address">
               {field => <Input {...field} />}
