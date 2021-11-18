@@ -43,6 +43,12 @@ namespace backend.Repositories
             _db.Entry(offer.Food).CurrentValues.SetValues(foodDto);
             _db.SaveChanges();
         }
+
+        public void Delete(Offer offer)
+        {
+            _db.Offers.Remove(offer);
+            _db.SaveChanges();
+        }
         
     }
 }

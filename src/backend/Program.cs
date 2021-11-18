@@ -1,5 +1,6 @@
 using System;
 using backend.Data;
+using backend.Hubs;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,13 +20,15 @@ namespace backend
                 
                 try
                 {
+                    services.GetRequiredService<HubInvoker>(); // force singleton creation
+                    
                     var context = services.GetRequiredService<AppDbContext>();
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
+                    logger.LogError(ex, "An error occurred while seeding the database");
                 }
             }
             
