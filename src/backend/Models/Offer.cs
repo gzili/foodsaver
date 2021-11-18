@@ -14,7 +14,6 @@ namespace backend.Models
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
         
-        public int GiverId { get; set; }
         public virtual User Giver { get; set; }
         public virtual Food Food { get; set; }
         public virtual Address Address { get; set; }
