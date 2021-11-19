@@ -1,83 +1,61 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using backend.DTO.Offers;
+using backend.Exceptions;
 using backend.Models;
 using backend.Repositories;
 
 namespace backend.Services
 {
-    public class OffersService : IService<Offer>
+    public class OffersService
     {
         private readonly OffersRepository _offersRepository;
-        
-        private readonly FoodService _foodService;
 
-        public OffersService(OffersRepository offersRepository, FoodService foodService)
+        public OffersService(OffersRepository offersRepository)
         {
             _offersRepository = offersRepository;
-            _foodService = foodService;
-        }
-
-        public Offer GetById(int id)
-        {
-            return _offersRepository.GetById(id);
-        }
-
-        public IEnumerable<Offer> GetByUserId(int id)
-        {
-            return _offersRepository[id];
-        }
-
-        public List<Offer> GetAll()
-        {
-            
-            return _offersRepository.GetAll();
-        }
-
-        public void Save(Offer offer)
-        {
-            _offersRepository.Save(offer);
         }
         
-        public void SaveDto(OfferCreateDto offerCreateDto, User user)
+        public void Create(Offer offer)
         {
-            _offersRepository.Save(GetOfferFromCreateDto(offerCreateDto, user));
+            _offersRepository.Create(offer);
         }
 
-        public List<Offer> GetAllActiveOffers()
+        public Offer FindById(int id)
         {
-            var list = new List<Offer>();
-            foreach (var offer in GetAll())
-                if (offer.ExpirationDate > DateTime.Now)
-                    list.Add(offer);
+            var offer = _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
 
-            return list;
-        }
-
-        private Offer GetOfferFromCreateDto(OfferCreateDto offerCreateDto, User user) => new(GetAll().Count + 1)
-        {
-            Food = _foodService.GetFromDto(offerCreateDto),
-            CreationDate = DateTime.Now,
-            Description = offerCreateDto.Description,
-            ExpirationDate = offerCreateDto.ExpirationDate,
-            Quantity = offerCreateDto.Quantity,
-            Giver = user
-        };
-
-        public OfferDto ToDto(Offer offer) => new()
-        {
-            Id = offer.Id,
-            Food = offer.Food,
-            CreationDate = offer.CreationDate,
-            Description = offer.Description,
-            ExpirationDate = offer.ExpirationDate,
-            Quantity = offer.Quantity,
-            Giver = new GiverDto
+            if (offer == null)
             {
-                Id = offer.Giver.Id,
-                Address = offer.Giver.Address,
-                Name = offer.Giver.Name
+                throw new EntityNotFoundException(nameof(offer), id);
             }
-        };
+
+            return offer;
+        }
+
+        public IEnumerable<Offer> FindAll(bool includeExpired)
+        {
+            var offers = includeExpired
+                ? _offersRepository.FindAll()
+                : _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now);
+
+            return offers.ToList();
+        }
+
+        public void UpdateOffer(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
+        {
+            _offersRepository.UpdateOffer(offer, updateOfferDto, foodDto);
+        }
+
+        public void Delete(Offer offer)
+        {
+            var imagePath = offer.Food.ImagePath;
+            
+            _offersRepository.Delete(offer);
+            
+            FileUploadService.DeleteFile(imagePath);
+        }
     }
+
 }

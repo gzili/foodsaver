@@ -3,12 +3,13 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { FieldWithController, Input } from 'components';
-import { useAuth, User } from 'contexts/auth.context';
+import { useAuth } from 'contexts/auth.context';
 import { Redirect } from 'react-router';
 import api from 'contexts/api.context';
 import { useMutation } from 'react-query';
 import { HTTPError } from 'ky';
 import { useState } from 'react';
+import { UserDto } from 'dto/user';
 
 interface FormValues {
   email: string,
@@ -28,7 +29,7 @@ const defaultValues = {
 }
 
 function loginUser(data: FormValues) {
-  return api.post('user/login', { json: data }).json<User>();
+  return api.post('user/login', { json: data }).json<UserDto>();
 }
 
 function Login() {

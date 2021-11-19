@@ -1,72 +1,34 @@
-﻿using System.Collections.Generic;
-using backend.DTO.Users;
+﻿using System.Linq;
 using backend.Models;
 using backend.Repositories;
 using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Services
 {
-    public class UserService : IService<User>
+    public class UsersService
     {
-        private readonly UserRepository _userRepository;
+        private readonly UsersRepository _usersRepository;
 
-        public UserService()
+        public UsersService(UsersRepository usersRepository)
         {
-            _userRepository = new UserRepository();
-        }
-
-        public User GetById(int id)
-        {
-            return _userRepository.GetById(id);
-        }
-
-        public List<User> GetAll()
-        {
-            return _userRepository.GetAll();
-        }
-
-        public void Save(User user)
-        {
-            _userRepository.Save(user);
-        }
-
-        public User CheckLogin(LoginUserDto user)
-        {
-            var dbUser = _userRepository.GetByEmail(user.Email);
-            return dbUser != null && BC.Verify(user.Password, dbUser.Password) ? dbUser : null;
-        }
-
-        private bool IsValidEmailRegistration(string email)
-        {
-            return _userRepository.GetByEmail(email) == null;
-        }
-
-        public bool IsValidRegister(CreateUserDto createUserDto)
-        {
-            return IsValidEmailRegistration(createUserDto.Email);
-        }
-        public string GetFirstValidationError(CreateUserDto createUserDto)
-        {
-            if (!ValidationService.IsEmail(createUserDto.Email))
-                return "This email does not conform to our company standards";
-            
-            if (string.IsNullOrWhiteSpace(createUserDto.Password))
-                return "Password must be non-blank";
-            
-            return null;
+            _usersRepository = usersRepository;
         }
         
-        public User FromCreateDto(CreateUserDto createUserDto)
+        public void Create(User user)
         {
-            return new User(
-                // Real database will automatically assign a user id, this is temporary
-                GetAll().Count + 1,
-                createUserDto.Email,
-                createUserDto.Name,
-                BC.HashPassword(createUserDto.Password),
-                createUserDto.Address,
-                createUserDto.UserType
-            );
+            user.Password = BC.HashPassword(user.Password);
+            _usersRepository.Create(user);
+        }
+
+        public User GetByEmail(string email)
+        {
+            return _usersRepository.FindByCondition(u => u.Email == email).FirstOrDefault();
+        }
+
+        public User IsValidLogin(string email, string password)
+        {
+            var user = GetByEmail(email);
+            return user != null && BC.Verify(password, user.Password) ? user : null;
         }
     }
 }

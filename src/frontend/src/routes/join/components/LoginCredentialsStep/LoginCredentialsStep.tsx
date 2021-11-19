@@ -15,15 +15,25 @@ import { StepContainer, StepContent, StepHeader, BottomBar, ProgressIndicator } 
 import { useState } from 'react';
 
 const publicProfileSchema = yup.object().shape({
-  email: yup.string().email('Please provide a valid email').required(),
-  password: yup.string().min(6, 'Password must be at least 6 characters long'),
+  email: yup.string().email('Please provide a valid email').required('Please provide your email'),
+  password: yup.string().required('Please choose a password'),
   confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match'),
 });
 
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
 
 function registerUser(data: ICreateUserDto) {
-  return api.post('user/register', { json: data }).json<any>();
+  const fd = new FormData();
+
+  fd.append('userType', data.userType.toString());
+  fd.append('username', data.username);
+  data.avatar && fd.append('avatar', data.avatar);
+  fd.append('addressStreet', data.address.street);
+  fd.append('addressCity', data.address.city);
+  fd.append('email', data.email);
+  fd.append('password', data.password);
+
+  return api.post('user/register', { body: fd });
 }
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
@@ -53,7 +63,8 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
     onError: async (e: HTTPError) => {
       if (e.response) {
         const message = await e.response.json();
-        setError(message);
+        console.log(message);
+        setError(message?.title ?? String(message));
       } else {
         setError(e.message);
       }
@@ -61,27 +72,16 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   });
 
   const handleNext = (values: LoginCredentialsData) => {
-    const {
-      userType: accountType,
-      name,
-      street,
-      city
-    } = data as Required<typeof data>;
-
-    const {
-      email,
-      password
-    } = values;
+    const { avatar, street, city, ...restData } = data as Required<typeof data>;
 
     mutate({
-      userType: accountType,
-      name,
+      avatar: avatar[0],
       address: {
-        streetAddress: street,
+        street,
         city,
       },
-      email,
-      password
+      ...restData,
+      ...values,
     });
   }
 

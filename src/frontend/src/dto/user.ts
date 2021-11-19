@@ -1,16 +1,22 @@
 export enum UserType {
   Individual,
   Business,
-  Nonprofit
+  Charity
 }
 
-export interface ICreateUserDto {
+export interface UserDto {
+  id: number,
   userType: UserType,
-  name: string,
+  username: string,
+  avatarPath: string | null,
   address: {
-    streetAddress: string,
+    street: string,
     city: string,
   },
   email: string,
-  password: string
+}
+
+export interface ICreateUserDto extends Omit<UserDto, 'id' | 'avatarPath'> {
+  avatar?: File,
+  password: string,
 }

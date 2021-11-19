@@ -1,51 +1,54 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Linq.Expressions;
+using backend.Data;
+using backend.DTO.Offers;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class OffersRepository : IRepository<Offer>
+    public class OffersRepository : IRepositoryBase<Offer>
     {
-        private readonly AppDbContext _appDbContext;
-        public Dictionary<int, IEnumerable<Offer>> OffersByUser { get; private set; }
+        private readonly AppDbContext _db;
+
+        public OffersRepository(AppDbContext db)
+        {
+            _db = db;
+        }
+
+        public void Create(Offer offer)
+        {
+            _db.Offers.Add(offer);
+            _db.SaveChanges();
+        }
+
+        public IQueryable<Offer> FindAll()
+        {
+            return _db.Offers
+                .Include(o => o.Address)
+                .Include(o => o.Food)
+                .Include(o => o.Giver)
+                .ThenInclude(u => u.Address);
+        }
+
+        public IQueryable<Offer> FindByCondition(Expression<Func<Offer, bool>> expression)
+        {
+            return FindAll().Where(expression);
+        }
+
+        public void UpdateOffer (Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
+        {
+            _db.Entry(offer).CurrentValues.SetValues(updateOfferDto);
+            _db.Entry(offer.Food).CurrentValues.SetValues(foodDto);
+            _db.SaveChanges();
+        }
+
+        public void Delete(Offer offer)
+        {
+            _db.Offers.Remove(offer);
+            _db.SaveChanges();
+        }
         
-        public OffersRepository()
-        {
-            _appDbContext = AppDbContext.GetObject();
-            GroupOffersByUser();
-        }
-
-        public IEnumerable<Offer> this[int id] => OffersByUser[id];
-
-        private void GroupOffersByUser()
-        {
-            var byUser = _appDbContext.DbLists.Users.GroupJoin(
-                _appDbContext.DbLists.Offers,
-                user => user,
-                offer => offer.Giver,
-                (user, offerCollection) =>
-                    new
-                    {
-                        UserId = user.Id,
-                        Offers = offerCollection
-                    }).ToDictionary(o => o.UserId, o => o.Offers);
-            OffersByUser = byUser;
-        }
-
-        public void Save(Offer newOffer)
-        {
-            _appDbContext.DbLists.Offers.Add(newOffer);
-            GroupOffersByUser();
-        }
-
-        public Offer GetById(int id)
-        {
-            return _appDbContext.DbLists.Offers.Find(x => x.Id == id);
-        }
-
-        public List<Offer> GetAll()
-        {
-            return (List<Offer>) _appDbContext["offers"];
-        }
     }
 }

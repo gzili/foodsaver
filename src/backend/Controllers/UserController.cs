@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
 using backend.DTO.Offers;
 using backend.DTO.Users;
 using backend.Models;
@@ -17,45 +19,49 @@ namespace backend.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly OffersService _offersService;
-        private readonly UserService _userService;
+        private readonly IMapper _mapper;
+        private readonly UsersService _usersService;
 
-        public UserController(OffersService offersService, UserService userService)
+        public UserController(IMapper mapper, UsersService usersService)
         {
-            _offersService = offersService;
-            _userService = userService;
+            _mapper = mapper;
+            _usersService = usersService;
         }
 
         [HttpPost("register")] // "api/user/register"
-        public ActionResult<User> Register(CreateUserDto createUserDto)
+        public async Task<ActionResult<UserDto>> RegisterAsync([FromForm] CreateUserDto createUserDto)
         {
-            var validationError = _userService.GetFirstValidationError(createUserDto);
-            if (validationError != null) return BadRequest(validationError);
+            if (_usersService.GetByEmail(createUserDto.Email) != null)
+                return Conflict("User with the same email already exists");
+
+            var avatarPath = await FileUploadService.UploadFormFileAsync(createUserDto.Avatar, "images");
+
+            var user = _mapper.Map<User>(createUserDto);
+            user.AvatarPath = avatarPath;
+            _usersService.Create(user);
             
-            if (!_userService.IsValidRegister(createUserDto)) return Conflict("User with the same email already exists");
-            
-            var user = _userService.FromCreateDto(createUserDto);
-            _userService.Save(user);
-            
-            return Ok(user);
+            return _mapper.Map<UserDto>(user);
         }
         
-        [HttpPost("login")] // "api/user/login"
-        public ActionResult<User> Login(LoginUserDto loginUserDto)
+        [HttpPost("login")] // POST "api/user/login"
+        public ActionResult<UserDto> Login(LoginUserDto loginUserDto)
         {
-            var user = _userService.CheckLogin(loginUserDto);
+            if (HttpContext.User.Identity.IsAuthenticated)
+                return Conflict("User is already authenticated");
+            
+            var user = _usersService.IsValidLogin(loginUserDto.Email, loginUserDto.Password);
             if (user == null) return Unauthorized();
             
-            var claims = new List<Claim> { new("id", user.Id.ToString()) };
+            var claims = new List<Claim> { new(ClaimTypes.Name, user.Id.ToString())};
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
-                CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
+                CookieAuthenticationDefaults.AuthenticationScheme)));
             
-            return Ok(user);
+            return _mapper.Map<UserDto>(user);
         }
 
         [Authorize]
-        [HttpPost("logout")] // "api/user/logout"
-        public ActionResult LogOut()
+        [HttpPost("logout")] // POST "api/user/logout"
+        public IActionResult LogOut()
         {
             HttpContext.SignOutAsync();
             return Ok();
@@ -63,21 +69,18 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpGet]
-        public ActionResult<User> Get() // "api/user"
+        public ActionResult<UserDto> Get() // GET "api/user"
         {
-            var userId = int.Parse(HttpContext.User.Identity.Name);
-            var user = _userService.GetById(userId);
-            return Ok(user);
+            var user = (User) HttpContext.Items["user"];
+            return _mapper.Map<UserDto>(user);
         }
         
         [Authorize]
-        [HttpGet("offers")] // "api/user/offers"
-        public IEnumerable<OfferDto> FindByUser()
+        [HttpGet("offers")] // GET "api/user/offers"
+        public IEnumerable<OfferDto> GetUserOffers()
         {
-            var userOffers = _offersService.GetByUserId(int.Parse(HttpContext.User.Identity.Name));
-            return
-                (from userOffer in userOffers
-                    select _offersService.ToDto(userOffer)).ToList();
+            var user = (User) HttpContext.Items["user"];
+            return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
         }
     }
 }

@@ -1,14 +1,16 @@
 export interface IOfferDto {
   id: number,
   quantity: number,
+  availableQuantity: number,
   description: string,
-  creationDate: string,
-  expirationDate: string,
+  createdAt: string,
+  expiresAt: string,
   giver: {
-    name: string,
-    avatar: string,
+    id: number,
+    username: string,
+    avatarPath: string | null,
     address: {
-      streetAddress: string,
+      street: string,
       city: string,
     }
   },

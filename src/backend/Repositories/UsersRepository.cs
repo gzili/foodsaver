@@ -1,35 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using backend.Data;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class UserRepository : IRepository<User>
+    public class UsersRepository: IRepositoryBase<User>
     {
-        private readonly AppDbContext _appContext;
+        private readonly AppDbContext _db;
 
-        public UserRepository()
+        public UsersRepository(AppDbContext db)
         {
-            _appContext = AppDbContext.GetObject();
+            _db = db;
         }
 
-        public void Save(User user)
+        public void Create(User user)
         {
-            _appContext.DbLists.Users.Add(user);
+            _db.Users.Add(user);
+            _db.SaveChanges();
         }
 
-        public List<User> GetAll()
+        public IQueryable<User> FindAll()
         {
-            return _appContext.DbLists.Users;
+            return _db.Users.Include(u => u.Address);
         }
 
-        public User GetById(int id)
+        public IQueryable<User> FindByCondition(Expression<Func<User, bool>> expression)
         {
-            return _appContext.DbLists.Users.Find(x => x.Id == id);
-        }
-
-        public User GetByEmail(string email)
-        {
-            return _appContext.DbLists.Users.Find(x => x.Email.Equals(email));
+            return FindAll().Where(expression);
         }
     }
 }

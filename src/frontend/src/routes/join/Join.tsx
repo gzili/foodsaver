@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { useAuth } from 'contexts/auth.context';
 
 import { UserTypeData, PublicProfileData, LoginCredentialsData } from './components/interfaces';
-import AccountTypeStep from './components/AccountTypeStep';
+import AccountTypeStep from './components/UserTypeStep';
 import PublicProfileStep from './components/PublicProfileStep';
 import LoginCredentialsStep from './components/LoginCredentialsStep';
 

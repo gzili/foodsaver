@@ -3,7 +3,7 @@
     public enum UserType
     {
         Individual,
-        Enterprise,
+        Business,
         Charity
     }
 }

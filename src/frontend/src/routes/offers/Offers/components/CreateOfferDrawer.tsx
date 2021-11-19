@@ -1,8 +1,8 @@
-import { Button, Modal, ModalOverlay, ModalBody, ModalCloseButton, ModalHeader, ModalContent, ModalFooter, Textarea, VStack } from '@chakra-ui/react';
+import { Button, Modal, ModalOverlay, ModalBody, ModalCloseButton, ModalHeader, ModalContent, ModalFooter, Select, Textarea, VStack } from '@chakra-ui/react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { DatePickerInput, FieldWithController, FilePicker, Input, TextAutocomplete } from 'components';
+import { DatePickerInput, FieldWithController, FilePicker, Input } from 'components';
 import api from 'contexts/api.context';
 import { useMutation, useQueryClient } from 'react-query';
 import { endOfDay } from 'date-fns';
@@ -32,15 +32,6 @@ const validationSchema = yup.object({
 
 const resolver = yupResolver(validationSchema) as any;
 
-const units = [
-  'kg',
-  'g',
-  'l',
-  'ml',
-  'pc',
-  'pcs',
-].sort();
-
 function createOffer(data: FormData) {
   return api.post('offers', { body: data });
 }
@@ -52,7 +43,7 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
       foodName: '',
       foodPhoto: [],
       offerQuantity: '',
-      foodUnit: '',
+      foodUnit: 'pcs',
       offerExpirationDate: null,
       offerDescription: '',
     }
@@ -70,14 +61,15 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
   });
 
   const handleSubmit = (data: FormValues) => {
-    console.log(data);
     const formData = new FormData();
+
     formData.append('foodName', data.foodName);
     formData.append('foodPhoto', data.foodPhoto![0]);
     formData.append('foodUnit', data.foodUnit);
     formData.append('quantity', data.offerQuantity.toString());
-    formData.append('expirationDate', endOfDay(data.offerExpirationDate!).toJSON());
+    formData.append('expiresAt', endOfDay(data.offerExpirationDate!).toJSON());
     formData.append('description', data.offerDescription);
+
     mutate(formData);
   };
 
@@ -96,12 +88,30 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
               {props => <Input {...props} />}
             </FieldWithController>
             <FieldWithController control={control} name="foodUnit" label="Measurement unit">
-              {(props) => <TextAutocomplete items={units} {...props} />}
+              {(props) => (
+                <Select
+                  {...props}
+                  borderWidth="2px"
+                  borderColor="gray.300"
+                  _hover={{
+                    borderColor: 'gray.400',
+                  }}
+                  _focus={{
+                    borderColor: 'brand.500',
+                  }}
+                >
+                  <option value="g">g (grams)</option>
+                  <option value="kg">kg (kilograms)</option>
+                  <option value="l">l (litres)</option>
+                  <option value="ml">ml (mililitres)</option>
+                  <option value="pcs">pcs (pieces)</option>
+                </Select>
+              )}
             </FieldWithController>
             <FieldWithController control={control} name="offerExpirationDate" label="Expiration date">
               {(props) => <DatePickerInput {...props} disablePast weekStartsOnMonday />}
             </FieldWithController>
-            <FieldWithController control={control} name="offerDescription" label="Description" optional>
+            <FieldWithController control={control} name="offerDescription" label="Description">
               {props => (
                 <Textarea
                   {...props}

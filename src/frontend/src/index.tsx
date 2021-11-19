@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from 'contexts/auth.context';
+import { HubProvider } from 'contexts/hubContext';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -27,7 +28,9 @@ ReactDOM.render(
         <BrowserRouter>
           <AuthProvider>
             <DndProvider backend={HTML5Backend}>
-              <App />
+              <HubProvider>
+                <App />
+              </HubProvider>
             </DndProvider>
           </AuthProvider>
         </BrowserRouter>

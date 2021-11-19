@@ -5,12 +5,14 @@ import { Avatar, Box, Flex, Heading, IconButton, useDisclosure, VStack } from '@
 import { AddIcon } from '@chakra-ui/icons';
 import { useAuth } from 'contexts/auth.context';
 
-import { FaIcon, faMapMarkerAlt, faUser } from 'components/core';
+import { FaIcon, faMapMarkerAlt } from 'components/core';
 import { LoadingOverlay } from 'components/layout';
 import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 import { IOfferDto } from 'dto/offer';
 import { UserType } from 'contexts/auth.context';
+import { useHub } from 'contexts/hubContext';
+import { useCallback, useEffect } from 'react';
 
 interface IOffersListItem {
   item: IOfferDto,
@@ -19,7 +21,7 @@ interface IOffersListItem {
 function OffersListItem(props: IOffersListItem) {
   const { item } = props;
 
-  const toNow = formatDistanceToNowStrict(parseJSON(item.creationDate), { addSuffix: true });
+  const toNow = formatDistanceToNowStrict(parseJSON(item.createdAt), { addSuffix: true });
 
   return (
     <Box
@@ -36,8 +38,8 @@ function OffersListItem(props: IOffersListItem) {
       <Flex direction="column" justify="space-between" pos="absolute" inset={0} p={4} bg="rgba(0, 0, 0, 0.4)" color="white">
         <Box>
           <Flex align="center">
-            <Avatar size="sm" name={item.giver.name} /*src={item.user.avatar}*/ icon={<FaIcon icon={faUser} />} mr={2} />
-            {item.giver.name}
+            <Avatar size="sm" name={item.giver.username} src={item.giver.avatarPath ?? undefined} mr={2} />
+            {item.giver.username}
           </Flex>
         </Box>
         <Box>
@@ -45,7 +47,7 @@ function OffersListItem(props: IOffersListItem) {
           <Box fontWeight="bold" fontSize="lg">{item.food.name}</Box>
           <Flex fontSize="sm" align="center">
             <Box as={FaIcon} icon={faMapMarkerAlt} mr={2} />
-            {[item.giver.address.streetAddress, item.giver.address.city].join(', ')}
+            {[item.giver.address.street, item.giver.address.city].join(', ')}
           </Flex>
         </Box>
       </Flex>
@@ -54,7 +56,7 @@ function OffersListItem(props: IOffersListItem) {
 }
 
 async function fetchOffers(): Promise<IOfferDto[]> {
-  const res = await fetch('api/offers?showExpired');
+  const res = await fetch('api/offers');
 
   if (!res.ok) {
     throw new Error(`Unable to fetch offers: server responded with status ${res.status} ${res.statusText}`)
@@ -64,7 +66,17 @@ async function fetchOffers(): Promise<IOfferDto[]> {
 }
 
 function OffersList() {
-  const { isLoading, isError, data, error } = useQuery('offers', fetchOffers);
+  const { isLoading, isError, data, error, refetch } = useQuery('offers', fetchOffers);
+
+  const { connection } = useHub();
+
+  const handleOffersChange = useCallback(() => refetch(), [refetch]);
+
+  useEffect(() => {
+    connection.on("OffersChanged", handleOffersChange);
+
+    return () => connection.off("OffersChanged", handleOffersChange);
+  }, [handleOffersChange, connection]);
 
   if (isLoading) {
     return <LoadingOverlay message="Loading offers" />
@@ -77,14 +89,14 @@ function OffersList() {
   if (data) {
     return (
       <VStack spacing={2} pb="80px">
-        {data.sort((a, b) => compareDesc(parseJSON(a.creationDate), parseJSON(b.creationDate))).map(offer => (
+        {data.sort((a, b) => compareDesc(parseJSON(a.createdAt), parseJSON(b.createdAt))).map(offer => (
           <OffersListItem key={offer.id} item={offer} />
         ))}
       </VStack>
     );
-  } else {
-    return null;
   }
+
+  return null;
 }
 
 export default function Offers() {
@@ -95,7 +107,7 @@ export default function Offers() {
     <Box mt={10} pt={2} px={4}>
       <Heading as="h1" mb={2}>Offers</Heading>
       <OffersList />
-      {(user && user.userType !== UserType.Nonprofit) && (
+      {(user && user.userType !== UserType.Charity) && (
         <>
           <IconButton
             icon={<AddIcon />}
