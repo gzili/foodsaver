@@ -49,7 +49,7 @@ export default function PublicProfileFlow(props: IStep<PublicProfileData>) {
             <FieldWithController control={control} name="username" label="Display name">
               {field => <Input {...field} />}
             </FieldWithController>
-            <FieldWithController control={control} name="avatar" label="Profile picture / logo">
+            <FieldWithController control={control} name="avatar" label="Profile picture / logo" optional>
               {(field, state) => <FilePicker accept="image/*" {...field} {...state} />}
             </FieldWithController>
             <FieldWithController control={control} name="street" label="Street address">

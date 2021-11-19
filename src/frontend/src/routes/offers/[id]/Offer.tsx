@@ -76,7 +76,7 @@ export default function Offer() {
     return <Redirect to="/offers" />;
   }
 
-  const mapsApiKey = undefined;//process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+  const mapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
   const encodedAddress = encodeURIComponent([offer.giver.address.street, offer.giver.address.city].join(', '));
   const createdToNow = formatDistanceToNowStrict(parseJSON(offer.createdAt), { addSuffix: true });
   const [expNum, expUnit] = formatDistanceToNowStrict(parseJSON(offer.expiresAt)).split(' ');
@@ -101,7 +101,7 @@ export default function Offer() {
             </Flex>
           </Box>
           <Flex align="center">
-            <Avatar size="sm" name={offer.giver.username} />
+            <Avatar src={offer.giver.avatarPath ? '/' + offer.giver.avatarPath : undefined} size="sm" name={offer.giver.username} />
             <Box ml={2}>{offer.giver.username}</Box>
           </Flex>
           <Box>

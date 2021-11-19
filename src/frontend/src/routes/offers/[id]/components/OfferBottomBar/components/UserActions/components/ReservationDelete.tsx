@@ -53,7 +53,7 @@ export function ReservationDelete({ reservation }: { reservation: ReservationDto
   return (
     <>
       <ReservationDeletePrompt isOpen={isPromptOpen} onClose={onClose} quantity={reservation.quantity} />
-      <Button w="100%" onClick={onOpen}>Cancel reservation ({reservation.quantity} {offer.food.unit})</Button>
+      <Button w="100%" onClick={onOpen} isDisabled={reservation.completedAt !== null}>Cancel reservation ({reservation.quantity} {offer.food.unit})</Button>
     </>
   );
 }

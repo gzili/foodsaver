@@ -92,7 +92,10 @@ function ReservationsListItem({ reservation }: { reservation: ReservationDto }) 
 
   return (
     <Grid mt={2} templateColumns="auto 1fr auto" gap={4} alignItems="center" borderRadius="md">
-      <Avatar name={reservation.user.username} />
+      <Avatar
+        name={reservation.user.username}
+        src={reservation.user.avatarPath ? '/' + reservation.user.avatarPath : undefined}
+      />
       <Box>
         <Box>{reservation.user.username}</Box>
         <Flex align="flex-end">

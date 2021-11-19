@@ -8,7 +8,7 @@ export interface UserDto {
   id: number,
   userType: UserType,
   username: string,
-  avatarPath: string,
+  avatarPath: string | null,
   address: {
     street: string,
     city: string,
