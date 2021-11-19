@@ -20,10 +20,10 @@ Build a React powered SPA (Single Page Application), using ASP.NET framework as 
 
 ### Second Release
 
-- [ ] Offer reservation for pickup
-- [ ] Pickup status tracking on both ends
-- [ ] Display of pickup location as a point on the map
-- [ ] Data persistence in a database
+- [x] Offer reservation for pickup
+- [x] Pickup status tracking
+- [x] Display of pickup location as a point on the map
+- [x] Data persistence in a database
 
 ### Third Release
 
