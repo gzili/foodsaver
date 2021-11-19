@@ -23,7 +23,17 @@ const publicProfileSchema = yup.object().shape({
 const resolver: Resolver<LoginCredentialsData> = yupResolver(publicProfileSchema) as any;
 
 function registerUser(data: ICreateUserDto) {
-  return api.post('user/register', { json: data }).json<any>();
+  const fd = new FormData();
+
+  fd.append('userType', data.userType.toString());
+  fd.append('username', data.username);
+  data.avatar && fd.append('avatar', data.avatar);
+  fd.append('addressStreet', data.address.street);
+  fd.append('addressCity', data.address.city);
+  fd.append('email', data.email);
+  fd.append('password', data.password);
+
+  return api.post('user/register', { body: fd });
 }
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
@@ -62,27 +72,16 @@ export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {
   });
 
   const handleNext = (values: LoginCredentialsData) => {
-    const {
-      userType,
-      username,
-      street,
-      city
-    } = data as Required<typeof data>;
-
-    const {
-      email,
-      password
-    } = values;
+    const { avatar, street, city, ...restData } = data as Required<typeof data>;
 
     mutate({
-      userType,
-      username,
+      avatar: avatar[0],
       address: {
         street,
         city,
       },
-      email,
-      password
+      ...restData,
+      ...values,
     });
   }
 

@@ -52,9 +52,9 @@ namespace backend.Controllers
             var user = _usersService.IsValidLogin(loginUserDto.Email, loginUserDto.Password);
             if (user == null) return Unauthorized();
             
-            var claims = new List<Claim> { new("id", user.Id.ToString()) };
+            var claims = new List<Claim> { new(ClaimTypes.Name, user.Id.ToString())};
             HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims,
-                CookieAuthenticationDefaults.AuthenticationScheme, "id", "")));
+                CookieAuthenticationDefaults.AuthenticationScheme)));
             
             return _mapper.Map<UserDto>(user);
         }

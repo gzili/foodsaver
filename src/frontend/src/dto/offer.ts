@@ -8,6 +8,7 @@ export interface IOfferDto {
   giver: {
     id: number,
     username: string,
+    avatarPath: string | null,
     address: {
       street: string,
       city: string,

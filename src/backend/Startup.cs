@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,11 +43,10 @@ namespace backend
             
             services.AddAutoMapper(typeof(Startup));
             services.AddSignalR();
+            services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
             services.AddScoped<OffersService>();
             services.AddScoped<OffersRepository>();
-            services.AddScoped<PickupsService>();
-            services.AddScoped<PickupsRepository>();
             services.AddScoped<ReservationsService>();
             services.AddScoped<ReservationsRepository>();
             services.AddScoped<UsersService>();

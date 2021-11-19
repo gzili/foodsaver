@@ -1,7 +1,7 @@
-import { HamburgerIcon, AddIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { Flex, IconButton, Box, Menu, MenuButton, Avatar, MenuList, MenuItem, MenuDivider, Button } from '@chakra-ui/react';
 import { FaIcon, faHandHoldingHeart, faSignOutAlt } from 'components';
-import { useAuth, UserType } from 'contexts/auth.context';
+import { useAuth } from 'contexts/auth.context';
 import { Link } from 'react-router-dom';
 
 export default function AppBar() {
@@ -23,18 +23,19 @@ export default function AppBar() {
       borderBottomColor="gray.100"
     >
       <IconButton h={8} minW={8} variant="ghost" icon={<HamburgerIcon />} aria-label="Open menu" />
-      <Box fontSize="xl" fontWeight="bold">
-        food
-        <Box as="span" color="brand.500">saver</Box>
-      </Box>
+      <Link to="/">
+        <Box fontSize="xl" fontWeight="bold">
+          food
+          <Box as="span" color="brand.500">saver</Box>
+        </Box>
+      </Link>
       {user ? (
         <Menu autoSelect={false} gutter={16} placement="bottom-end">
           <MenuButton>
-            <Avatar name={user.username} size="xs" />
+            <Avatar name={user.username} src={user.avatarPath ?? undefined} size="xs" />
           </MenuButton>
           <MenuList>
             <MenuItem icon={<FaIcon icon={faHandHoldingHeart} />}>My offers</MenuItem>
-            {(user.userType !== UserType.Charity) && <MenuItem icon={<AddIcon />}>New offer</MenuItem>}
             <MenuDivider />
             <MenuItem icon={<FaIcon icon={faSignOutAlt} />} onClick={signOut}>Sign out</MenuItem>
           </MenuList>

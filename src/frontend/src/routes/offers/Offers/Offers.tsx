@@ -5,7 +5,7 @@ import { Avatar, Box, Flex, Heading, IconButton, useDisclosure, VStack } from '@
 import { AddIcon } from '@chakra-ui/icons';
 import { useAuth } from 'contexts/auth.context';
 
-import { FaIcon, faMapMarkerAlt, faUser } from 'components/core';
+import { FaIcon, faMapMarkerAlt } from 'components/core';
 import { LoadingOverlay } from 'components/layout';
 import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
@@ -38,7 +38,7 @@ function OffersListItem(props: IOffersListItem) {
       <Flex direction="column" justify="space-between" pos="absolute" inset={0} p={4} bg="rgba(0, 0, 0, 0.4)" color="white">
         <Box>
           <Flex align="center">
-            <Avatar size="sm" name={item.giver.username} /*src={item.user.avatar}*/ icon={<FaIcon icon={faUser} />} mr={2} />
+            <Avatar size="sm" name={item.giver.username} src={item.giver.avatarPath ?? undefined} mr={2} />
             {item.giver.username}
           </Flex>
         </Box>
@@ -56,7 +56,7 @@ function OffersListItem(props: IOffersListItem) {
 }
 
 async function fetchOffers(): Promise<IOfferDto[]> {
-  const res = await fetch('api/offers?showExpired');
+  const res = await fetch('api/offers');
 
   if (!res.ok) {
     throw new Error(`Unable to fetch offers: server responded with status ${res.status} ${res.statusText}`)
