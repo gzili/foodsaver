@@ -55,6 +55,7 @@ namespace backend
             services.AddSingleton<OfferEvents>();
             services.AddSingleton<HubInvoker>();
             services.AddScoped<PushService>();
+            services.AddSingleton<FileUploadService>();
 
             services.AddControllersWithViews();
 

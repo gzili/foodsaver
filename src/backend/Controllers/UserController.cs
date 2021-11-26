@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Controllers
@@ -19,13 +20,19 @@ namespace backend.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
+        private readonly FileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly UsersService _usersService;
 
-        public UserController(IMapper mapper, UsersService usersService)
+        private readonly string _uploadPath;
+
+        public UserController(FileUploadService fileUploadService, IConfiguration config, IMapper mapper, UsersService usersService)
         {
+            _fileUploadService = fileUploadService;
             _mapper = mapper;
             _usersService = usersService;
+
+            _uploadPath = config["UploadedFilesPath"];
         }
 
         [HttpPost("register")] // "api/user/register"
@@ -34,7 +41,7 @@ namespace backend.Controllers
             if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
 
-            var avatarPath = await FileUploadService.UploadFormFileAsync(createUserDto.Avatar, "images");
+            var avatarPath = await _fileUploadService.UploadFormFileAsync(createUserDto.Avatar, _uploadPath);
 
             var user = _mapper.Map<User>(createUserDto);
             user.AvatarPath = avatarPath;

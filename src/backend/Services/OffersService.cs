@@ -10,10 +10,12 @@ namespace backend.Services
 {
     public class OffersService
     {
+        private readonly FileUploadService _fileUploadService;
         private readonly OffersRepository _offersRepository;
 
-        public OffersService(OffersRepository offersRepository)
+        public OffersService(FileUploadService fileUploadService, OffersRepository offersRepository)
         {
+            _fileUploadService = fileUploadService;
             _offersRepository = offersRepository;
         }
         
@@ -54,7 +56,7 @@ namespace backend.Services
             
             _offersRepository.Delete(offer);
             
-            FileUploadService.DeleteFile(imagePath);
+            _fileUploadService.DeleteFile(imagePath);
         }
     }
 

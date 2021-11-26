@@ -2,6 +2,7 @@ using System;
 using backend.Data;
 using backend.Hubs;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,8 @@ namespace backend
                     services.GetRequiredService<HubInvoker>(); // force singleton creation
                     
                     var context = services.GetRequiredService<AppDbContext>();
-                    DbInitializer.Initialize(context);
+                    var config = services.GetRequiredService<IConfiguration>();
+                    DbInitializer.Initialize(context, config);
                 }
                 catch (Exception ex)
                 {

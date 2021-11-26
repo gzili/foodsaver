@@ -38,7 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="wwwroot\images" />
+        <Folder Include="wwwroot\uploads" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
