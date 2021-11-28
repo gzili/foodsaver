@@ -2,7 +2,6 @@
 using System.Linq;
 using backend.Data;
 using backend.Exceptions;
-using backend.Hubs;
 using backend.Models;
 using backend.Repositories;
 
@@ -12,28 +11,20 @@ namespace backend.Services
     {
         private readonly PushService _pushService;
         private readonly ReservationsRepository _reservationsRepository;
-        private readonly OfferEvents _offerEvents;
         private readonly AppDbContext _db;
 
-        public ReservationsService(PushService pushService, ReservationsRepository reservationsRepository, OfferEvents offerEvents, AppDbContext db)
+        public ReservationsService(PushService pushService, ReservationsRepository reservationsRepository, AppDbContext db)
         {
             _pushService = pushService;
             _reservationsRepository = reservationsRepository;
-            _offerEvents = offerEvents;
             _db = db;
         }
 
-        private void NotifyAvailableQuantityChanged(Reservation reservation)
-        {
-            _offerEvents.OnAvailableQuantityChanged(
-                new AvailableQuantityChangedEventArgs(reservation.Offer.Id, reservation.Offer.AvailableQuantity));
-        }
-        
         public void Create(Reservation reservation)
         {
             _reservationsRepository.Create(reservation);
             
-            NotifyAvailableQuantityChanged(reservation);
+            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
             _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
@@ -55,7 +46,7 @@ namespace backend.Services
         {
             _reservationsRepository.Delete(reservation);
             
-            NotifyAvailableQuantityChanged(reservation);
+            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
             _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
@@ -63,7 +54,7 @@ namespace backend.Services
         {
             reservation.CompletedAt = DateTime.UtcNow;
             
-            _db.SaveChanges();
+            _db.SaveChanges(); // Can this be avoided?
             _pushService.NotifyReservationsChanged(reservation.Offer);
         }
     }

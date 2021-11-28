@@ -52,8 +52,6 @@ namespace backend
             services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
             
-            services.AddSingleton<OfferEvents>();
-            services.AddSingleton<HubInvoker>();
             services.AddScoped<PushService>();
             services.AddSingleton<FileUploadService>();
 
