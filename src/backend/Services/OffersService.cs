@@ -11,17 +11,21 @@ namespace backend.Services
     public class OffersService
     {
         private readonly FileUploadService _fileUploadService;
+        private readonly PushService _pushService;
         private readonly OffersRepository _offersRepository;
 
-        public OffersService(FileUploadService fileUploadService, OffersRepository offersRepository)
+        public OffersService(FileUploadService fileUploadService, PushService pushService, OffersRepository offersRepository)
         {
             _fileUploadService = fileUploadService;
+            _pushService = pushService;
             _offersRepository = offersRepository;
         }
         
         public void Create(Offer offer)
         {
             _offersRepository.Create(offer);
+            
+            _pushService.NotifyOffersChanged();
         }
 
         public Offer FindById(int id)
@@ -45,9 +49,9 @@ namespace backend.Services
             return offers.ToList();
         }
 
-        public void UpdateOffer(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
+        public void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
-            _offersRepository.UpdateOffer(offer, updateOfferDto, foodDto);
+            _offersRepository.Update(offer, updateOfferDto, foodDto);
         }
 
         public void Delete(Offer offer)
@@ -55,6 +59,9 @@ namespace backend.Services
             var imagePath = offer.Food.ImagePath;
             
             _offersRepository.Delete(offer);
+            
+            _pushService.NotifyOfferDeleted(offer.Id);
+            _pushService.NotifyOffersChanged();
             
             _fileUploadService.DeleteFile(imagePath);
         }

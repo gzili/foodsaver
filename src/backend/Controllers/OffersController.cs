@@ -23,7 +23,6 @@ namespace backend.Controllers
         private readonly FileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly OffersService _offersService;
-        private readonly PushService _pushService;
         private readonly ReservationsService _reservationsService;
 
         private readonly string _uploadPath;
@@ -33,14 +32,12 @@ namespace backend.Controllers
             IConfiguration config,
             IMapper mapper,
             OffersService offersService,
-            PushService pushService,
             ReservationsService reservationsService)
         {
             _fileUploadService = fileUploadService;
             _mapper = mapper;
             _uploadPath = config["UploadedFilesPath"];
             _offersService = offersService;
-            _pushService = pushService;
             _reservationsService = reservationsService;
         }
 
@@ -74,8 +71,6 @@ namespace backend.Controllers
             offer.Food.ImagePath = imagePath;
             
             _offersService.Create(offer);
-            
-            _pushService.NotifyOffersChanged();
 
             return CreatedAtAction(nameof(FindById), new { id = offer.Id }, _mapper.Map<OfferDto>(offer));
         }
@@ -89,7 +84,6 @@ namespace backend.Controllers
             IFormFile image)
         {
             var offer = _offersService.FindById(id);
-
             var user = HttpContext.GetUser();
             
             if(offer.Giver != user)
@@ -101,7 +95,7 @@ namespace backend.Controllers
             if (imagePath != null)
                 (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
 
-            _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
+            _offersService.Update(offer, updateOfferDto, foodDto);
             
             // delete the old file if changes were saved successfully
             if (imagePath != null)
@@ -117,9 +111,6 @@ namespace backend.Controllers
             var offer = _offersService.FindById(id);
 
             _offersService.Delete(offer);
-            
-            _pushService.NotifyOfferDeleted(id);
-            _pushService.NotifyOffersChanged();
 
             return NoContent();
         }
@@ -128,19 +119,18 @@ namespace backend.Controllers
         [HttpPost("{id:int}/reservation")] // POST "api/offers/<number>/reservation
         public ActionResult<ReservationDto> CreateReservation(int id, CreateReservationDto createReservationDto)
         {
-            var offer = _offersService.FindById(id);
-
             var user = HttpContext.GetUser();
-
-            if (user == offer.Giver)
-            {
-                return Conflict("Offer cannot be reserved by its owner");
-            }
-
             Reservation reservation;
 
             lock (ReservationsLock.Object)
             {
+                var offer = _offersService.FindById(id);
+
+                if (user == offer.Giver)
+                {
+                    return Conflict("Offer cannot be reserved by its owner");
+                }
+                
                 reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
                 if (reservation != null)
@@ -175,7 +165,6 @@ namespace backend.Controllers
         public ActionResult<ReservationDto> GetReservation(int id)
         {
             var offer = _offersService.FindById(id);
-
             var user = HttpContext.GetUser();
 
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
@@ -188,25 +177,21 @@ namespace backend.Controllers
         public IActionResult CancelReservation(int id)
         {
             var offer = _offersService.FindById(id);
-
             var user = HttpContext.GetUser();
-
-            lock (ReservationsLock.Object)
-            {
-                var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
-
-                if (reservation == null)
-                {
-                    return Conflict("User has not reserved this offer");
-                }
-
-                if (reservation.CompletedAt != null)
-                {
-                    return Conflict("Completed reservation can not be cancelled");
-                }
             
-                _reservationsService.Delete(reservation);
+            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
+
+            if (reservation == null)
+            {
+                return Conflict("User has not reserved this offer");
             }
+
+            if (reservation.CompletedAt != null)
+            {
+                return Conflict("Completed reservation can not be cancelled");
+            }
+        
+            _reservationsService.Delete(reservation);
 
             return Ok();
         }
@@ -216,7 +201,6 @@ namespace backend.Controllers
         public ActionResult<IEnumerable<ReservationDto>> GetAllReservations(int id)
         {
             var offer = _offersService.FindById(id);
-            
             var user = HttpContext.GetUser();
 
             if (offer.Giver != user)

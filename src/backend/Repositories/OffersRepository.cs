@@ -37,7 +37,7 @@ namespace backend.Repositories
             return FindAll().Where(expression);
         }
 
-        public void UpdateOffer (Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
+        public void Update (Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
             _db.Entry(offer).CurrentValues.SetValues(updateOfferDto);
             _db.Entry(offer.Food).CurrentValues.SetValues(foodDto);
