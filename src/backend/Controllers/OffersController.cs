@@ -6,6 +6,7 @@ using AutoMapper;
 using backend.Data;
 using backend.DTO.Offers;
 using backend.DTO.Reservation;
+using backend.Extensions;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
@@ -65,7 +66,7 @@ namespace backend.Controllers
             if (imagePath == null)
                 return BadRequest("Invalid image file");
             
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
             
             var offer = _mapper.Map<Offer>(createOfferDto);
             offer.CreatedAt = DateTime.UtcNow;
@@ -89,7 +90,7 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
             
             if(offer.Giver != user)
                 return Conflict("Offer can only be updated by its owner");
@@ -129,7 +130,7 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             if (user == offer.Giver)
             {
@@ -175,7 +176,7 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
@@ -188,7 +189,7 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
 
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             lock (ReservationsLock.Object)
             {
@@ -216,7 +217,7 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
             
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             if (offer.Giver != user)
             {

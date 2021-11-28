@@ -1,5 +1,6 @@
 using AutoMapper;
 using backend.DTO.Reservation;
+using backend.Extensions;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace backend.Controllers
         public ActionResult<ReservationDto> Complete(int id)
         {
             var reservation = _reservationsService.FindById(id);
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             if (reservation.Offer.Giver != user)
             {

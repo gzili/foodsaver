@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using backend.DTO.Offers;
 using backend.DTO.Users;
+using backend.Extensions;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -78,7 +79,7 @@ namespace backend.Controllers
         [HttpGet]
         public ActionResult<UserDto> Get() // GET "api/user"
         {
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
             return _mapper.Map<UserDto>(user);
         }
         
@@ -86,7 +87,7 @@ namespace backend.Controllers
         [HttpGet("offers")] // GET "api/user/offers"
         public IEnumerable<OfferDto> GetUserOffers()
         {
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
             return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
         }
     }
