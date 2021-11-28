@@ -6,7 +6,7 @@ import { Box, Code, Heading, Image, Text, Flex, Avatar, VStack } from '@chakra-u
 
 import { IOfferDto } from 'dto/offer';
 import { LoadingOverlay } from 'components/layout';
-import { useAuth } from 'contexts/auth.context';
+import { useAuth } from 'contexts/authContext';
 import { useHub } from 'contexts/hubContext';
 import { OfferProvider } from './contexts/OfferContext';
 import { OfferBottomBar } from './components';

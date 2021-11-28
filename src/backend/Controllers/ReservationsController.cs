@@ -1,14 +1,13 @@
 using AutoMapper;
 using backend.DTO.Reservation;
 using backend.Extensions;
-using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // /api/reservations
     public class ReservationsController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -20,7 +19,7 @@ namespace backend.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("{id:int}/completion")]
+        [HttpPost("{id:int}/completion")] // /api/reservations/{id}/completion
         public ActionResult<ReservationDto> Complete(int id)
         {
             var reservation = _reservationsService.FindById(id);

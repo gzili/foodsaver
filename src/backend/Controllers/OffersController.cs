@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using backend.Data;
-using backend.DTO.Offers;
+using backend.DTO.Offer;
 using backend.DTO.Reservation;
 using backend.Extensions;
 using backend.Models;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Configuration;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // "api/offers"
+    [Route("api/[controller]")] // /api/offers
     public class OffersController : ControllerBase
     {
         private readonly FileUploadService _fileUploadService;
@@ -41,13 +41,13 @@ namespace backend.Controllers
             _reservationsService = reservationsService;
         }
 
-        [HttpGet] // GET "api/offers"
+        [HttpGet] // GET /api/offers
         public IEnumerable<OfferDto> FindAll(bool showExpired)
         {
             return _offersService.FindAll(showExpired).Select(_mapper.Map<OfferDto>);
         }
 
-        [HttpGet("{id:int}")] // GET "api/offers/<number>"
+        [HttpGet("{id:int}")] // GET /api/offers/{id}
         public ActionResult<OfferDto> FindById(int id)
         {
             var offer = _offersService.FindById(id);
@@ -55,7 +55,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost] // POST "api/offers"
+        [HttpPost] // POST /api/offers
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
             var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, _uploadPath);
@@ -76,7 +76,7 @@ namespace backend.Controllers
         }
         
         [Authorize]
-        [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
+        [HttpPut("{id:int}")] // PUT /api/offers/{id}
         public async Task<ActionResult<OfferDto>> Update(
             int id,
             [FromForm] UpdateOfferDto updateOfferDto,
@@ -105,7 +105,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}")] // DELETE /api/offers/{id}
         public IActionResult Delete(int id)
         {
             var offer = _offersService.FindById(id);
@@ -116,7 +116,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("{id:int}/reservation")] // POST "api/offers/<number>/reservation
+        [HttpPost("{id:int}/reservation")] // POST /api/offers/{id}/reservation
         public ActionResult<ReservationDto> CreateReservation(int id, CreateReservationDto createReservationDto)
         {
             var user = HttpContext.GetUser();
@@ -161,7 +161,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id:int}/reservation")] // GET "api/offers/{id}/reservation
+        [HttpGet("{id:int}/reservation")] // GET /api/offers/{id}/reservation
         public ActionResult<ReservationDto> GetReservation(int id)
         {
             var offer = _offersService.FindById(id);
@@ -173,7 +173,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id:int}/reservation")] // DELETE "api/offers/<number>/reservation
+        [HttpDelete("{id:int}/reservation")] // DELETE /api/offers/{id}/reservation
         public IActionResult CancelReservation(int id)
         {
             var offer = _offersService.FindById(id);
@@ -197,7 +197,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id:int}/reservations")]
+        [HttpGet("{id:int}/reservations")] // GET /api/offers/{id}/reservations
         public ActionResult<IEnumerable<ReservationDto>> GetAllReservations(int id)
         {
             var offer = _offersService.FindById(id);

@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using backend.DTO.Offers;
-using backend.DTO.Users;
-using backend.Extensions;
+using backend.DTO.User;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -18,8 +15,8 @@ using BC = BCrypt.Net.BCrypt;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class UserController : Controller
+    [Route("api/[controller]")] // /api/users
+    public class UsersController : Controller
     {
         private readonly FileUploadService _fileUploadService;
         private readonly IMapper _mapper;
@@ -27,16 +24,16 @@ namespace backend.Controllers
 
         private readonly string _uploadPath;
 
-        public UserController(FileUploadService fileUploadService, IConfiguration config, IMapper mapper, UsersService usersService)
+        public UsersController(FileUploadService fileUploadService, IConfiguration config, IMapper mapper, UsersService usersService)
         {
             _fileUploadService = fileUploadService;
             _mapper = mapper;
             _usersService = usersService;
-
+            
             _uploadPath = config["UploadedFilesPath"];
         }
 
-        [HttpPost("register")] // "api/user/register"
+        [HttpPost("register")] // POST /api/users/register
         public async Task<ActionResult<UserDto>> RegisterAsync([FromForm] CreateUserDto createUserDto)
         {
             if (_usersService.GetByEmail(createUserDto.Email) != null)
@@ -51,7 +48,7 @@ namespace backend.Controllers
             return _mapper.Map<UserDto>(user);
         }
         
-        [HttpPost("login")] // POST "api/user/login"
+        [HttpPost("login")] // POST /api/users/login
         public ActionResult<UserDto> Login(LoginUserDto loginUserDto)
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -68,27 +65,12 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout")] // POST "api/user/logout"
+        [HttpPost("logout")] // POST /api/users/logout
         public IActionResult LogOut()
         {
             HttpContext.SignOutAsync();
+            
             return Ok();
-        }
-        
-        [Authorize]
-        [HttpGet]
-        public ActionResult<UserDto> Get() // GET "api/user"
-        {
-            var user = HttpContext.GetUser();
-            return _mapper.Map<UserDto>(user);
-        }
-        
-        [Authorize]
-        [HttpGet("offers")] // GET "api/user/offers"
-        public IEnumerable<OfferDto> GetUserOffers()
-        {
-            var user = HttpContext.GetUser();
-            return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
         }
     }
 }

@@ -1,6 +1,6 @@
 import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, HStack, Button, useDisclosure } from '@chakra-ui/react';
 import { B } from 'components';
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 import { useRef } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
 import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';

@@ -1,4 +1,4 @@
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 import { useHub } from 'contexts/hubContext';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';

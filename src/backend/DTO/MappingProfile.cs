@@ -1,9 +1,8 @@
 using AutoMapper;
 using backend.DTO.Address;
-using backend.DTO.Offers;
+using backend.DTO.Offer;
 using backend.DTO.Reservation;
-using backend.DTO.Users;
-using backend.Models;
+using backend.DTO.User;
 
 namespace backend.DTO
 {
@@ -11,17 +10,17 @@ namespace backend.DTO
     {
         public MappingProfile()
         {
-            CreateMap<User, UserDto>();
-            CreateMap<User, CreateUserDto>()
+            CreateMap<Models.User, UserDto>();
+            CreateMap<Models.User, CreateUserDto>()
                 .ReverseMap();
-            CreateMap<User, GiverDto>();
+            CreateMap<Models.User, GiverDto>();
             
-            CreateMap<Models.Address, AddressDto>(); // wtf
+            CreateMap<Models.Address, AddressDto>();
             CreateMap<Models.Address, AddressDto>()
                 .ReverseMap();
 
-            CreateMap<Offer, OfferDto>();
-            CreateMap<Offer, CreateOfferDto>()
+            CreateMap<Models.Offer, OfferDto>();
+            CreateMap<Models.Offer, CreateOfferDto>()
                 .ReverseMap();
 
             CreateMap<Models.Reservation, CreateReservationDto>();

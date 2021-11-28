@@ -1,7 +1,7 @@
 using System;
 using backend.Models;
 
-namespace backend.DTO.Offers
+namespace backend.DTO.Offer
 {
     public class OfferDto
     {

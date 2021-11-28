@@ -1,7 +1,7 @@
 using backend.DTO.Address;
 using backend.Models;
 
-namespace backend.DTO.Users
+namespace backend.DTO.User
 {
     public class UserDto
     {

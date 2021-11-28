@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { useAuth } from 'contexts/auth.context';
+import { useAuth } from 'contexts/authContext';
 
 import { UserTypeData, PublicProfileData, LoginCredentialsData } from './components/interfaces';
 import AccountTypeStep from './components/UserTypeStep';

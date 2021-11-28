@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { DatePickerInput, FieldWithController, FilePicker, Input } from 'components';
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 import { useMutation, useQueryClient } from 'react-query';
 import { endOfDay } from 'date-fns';
 

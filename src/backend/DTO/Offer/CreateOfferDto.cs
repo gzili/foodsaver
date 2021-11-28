@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace backend.DTO.Offers
+namespace backend.DTO.Offer
 {
     public class CreateOfferDto : IValidatableObject
     {

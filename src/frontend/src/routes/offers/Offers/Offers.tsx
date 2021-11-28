@@ -3,14 +3,14 @@ import { useQuery } from 'react-query';
 import { compareDesc, formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Avatar, Box, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { useAuth } from 'contexts/auth.context';
+import { useAuth } from 'contexts/authContext';
 
 import { FaIcon, faMapMarkerAlt } from 'components/core';
 import { LoadingOverlay } from 'components/layout';
 import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 import { IOfferDto } from 'dto/offer';
-import { UserType } from 'contexts/auth.context';
+import { UserType } from 'contexts/authContext';
 import { useHub } from 'contexts/hubContext';
 import { useCallback, useEffect } from 'react';
 

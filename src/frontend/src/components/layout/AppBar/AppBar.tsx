@@ -1,7 +1,7 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { Flex, IconButton, Box, Menu, MenuButton, Avatar, MenuList, MenuItem, MenuDivider, Button } from '@chakra-ui/react';
 import { FaIcon, faHandHoldingHeart, faSignOutAlt } from 'components';
-import { useAuth } from 'contexts/auth.context';
+import { useAuth } from 'contexts/authContext';
 import { Link } from 'react-router-dom';
 
 export default function AppBar() {

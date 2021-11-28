@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using backend.Data;
-using backend.DTO.Offers;
+using backend.DTO.Offer;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
