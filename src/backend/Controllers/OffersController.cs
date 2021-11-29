@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace backend.Controllers
@@ -27,18 +28,23 @@ namespace backend.Controllers
 
         private readonly string _uploadPath;
 
+        private readonly AppDbContext _db;
+
         public OffersController(
             FileUploadService fileUploadService,
             IConfiguration config,
             IMapper mapper,
             OffersService offersService,
-            ReservationsService reservationsService)
+            ReservationsService reservationsService,
+            AppDbContext db)
         {
             _fileUploadService = fileUploadService;
             _mapper = mapper;
             _uploadPath = config["UploadedFilesPath"];
             _offersService = offersService;
             _reservationsService = reservationsService;
+
+            _db = db;
         }
 
         [HttpGet] // GET /api/offers
@@ -66,10 +72,11 @@ namespace backend.Controllers
             var user = HttpContext.GetUser();
             
             var offer = _mapper.Map<Offer>(createOfferDto);
+            offer.AvailableQuantity = offer.Quantity;
             offer.CreatedAt = DateTime.UtcNow;
-            offer.Giver = user;
             offer.Food.ImagePath = imagePath;
-            
+            offer.Giver = user;
+
             _offersService.Create(offer);
 
             return CreatedAtAction(nameof(FindById), new { id = offer.Id }, _mapper.Map<OfferDto>(offer));
@@ -119,45 +126,65 @@ namespace backend.Controllers
         [HttpPost("{id:int}/reservation")] // POST /api/offers/{id}/reservation
         public ActionResult<ReservationDto> CreateReservation(int id, CreateReservationDto createReservationDto)
         {
+            var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();
-            Reservation reservation;
 
-            lock (ReservationsLock.Object)
+            if (user == offer.Giver)
             {
-                var offer = _offersService.FindById(id);
-
-                if (user == offer.Giver)
-                {
-                    return Conflict("Offer cannot be reserved by its owner");
-                }
-                
-                reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
-
-                if (reservation != null)
-                {
-                    return Conflict("User already has an active reservation for this offer");
-                }
-
-                if (createReservationDto.Quantity > offer.AvailableQuantity)
-                {
-                    return Conflict("Requested quantity is larger than available");
-                }
-
-                reservation = new Reservation
-                {
-                    Offer = offer,
-                    User = user,
-                    CreatedAt = DateTime.UtcNow,
-                    Quantity = createReservationDto.Quantity
-                };
+                return Conflict("Offer cannot be reserved by its owner");
+            }
             
-                _reservationsService.Create(reservation);
+            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
+
+            if (reservation != null)
+            {
+                return Conflict("User already has an active reservation for this offer");
+            }
+            
+            reservation = new Reservation
+            {
+                Offer = offer,
+                User = user,
+                Quantity = createReservationDto.Quantity
+            };
+            
+            var saved = false;
+            while (!saved)
+            {
+                try
+                {
+                    if (createReservationDto.Quantity > offer.AvailableQuantity)
+                    {
+                        return Conflict("Requested quantity is larger than available");
+                    }
+
+                    offer.AvailableQuantity -= createReservationDto.Quantity;
+                    _reservationsService.Create(reservation); // calls SaveChanges() implicitly
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    foreach (var entry in ex.Entries)
+                    {
+                        if (entry.Entity is Offer)
+                        {
+                            var dbValues = entry.GetDatabaseValues();
+                            entry.OriginalValues.SetValues(dbValues);
+                            entry.CurrentValues.SetValues(dbValues);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException(
+                                "Concurrency conflicts are not handled for " + entry.Metadata.Name);
+                        }
+                    }
+                }
             }
 
             return CreatedAtAction(
-                nameof(GetReservation),
-                new { id = reservation.Id },
-                _mapper.Map<ReservationDto>(reservation));
+            nameof(GetReservation),
+            new { id = reservation.Id },
+            _mapper.Map<ReservationDto>(reservation));
         }
 
         [Authorize]
@@ -190,8 +217,34 @@ namespace backend.Controllers
             {
                 return Conflict("Completed reservation can not be cancelled");
             }
-        
-            _reservationsService.Delete(reservation);
+            
+            var saved = false;
+            while (!saved)
+            {
+                try
+                {
+                    offer.AvailableQuantity += reservation.Quantity;
+                    _reservationsService.Delete(reservation); // calls SaveChanges() implicitly
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    foreach (var entry in ex.Entries)
+                    {
+                        if (entry.Entity is Offer)
+                        {
+                            var dbValues = entry.GetDatabaseValues();
+                            entry.OriginalValues.SetValues(dbValues);
+                            entry.CurrentValues.SetValues(dbValues);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException(
+                                "Concurrency conflicts are not handled for " + entry.Metadata.Name);
+                        }
+                    }
+                }
+            }
 
             return Ok();
         }
