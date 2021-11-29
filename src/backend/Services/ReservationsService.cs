@@ -4,6 +4,7 @@ using backend.Data;
 using backend.Exceptions;
 using backend.Models;
 using backend.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
@@ -19,10 +20,49 @@ namespace backend.Services
             _reservationsRepository = reservationsRepository;
             _db = db;
         }
+        
+        private static void WithConcurrencyResolution(Action f)
+        {
+            var saved = false;
+            while (!saved)
+            {
+                try
+                {
+                    f();
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    Console.WriteLine("conflict");
+                    
+                    foreach (var entry in ex.Entries)
+                    {
+                        if (entry.Entity is Offer)
+                        {
+                            var dbValues = entry.GetDatabaseValues();
+                            entry.OriginalValues.SetValues(dbValues);
+                            entry.CurrentValues.SetValues(dbValues);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException(
+                                "Concurrency conflicts are not handled for " + entry.Metadata.Name);
+                        }
+                    }
+                }
+            }
+        }
 
         public void Create(Reservation reservation)
         {
-            _reservationsRepository.Create(reservation);
+            WithConcurrencyResolution(() =>
+            {
+                if (reservation.Quantity > reservation.Offer.AvailableQuantity)
+                    throw new QuantityTooLargeException();
+                
+                reservation.Offer.AvailableQuantity -= reservation.Quantity;
+                _reservationsRepository.Create(reservation);; // calls SaveChanges() implicitly!
+            });
             
             _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
             _pushService.NotifyReservationsChanged(reservation.Offer);
@@ -41,20 +81,24 @@ namespace backend.Services
 
             return reservation;
         }
-        
-        public void Delete(Reservation reservation)
-        {
-            _reservationsRepository.Delete(reservation);
-            
-            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
-        }
 
         public void Complete(Reservation reservation)
         {
             reservation.CompletedAt = DateTime.UtcNow;
             
             _db.SaveChanges(); // Can this be avoided?
+            _pushService.NotifyReservationsChanged(reservation.Offer);
+        }
+
+        public void Delete(Reservation reservation)
+        {
+            WithConcurrencyResolution(() =>
+            {
+                reservation.Offer.AvailableQuantity += reservation.Quantity;
+                _reservationsRepository.Delete(reservation); // calls SaveChanges() implicitly!
+            });
+            
+            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
             _pushService.NotifyReservationsChanged(reservation.Offer);
         }
     }

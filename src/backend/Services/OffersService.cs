@@ -11,14 +11,17 @@ namespace backend.Services
     public class OffersService
     {
         private readonly FileUploadService _fileUploadService;
-        private readonly PushService _pushService;
         private readonly OffersRepository _offersRepository;
+        private readonly PushService _pushService;
 
-        public OffersService(FileUploadService fileUploadService, PushService pushService, OffersRepository offersRepository)
+        public OffersService(
+            FileUploadService fileUploadService,
+            OffersRepository offersRepository,
+            PushService pushService)
         {
             _fileUploadService = fileUploadService;
-            _pushService = pushService;
             _offersRepository = offersRepository;
+            _pushService = pushService;
         }
         
         public void Create(Offer offer)
