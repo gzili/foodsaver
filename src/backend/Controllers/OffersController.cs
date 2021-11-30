@@ -47,9 +47,13 @@ namespace backend.Controllers
         public ActionResult<PaginatedOfferListDto> FindAll(bool showExpired, int page, int limit)
         {
             if (page < 1)
-                return NoContent(); //here should be some kind of error
-            if (limit > 25)
-                return NoContent(); //here should be some kind of error
+                page = 1;
+            limit = limit switch
+            {
+                > 25 => 25,
+                < 0 => 5,
+                _ => limit
+            };
             var paginatedList = new PaginatedList<OfferDto>(_offersService.FindAll(showExpired)
                 .Select(_mapper.Map<OfferDto>)
                 .ToList(), page, limit);
