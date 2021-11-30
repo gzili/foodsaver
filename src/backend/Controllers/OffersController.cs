@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using backend.Data;
+using backend.DTO;
 using backend.DTO.Offers;
 using backend.DTO.Reservation;
 using backend.Models;
@@ -37,10 +38,18 @@ namespace backend.Controllers
                 new Lazy<ReservationsService>(() => HttpContext.RequestServices.GetService<ReservationsService>());
         }
 
-        [HttpGet] // GET "api/offers"
-        public IEnumerable<OfferDto> FindAll(bool showExpired)
+        
+        [HttpGet] // GET /api/offers
+        public ActionResult<PaginatedOfferListDto> FindAll(bool showExpired, int page, int limit)
         {
-            return _offersService.FindAll(showExpired).Select(_mapper.Map<OfferDto>);
+            if (page < 1)
+                return NoContent(); //here should be some kind of error
+            if (limit > 25)
+                return NoContent(); //here should be some kind of error
+            var paginatedList = new PaginatedList<OfferDto>(_offersService.FindAll(showExpired)
+                .Select(_mapper.Map<OfferDto>)
+                .ToList(), page, limit);
+            return new PaginatedOfferListDto(paginatedList.GetListItemsByPage(), paginatedList.HasNextPage);
         }
 
         [HttpGet("{id:int}")] // GET "api/offers/<number>"
