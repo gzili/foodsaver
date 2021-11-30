@@ -28,7 +28,7 @@ namespace backend.DTO
 
         public List<T> GetListItemsByPage()
         {
-            return List.Skip((PageIndex - 1) * PageSize).Take(PageSize).ToList();
+            return List.Skip((PageIndex) * PageSize).Take(PageSize).ToList();
 
         }
     }
