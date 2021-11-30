@@ -44,20 +44,15 @@ namespace backend.Controllers
         }
 
         [HttpGet] // GET /api/offers
-        public ActionResult<PaginatedOfferListDto> FindAll(bool showExpired, int page, int limit)
+        public ActionResult<PaginatedListDto<OfferDto>> FindAll(bool showExpired, int page, int limit)
         {
-            if (page < 1)
-                page = 1;
-            limit = limit switch
+            var paginatedOffersList = _offersService.FindAllPaginated(showExpired, page, limit);
+            var paginatedOffersListDto = new PaginatedListDto<OfferDto>
             {
-                > 25 => 25,
-                < 0 => 5,
-                _ => limit
+                Data = paginatedOffersList.Select(_mapper.Map<OfferDto>).ToList(),
+                HasNextPage = paginatedOffersList.HasNextPage
             };
-            var paginatedList = new PaginatedList<OfferDto>(_offersService.FindAll(showExpired)
-                .Select(_mapper.Map<OfferDto>)
-                .ToList(), page, limit);
-            return new PaginatedOfferListDto(paginatedList.GetListItemsByPage(), paginatedList.HasNextPage);
+            return paginatedOffersListDto;
         }
 
         [HttpGet("{id:int}")] // GET /api/offers/{id}

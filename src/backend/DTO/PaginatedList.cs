@@ -1,35 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.DTO
 {
-    public class PaginatedList<T>
+    public class PaginatedList<T> : List<T>
     {
-        public List<T> List { get; private set; }
-        public int PageIndex { get; private set; }
-        public int TotalPages { get; private set; }
-        public int PageSize { get; private set; }
+        private int PageIndex { get; }
+        private int TotalPages { get; }
 
-        public PaginatedList(List<T> items, int pageIndex, int pageSize)
+        private PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
-            PageSize = pageSize;
-            var count = items.Count;
             PageIndex = pageIndex;
             TotalPages = (int) Math.Ceiling(count / (double) pageSize);
 
-            List = new List<T>(items);
+            AddRange(items);
         }
 
-        public bool HasPreviousPage => (PageIndex > 1);
+        public bool HasPreviousPage => PageIndex > 0;
 
-        public bool HasNextPage => (PageIndex < TotalPages);
+        public bool HasNextPage => PageIndex < TotalPages - 1;
 
-        public List<T> GetListItemsByPage()
+        public static PaginatedList<T> Create(IQueryable<T> source, int pageIndex, int pageSize)
         {
-            return List.Skip((PageIndex) * PageSize).Take(PageSize).ToList();
-
+            var count = source.Count();
+            var items = source.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+            return new PaginatedList<T>(items, count, pageIndex, pageSize);
         }
     }
 }
