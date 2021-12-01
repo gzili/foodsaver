@@ -11,7 +11,7 @@ namespace backend.DTO
         private int PageIndex { get; }
         private int TotalPages { get; }
 
-        private PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
+        private PaginatedList(IEnumerable<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
             TotalPages = (int) Math.Ceiling(count / (double) pageSize);

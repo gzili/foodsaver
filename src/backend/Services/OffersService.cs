@@ -44,15 +44,6 @@ namespace backend.Services
             return offer;
         }
 
-        public IEnumerable<Offer> FindAll(bool includeExpired)
-        {
-            var offers = includeExpired
-                ? _offersRepository.FindAll()
-                : _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now);
-
-            return offers.ToList();
-        }
-
         public PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit)
         {
             if (page < 0)
