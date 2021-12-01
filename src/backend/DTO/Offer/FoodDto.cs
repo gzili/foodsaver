@@ -1,4 +1,4 @@
-namespace backend.DTO.Offers
+namespace backend.DTO.Offer
 {
     public class FoodDto
     {

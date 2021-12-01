@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react';
-import { useAuth } from 'contexts/auth.context';
+import { useAuth } from 'contexts/authContext';
 import { useOffer } from '../../contexts/OfferContext';
 import { GiverActions, UserActions } from './components';
 

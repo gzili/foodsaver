@@ -52,9 +52,8 @@ namespace backend
             services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
             
-            services.AddSingleton<OfferEvents>();
-            services.AddSingleton<HubInvoker>();
             services.AddScoped<PushService>();
+            services.AddSingleton<FileUploadService>();
 
             services.AddControllersWithViews();
 
@@ -76,7 +75,7 @@ namespace backend
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

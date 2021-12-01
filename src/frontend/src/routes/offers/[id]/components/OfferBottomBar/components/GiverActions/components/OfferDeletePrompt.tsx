@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, HStack, Button } from '@chakra-ui/react';
 import { useMutation } from 'react-query';
 import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 
 interface OfferDeletePromptProps {
   isOpen: boolean,

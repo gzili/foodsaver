@@ -13,7 +13,7 @@ import {
   useNumberInput,
 } from '@chakra-ui/react';
 import { B, Input } from 'components';
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 import { useRef, useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
 import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';

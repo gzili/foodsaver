@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using backend.DTO.Offers;
+using backend.DTO;
+using backend.DTO.Offer;
 using backend.Exceptions;
 using backend.Models;
 using backend.Repositories;
@@ -10,16 +10,25 @@ namespace backend.Services
 {
     public class OffersService
     {
+        private readonly FileUploadService _fileUploadService;
         private readonly OffersRepository _offersRepository;
+        private readonly PushService _pushService;
 
-        public OffersService(OffersRepository offersRepository)
+        public OffersService(
+            FileUploadService fileUploadService,
+            OffersRepository offersRepository,
+            PushService pushService)
         {
+            _fileUploadService = fileUploadService;
             _offersRepository = offersRepository;
+            _pushService = pushService;
         }
         
         public void Create(Offer offer)
         {
             _offersRepository.Create(offer);
+            
+            _pushService.NotifyOffersChanged();
         }
 
         public Offer FindById(int id)
@@ -34,18 +43,30 @@ namespace backend.Services
             return offer;
         }
 
-        public IEnumerable<Offer> FindAll(bool includeExpired)
+        public PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit)
         {
+            if (page < 0)
+                page = 0;
+            
+            limit = limit switch
+            {
+                > 25 => 25,
+                <= 0 => 5,
+                _ => limit
+            };
+            
             var offers = includeExpired
                 ? _offersRepository.FindAll()
                 : _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now);
 
-            return offers.ToList();
+            var orderedOffers = offers.OrderByDescending(o => o.ExpiresAt);
+
+            return PaginatedList<Offer>.Create(orderedOffers, page, limit);
         }
 
-        public void UpdateOffer(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
+        public void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
-            _offersRepository.UpdateOffer(offer, updateOfferDto, foodDto);
+            _offersRepository.Update(offer, updateOfferDto, foodDto);
         }
 
         public void Delete(Offer offer)
@@ -54,7 +75,10 @@ namespace backend.Services
             
             _offersRepository.Delete(offer);
             
-            FileUploadService.DeleteFile(imagePath);
+            _pushService.NotifyOfferDeleted(offer.Id);
+            _pushService.NotifyOffersChanged();
+            
+            _fileUploadService.DeleteFile(imagePath);
         }
     }
 

@@ -1,5 +1,5 @@
 using System;
-using backend.DTO.Users;
+using backend.DTO.User;
 
 namespace backend.DTO.Reservation
 {

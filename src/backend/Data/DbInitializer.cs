@@ -1,13 +1,15 @@
 using System;
+using System.IO;
 using System.Linq;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace backend.Data
 {
-    public class DbInitializer
+    public static class DbInitializer
     {
-        public static void Initialize(AppDbContext db)
+        public static void Initialize(AppDbContext db, IConfiguration config)
         {
             if (db.Users.Any())
             {
@@ -15,6 +17,8 @@ namespace backend.Data
             }
 
             var random = new Random();
+
+            var path = config["UploadedFilesPath"];
             
             var users = new User[]
             {
@@ -34,6 +38,7 @@ namespace backend.Data
                 {
                     UserType = UserType.Business,
                     Email = "andrius123@lidl.com",
+                    AvatarPath = Path.Combine(path, "lidl_logo.jpg"),
                     Password = "$2a$12$vCAbO6KDewtXbU52lJAm..CoDMoTgS9b85b15Q1lk0MrTEDm3830C",
                     Username = "Lidl",
                     Address = new Address
@@ -48,6 +53,7 @@ namespace backend.Data
                     Email = "inga@etnodvaras.lt",
                     Password = "$2a$12$HQ2IgAaIaqvIXLX7hqP4uuzESajwdsojqiVVsRz2FSh.C22qiyQ0i",
                     Username = "Etno dvaras",
+                    AvatarPath = Path.Combine(path, "etno_dvaras_logo.png"),
                     Address = new Address
                     {
                         Street = "Ukmergės g. 369",
@@ -73,7 +79,7 @@ namespace backend.Data
                     {
                         Name = "Bananai",
                         Unit = "kg",
-                        ImagePath = "images/bananas.jpg"
+                        ImagePath = Path.Combine(path, "bananas.jpg")
                     }
                 },
                 new()
@@ -88,7 +94,7 @@ namespace backend.Data
                     {
                         Name = "Marcipaninis sukutis",
                         Unit = "pcs",
-                        ImagePath = "images/sukutis.jpg"
+                        ImagePath = Path.Combine(path, "sukutis.jpg")
                     }
                 },
                 new()
@@ -103,7 +109,7 @@ namespace backend.Data
                     {
                         Name = "Cepelinai",
                         Unit = "pcs",
-                        ImagePath = "images/cepelinai.jpg"
+                        ImagePath = Path.Combine(path, "cepelinai.jpg")
                     }
                 }
             };

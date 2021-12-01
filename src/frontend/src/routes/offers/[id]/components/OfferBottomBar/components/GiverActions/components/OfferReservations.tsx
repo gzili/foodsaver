@@ -21,7 +21,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { faCheck, FaIcon } from 'components';
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 import { useHub } from 'contexts/hubContext';
 import { formatDistanceToNowStrict } from 'date-fns';
 import parseJSON from 'date-fns/parseJSON';

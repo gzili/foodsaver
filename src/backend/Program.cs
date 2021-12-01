@@ -1,7 +1,7 @@
 using System;
 using backend.Data;
-using backend.Hubs;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -20,10 +20,10 @@ namespace backend
                 
                 try
                 {
-                    services.GetRequiredService<HubInvoker>(); // force singleton creation
-                    
                     var context = services.GetRequiredService<AppDbContext>();
-                    DbInitializer.Initialize(context);
+                    var config = services.GetRequiredService<IConfiguration>();
+                    
+                    DbInitializer.Initialize(context, config);
                 }
                 catch (Exception ex)
                 {
@@ -35,7 +35,7 @@ namespace backend
             host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });

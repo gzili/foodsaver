@@ -5,7 +5,7 @@ import { Resolver, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { HTTPError } from 'ky';
 import { useHistory } from 'react-router';
-import api from 'contexts/api.context';
+import api from 'contexts/apiContext';
 
 import { ICreateUserDto } from 'dto/user';
 import { FieldWithController, Input } from 'components/form';
@@ -33,7 +33,7 @@ function registerUser(data: ICreateUserDto) {
   fd.append('email', data.email);
   fd.append('password', data.password);
 
-  return api.post('user/register', { body: fd });
+  return api.post('users/register', { body: fd });
 }
 
 export default function PublicProfileFlow(props: IStep<LoginCredentialsData>) {

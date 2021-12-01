@@ -13,6 +13,11 @@ namespace backend.Services
             _reservationsHub = reservationsHub;
         }
 
+        public void NotifyAvailableQuantityChanged(int id, decimal quantity)
+        {
+            _reservationsHub.Clients.Group(id.ToString()).SendAsync("AvailableQuantityChanged", quantity);
+        }
+
         public void NotifyOffersChanged()
         {
             _reservationsHub.Clients.All.SendAsync("OffersChanged");

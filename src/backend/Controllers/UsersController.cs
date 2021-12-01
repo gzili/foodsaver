@@ -1,40 +1,45 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using backend.DTO.Offers;
-using backend.DTO.Users;
+using backend.DTO.User;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class UserController : Controller
+    [Route("api/[controller]")] // /api/users
+    public class UsersController : Controller
     {
+        private readonly FileUploadService _fileUploadService;
         private readonly IMapper _mapper;
         private readonly UsersService _usersService;
 
-        public UserController(IMapper mapper, UsersService usersService)
+        private readonly string _uploadPath;
+
+        public UsersController(FileUploadService fileUploadService, IConfiguration config, IMapper mapper, UsersService usersService)
         {
+            _fileUploadService = fileUploadService;
             _mapper = mapper;
             _usersService = usersService;
+            
+            _uploadPath = config["UploadedFilesPath"];
         }
 
-        [HttpPost("register")] // "api/user/register"
+        [HttpPost("register")] // POST /api/users/register
         public async Task<ActionResult<UserDto>> RegisterAsync([FromForm] CreateUserDto createUserDto)
         {
             if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
 
-            var avatarPath = await FileUploadService.UploadFormFileAsync(createUserDto.Avatar, "images");
+            var avatarPath = await _fileUploadService.UploadFormFileAsync(createUserDto.Avatar, _uploadPath);
 
             var user = _mapper.Map<User>(createUserDto);
             user.AvatarPath = avatarPath;
@@ -43,7 +48,7 @@ namespace backend.Controllers
             return _mapper.Map<UserDto>(user);
         }
         
-        [HttpPost("login")] // POST "api/user/login"
+        [HttpPost("login")] // POST /api/users/login
         public ActionResult<UserDto> Login(LoginUserDto loginUserDto)
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -60,27 +65,12 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout")] // POST "api/user/logout"
+        [HttpPost("logout")] // POST /api/users/logout
         public IActionResult LogOut()
         {
             HttpContext.SignOutAsync();
+            
             return Ok();
-        }
-        
-        [Authorize]
-        [HttpGet]
-        public ActionResult<UserDto> Get() // GET "api/user"
-        {
-            var user = (User) HttpContext.Items["user"];
-            return _mapper.Map<UserDto>(user);
-        }
-        
-        [Authorize]
-        [HttpGet("offers")] // GET "api/user/offers"
-        public IEnumerable<OfferDto> GetUserOffers()
-        {
-            var user = (User) HttpContext.Items["user"];
-            return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
         }
     }
 }

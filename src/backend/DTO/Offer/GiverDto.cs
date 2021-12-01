@@ -1,6 +1,6 @@
 using backend.DTO.Address;
 
-namespace backend.DTO.Offers
+namespace backend.DTO.Offer
 {
     public class GiverDto
     {

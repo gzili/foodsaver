@@ -2,7 +2,7 @@ import { UserDto } from 'dto/user';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
-import api from './api.context';
+import api from './apiContext';
 
 export enum UserType {
   Individual,
@@ -26,11 +26,11 @@ const AuthContext = createContext<AuthContextValue>(null!);
 export const useAuth = () => useContext(AuthContext);
 
 const fetchUser = () => {
-  return api.get('user').json<UserDto>();
+  return api.get('my/profile').json<UserDto>();
 }
 
 const fetchSignOut = () => {
-  return api.post('user/logout');
+  return api.post('users/logout');
 }
 
 function useAuthProvider() {

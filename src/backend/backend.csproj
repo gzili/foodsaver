@@ -38,7 +38,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="wwwroot\images" />
+        <Folder Include="wwwroot\uploads" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Users\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Users\_ViewImports.cshtml" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

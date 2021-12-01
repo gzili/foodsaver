@@ -1,7 +1,7 @@
 using backend.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace backend.DTO.Users
+namespace backend.DTO.User
 {
     public class CreateUserDto
     {

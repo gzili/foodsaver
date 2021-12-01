@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using backend.Repositories;
 using Microsoft.AspNetCore.Authentication;
@@ -42,8 +41,10 @@ namespace backend.Services
                 context.RejectPrincipal();
                 await context.HttpContext.SignOutAsync();
             }
-            
-            context.HttpContext.Items.Add("user", user);
+            else
+            {
+                context.HttpContext.Items.Add("user", user);
+            }
         }
     }
 }
