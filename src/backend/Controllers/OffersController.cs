@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using backend.DTO;
 using backend.DTO.Offer;
-using backend.DTO.Offers;
 using backend.DTO.Reservation;
 using backend.Exceptions;
 using backend.Extensions;
