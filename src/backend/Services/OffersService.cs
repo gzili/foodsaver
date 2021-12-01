@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using backend.DTO;
 using backend.DTO.Offer;
 using backend.Exceptions;
 using backend.Models;
@@ -43,13 +43,25 @@ namespace backend.Services
             return offer;
         }
 
-        public IEnumerable<Offer> FindAll(bool includeExpired)
+        public PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit)
         {
+            if (page < 0)
+                page = 0;
+            
+            limit = limit switch
+            {
+                > 25 => 25,
+                <= 0 => 5,
+                _ => limit
+            };
+            
             var offers = includeExpired
                 ? _offersRepository.FindAll()
                 : _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now);
 
-            return offers.ToList();
+            var orderedOffers = offers.OrderByDescending(o => o.ExpiresAt);
+
+            return PaginatedList<Offer>.Create(orderedOffers, page, limit);
         }
 
         public void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)

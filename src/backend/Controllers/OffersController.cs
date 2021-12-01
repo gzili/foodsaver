@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using backend.DTO;
 using backend.DTO.Offer;
 using backend.DTO.Reservation;
 using backend.Exceptions;
@@ -42,10 +43,15 @@ namespace backend.Controllers
         }
 
         [HttpGet] // GET /api/offers
-        public IEnumerable<OfferDto> FindAll(bool showExpired, int page, int limit)
+        public ActionResult<PaginatedListDto<OfferDto>> FindAll(bool showExpired, int page, int limit)
         {
-            // TODO: implement pagination (0-indexed page, max limit 25)
-            return _offersService.FindAll(showExpired).Select(_mapper.Map<OfferDto>);
+            var paginatedOffersList = _offersService.FindAllPaginated(showExpired, page, limit);
+            var paginatedOffersListDto = new PaginatedListDto<OfferDto>
+            {
+                Data = paginatedOffersList.Select(_mapper.Map<OfferDto>).ToList(),
+                HasNextPage = paginatedOffersList.HasNextPage
+            };
+            return paginatedOffersListDto;
         }
 
         [HttpGet("{id:int}")] // GET /api/offers/{id}
