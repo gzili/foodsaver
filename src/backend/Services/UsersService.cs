@@ -22,7 +22,7 @@ namespace backend.Services
 
         public User GetByEmail(string email)
         {
-            return _usersRepository.FindByCondition(u => u.Email == email).FirstOrDefault();
+            return _usersRepository.Items.FirstOrDefault(u => u.Email == email);
         }
 
         public User IsValidLogin(string email, string password)

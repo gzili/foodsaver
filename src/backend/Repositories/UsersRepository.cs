@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq;
 using backend.Data;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class UsersRepository: IRepositoryBase<User>
+    public class UsersRepository : IRepositoryBase<User>
     {
         private readonly AppDbContext _db;
+
+        public IQueryable<User> Items => _db.Users.Include(u => u.Address);
 
         public UsersRepository(AppDbContext db)
         {
@@ -20,16 +20,6 @@ namespace backend.Repositories
         {
             _db.Users.Add(user);
             _db.SaveChanges();
-        }
-
-        public IQueryable<User> FindAll()
-        {
-            return _db.Users.Include(u => u.Address);
-        }
-
-        public IQueryable<User> FindByCondition(Expression<Func<User, bool>> expression)
-        {
-            return FindAll().Where(expression);
         }
     }
 }

@@ -1,6 +1,4 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
 using backend.Data;
 using backend.DTO.Offer;
 using backend.Models;
@@ -12,6 +10,18 @@ namespace backend.Repositories
     {
         private readonly AppDbContext _db;
 
+        public IQueryable<Offer> Items
+        {
+            get
+            {
+                return _db.Offers
+                    .Include(o => o.Address)
+                    .Include(o => o.Food)
+                    .Include(o => o.Giver)
+                    .ThenInclude(u => u.Address);
+            }
+        }
+
         public OffersRepository(AppDbContext db)
         {
             _db = db;
@@ -21,20 +31,6 @@ namespace backend.Repositories
         {
             _db.Offers.Add(offer);
             _db.SaveChanges();
-        }
-
-        public IQueryable<Offer> FindAll()
-        {
-            return _db.Offers
-                .Include(o => o.Address)
-                .Include(o => o.Food)
-                .Include(o => o.Giver)
-                .ThenInclude(u => u.Address);
-        }
-
-        public IQueryable<Offer> FindByCondition(Expression<Func<Offer, bool>> expression)
-        {
-            return FindAll().Where(expression);
         }
 
         public void Update (Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
