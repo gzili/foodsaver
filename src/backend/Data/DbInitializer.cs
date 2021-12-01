@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Linq;
 using backend.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace backend.Data
 {
@@ -26,7 +26,7 @@ namespace backend.Data
                 {
                     UserType = UserType.Individual,
                     Email = "edvinas@gmail.com",
-                    Password = "$2a$12$cvSl/uRwdzPSZSHSWCfjleP6r9ShUXKuTy7eJ6IKQxSvKYYNKJsfi",
+                    Password = BCryptNet.HashPassword("pass"),
                     Username = "Edvinas",
                     Address = new Address
                     {
@@ -39,8 +39,8 @@ namespace backend.Data
                     UserType = UserType.Business,
                     Email = "andrius123@lidl.com",
                     AvatarPath = Path.Combine(path, "lidl_logo.jpg"),
-                    Password = "$2a$12$vCAbO6KDewtXbU52lJAm..CoDMoTgS9b85b15Q1lk0MrTEDm3830C",
-                    Username = "Lidl",
+                    Password = BCryptNet.HashPassword("parkside"),
+                    Username = "Lidl Ukmergė",
                     Address = new Address
                     {
                         Street = "Vytauto g. 111A",
@@ -51,8 +51,8 @@ namespace backend.Data
                 {
                     UserType = UserType.Business,
                     Email = "inga@etnodvaras.lt",
-                    Password = "$2a$12$HQ2IgAaIaqvIXLX7hqP4uuzESajwdsojqiVVsRz2FSh.C22qiyQ0i",
-                    Username = "Etno dvaras",
+                    Password = BCryptNet.HashPassword("manozepelinas"),
+                    Username = "Etno dvaras BIG",
                     AvatarPath = Path.Combine(path, "etno_dvaras_logo.png"),
                     Address = new Address
                     {
@@ -73,12 +73,13 @@ namespace backend.Data
                     Description = "Have nowhere to put these bananas",
                     CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
                     ExpiresAt = DateTime.UtcNow.AddDays(5),
-                    Giver = db.Users.Find(1),
-                    Address = db.Users.Include(u => u.Address).First(u => u.Id == 1).Address,
+                    Giver = users[0],
+                    Address = users[0].Address,
                     Food = new Food
                     {
-                        Name = "Bananai",
+                        Name = "Bananas",
                         Unit = "kg",
+                        MinQuantity = 0.5m,
                         ImagePath = Path.Combine(path, "bananas.jpg")
                     }
                 },
@@ -88,12 +89,13 @@ namespace backend.Data
                     Description = "Leftover buns from the last day",
                     CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
                     ExpiresAt = DateTime.UtcNow.AddDays(2),
-                    Giver = db.Users.Find(2),
-                    Address = db.Users.Include(u => u.Address).First(u => u.Id == 2).Address,
+                    Giver = users[1],
+                    Address = users[1].Address,
                     Food = new Food
                     {
                         Name = "Marcipaninis sukutis",
                         Unit = "pcs",
+                        MinQuantity = 1,
                         ImagePath = Path.Combine(path, "sukutis.jpg")
                     }
                 },
@@ -103,12 +105,13 @@ namespace backend.Data
                     Description = "Delicious serving made by mistake",
                     CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
                     ExpiresAt = DateTime.UtcNow.AddHours(12),
-                    Giver = db.Users.Find(3),
-                    Address = db.Users.Include(u => u.Address).First(u => u.Id == 3).Address,
+                    Giver = users[2],
+                    Address = users[2].Address,
                     Food = new Food
                     {
-                        Name = "Cepelinai",
+                        Name = "Zeppelins",
                         Unit = "pcs",
+                        MinQuantity = 1,
                         ImagePath = Path.Combine(path, "cepelinai.jpg")
                     }
                 }
