@@ -8,7 +8,7 @@ using backend.Repositories;
 
 namespace backend.Services
 {
-    public class OffersService
+    public class OffersService : IOffersService
     {
         private readonly FileUploadService _fileUploadService;
         private readonly OffersRepository _offersRepository;

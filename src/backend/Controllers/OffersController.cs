@@ -22,22 +22,21 @@ namespace backend.Controllers
     public class OffersController : ControllerBase
     {
         private readonly FileUploadService _fileUploadService;
+        private readonly IConfiguration _config;
         private readonly IMapper _mapper;
-        private readonly OffersService _offersService;
+        private readonly IOffersService _offersService;
         private readonly ReservationsService _reservationsService;
-
-        private readonly string _uploadPath;
         
         public OffersController(
             FileUploadService fileUploadService,
             IConfiguration config,
             IMapper mapper,
-            OffersService offersService,
+            IOffersService offersService,
             ReservationsService reservationsService)
         {
             _fileUploadService = fileUploadService;
             _mapper = mapper;
-            _uploadPath = config["UploadedFilesPath"];
+            _config = config;
             _offersService = offersService;
             _reservationsService = reservationsService;
         }
@@ -55,7 +54,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id:int}")] // GET /api/offers/{id}
-        public ActionResult<OfferDto> FindById(int id)
+        public OfferDto FindById(int id)
         {
             var offer = _offersService.FindById(id);
             return _mapper.Map<OfferDto>(offer);
@@ -65,7 +64,7 @@ namespace backend.Controllers
         [HttpPost] // POST /api/offers
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, _uploadPath);
+            var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
             
             if (imagePath == null)
                 return BadRequest("Invalid image file");
@@ -97,7 +96,7 @@ namespace backend.Controllers
             if(offer.Giver != user)
                 return Conflict("Offer can only be updated by its owner");
 
-            var imagePath = await _fileUploadService.UploadFormFileAsync(image, _uploadPath);
+            var imagePath = await _fileUploadService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
 
             // if a new file was uploaded, swap the new path with the old one
             if (imagePath != null)
