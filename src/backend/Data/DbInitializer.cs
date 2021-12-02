@@ -70,6 +70,7 @@ namespace backend.Data
                 new()
                 {
                     Quantity = 5.0m,
+                    AvailableQuantity = 5.0m,
                     Description = "Have nowhere to put these bananas",
                     CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
                     ExpiresAt = DateTime.UtcNow.AddDays(5),
@@ -86,6 +87,7 @@ namespace backend.Data
                 new()
                 {
                     Quantity = 8.0m,
+                    AvailableQuantity = 8.0m,
                     Description = "Leftover buns from the last day",
                     CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
                     ExpiresAt = DateTime.UtcNow.AddDays(2),
@@ -102,6 +104,7 @@ namespace backend.Data
                 new()
                 {
                     Quantity = 2.0m,
+                    AvailableQuantity = 2.0m,
                     Description = "Delicious serving made by mistake",
                     CreatedAt = DateTime.UtcNow.Subtract(TimeSpan.FromHours(random.Next(1, 8))),
                     ExpiresAt = DateTime.UtcNow.AddHours(12),
