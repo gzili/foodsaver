@@ -12,15 +12,16 @@ namespace backend.DTO
         {
             CreateMap<Models.User, UserDto>();
             CreateMap<Models.User, CreateUserDto>()
+                .ForMember(d => d.Avatar, opt => opt.Ignore())
                 .ReverseMap();
             CreateMap<Models.User, GiverDto>();
-            
-            CreateMap<Models.Address, AddressDto>();
+
             CreateMap<Models.Address, AddressDto>()
                 .ReverseMap();
 
             CreateMap<Models.Offer, OfferDto>();
             CreateMap<Models.Offer, CreateOfferDto>()
+                .ForMember(offer => offer.FoodPhoto, opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<Models.Reservation, CreateReservationDto>();
