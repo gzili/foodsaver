@@ -1,6 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { useInfiniteQuery, useQuery } from 'react-query';
-import { compareDesc, formatDistanceToNowStrict, parseJSON } from 'date-fns';
+import { useInfiniteQuery } from 'react-query';
+import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Avatar, Box, Button, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useAuth } from 'contexts/authContext';
