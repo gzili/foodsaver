@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace backend.Services
 {
-    public class FileUploadService
+    public class FileService : IFileService
     {
         private readonly string _contentRoot;
 
-        public FileUploadService(IWebHostEnvironment host)
+        public FileService(IWebHostEnvironment host)
         {
             _contentRoot = host.WebRootPath;
         }

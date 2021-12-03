@@ -21,23 +21,23 @@ namespace backend.Controllers
     [Route("api/[controller]")] // /api/offers
     public class OffersController : ControllerBase
     {
-        private readonly FileUploadService _fileUploadService;
-        private readonly IConfiguration _config;
-        private readonly IMapper _mapper;
         private readonly IOffersService _offersService;
-        private readonly ReservationsService _reservationsService;
-        
+        private readonly IMapper _mapper;
+        private readonly IConfiguration _config;
+        private readonly IFileService _fileService;
+        private readonly IReservationsService _reservationsService;
+
         public OffersController(
-            FileUploadService fileUploadService,
-            IConfiguration config,
-            IMapper mapper,
             IOffersService offersService,
-            ReservationsService reservationsService)
+            IMapper mapper,
+            IConfiguration config,
+            IFileService fileService,
+            IReservationsService reservationsService)
         {
-            _fileUploadService = fileUploadService;
+            _offersService = offersService;
             _mapper = mapper;
             _config = config;
-            _offersService = offersService;
+            _fileService = fileService;
             _reservationsService = reservationsService;
         }
 
@@ -64,7 +64,7 @@ namespace backend.Controllers
         [HttpPost] // POST /api/offers
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
+            var imagePath = await _fileService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
             
             if (imagePath == null)
                 return BadRequest("Invalid image file");
@@ -96,7 +96,7 @@ namespace backend.Controllers
             if(offer.Giver != user)
                 return Conflict("Offer can only be updated by its owner");
 
-            var imagePath = await _fileUploadService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
+            var imagePath = await _fileService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
 
             // if a new file was uploaded, swap the new path with the old one
             if (imagePath != null)
@@ -106,7 +106,7 @@ namespace backend.Controllers
             
             // delete the old file if changes were saved successfully
             if (imagePath != null)
-                _fileUploadService.DeleteFile(imagePath);
+                _fileService.DeleteFile(imagePath);
 
             return _mapper.Map<OfferDto>(offer);
         }

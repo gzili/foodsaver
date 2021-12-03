@@ -10,10 +10,10 @@ namespace backend.Controllers
     [Route("api/[controller]")] // /api/reservations
     public class ReservationsController : ControllerBase
     {
+        private readonly IReservationsService _reservationsService;
         private readonly IMapper _mapper;
-        private readonly ReservationsService _reservationsService;
 
-        public ReservationsController(IMapper mapper, ReservationsService reservationsService)
+        public ReservationsController(IReservationsService reservationsService, IMapper mapper)
         {
             _reservationsService = reservationsService;
             _mapper = mapper;

@@ -53,7 +53,7 @@ namespace backend
             services.AddScoped<UsersRepository>();
             
             services.AddScoped<PushService>();
-            services.AddSingleton<FileUploadService>();
+            services.AddSingleton<FileService>();
 
             services.AddControllersWithViews();
 

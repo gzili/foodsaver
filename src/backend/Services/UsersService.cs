@@ -5,7 +5,7 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace backend.Services
 {
-    public class UsersService
+    public class UsersService : IUsersService
     {
         private readonly UsersRepository _usersRepository;
 

@@ -22,8 +22,7 @@ namespace backend.Tests.ControllersUnitTests
             mockOffersService.Setup(s => s.FindById(1))
                 .Returns(offer);
 
-            var controller = new OffersController(
-                null, null, mapper, mockOffersService.Object, null);
+            var controller = new OffersController(mockOffersService.Object, mapper, null, null, null);
 
             var result = controller.FindById(1);
 
@@ -40,8 +39,7 @@ namespace backend.Tests.ControllersUnitTests
             mockOffersService.Setup(s => s.FindById(1))
                 .Returns(offer);
 
-            var controller = new OffersController(
-                null, null, null, mockOffersService.Object, null);
+            var controller = new OffersController(mockOffersService.Object, null, null, null, null);
 
             controller.Delete(1);
             
