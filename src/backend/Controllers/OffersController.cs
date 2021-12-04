@@ -159,13 +159,13 @@ namespace backend.Controllers
 
             return CreatedAtAction(
             nameof(GetReservation),
-            new { id = reservation.Id },
+            new { id = offer.Id },
             _mapper.Map<ReservationDto>(reservation));
         }
 
         [Authorize]
         [HttpGet("{id:int}/reservation")] // GET /api/offers/{id}/reservation
-        public ActionResult<ReservationDto> GetReservation(int id)
+        public ReservationDto GetReservation(int id)
         {
             var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();
