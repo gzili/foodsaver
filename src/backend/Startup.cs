@@ -46,14 +46,14 @@ namespace backend
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
             services.AddScoped<IOffersService, OffersService>();
-            services.AddScoped<OffersRepository>();
-            services.AddScoped<ReservationsService>();
-            services.AddScoped<ReservationsRepository>();
-            services.AddScoped<UsersService>();
+            services.AddScoped<IOffersRepository, OffersRepository>();
+            services.AddScoped<IReservationsService, ReservationsService>();
+            services.AddScoped<IReservationsRepository, ReservationsRepository>();
+            services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<UsersRepository>();
             
-            services.AddScoped<PushService>();
-            services.AddSingleton<FileService>();
+            services.AddScoped<IPushService, PushService>();
+            services.AddSingleton<IFileService, FileService>();
 
             services.AddControllersWithViews();
 
