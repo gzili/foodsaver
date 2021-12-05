@@ -11,21 +11,17 @@ namespace backend.Services
     public class OffersService : IOffersService
     {
         private readonly IOffersRepository _offersRepository;
-        private readonly IPushService _pushService;
         private readonly IFileService _fileService;
 
-        public OffersService(IOffersRepository offersRepository, IPushService pushService, IFileService fileService)
+        public OffersService(IOffersRepository offersRepository, IFileService fileService)
         {
             _offersRepository = offersRepository;
-            _pushService = pushService;
             _fileService = fileService;
         }
 
         public void Create(Offer offer)
         {
             _offersRepository.Create(offer);
-            
-            _pushService.NotifyOffersChanged();
         }
 
         public Offer FindById(int id)
@@ -71,10 +67,7 @@ namespace backend.Services
             var imagePath = offer.Food.ImagePath;
             
             _offersRepository.Delete(offer);
-            
-            _pushService.NotifyOfferDeleted(offer.Id);
-            _pushService.NotifyOffersChanged();
-            
+
             _fileService.DeleteFile(imagePath);
         }
     }

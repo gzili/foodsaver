@@ -1,9 +1,13 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.DynamicProxy;
 using backend.Data;
 using backend.Exceptions;
 using backend.Hubs;
+using backend.Interceptors;
 using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -27,6 +31,8 @@ namespace backend
 
         public IConfiguration Configuration { get; }
 
+        public ILifetimeScope AutofacContainer { get; private set; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -45,7 +51,6 @@ namespace backend
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
-            services.AddScoped<IOffersService, OffersService>();
             services.AddScoped<IOffersRepository, OffersRepository>();
             services.AddScoped<IReservationsService, ReservationsService>();
             services.AddScoped<IReservationsRepository, ReservationsRepository>();
@@ -61,9 +66,19 @@ namespace backend
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../frontend/build"; });
         }
 
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<OffersChangedNotifier>();
+            builder.RegisterType<OffersService>().As<IOffersService>().InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(OffersChangedNotifier));
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
