@@ -1,11 +1,7 @@
-using System;
-using System.Net;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 using backend.Data;
-using backend.Exceptions;
 using backend.Hubs;
 using backend.Interceptors;
 using backend.Middleware;
@@ -14,7 +10,6 @@ using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -53,7 +48,6 @@ namespace backend
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
             services.AddScoped<IOffersRepository, OffersRepository>();
-            services.AddScoped<IReservationsService, ReservationsService>();
             services.AddScoped<IReservationsRepository, ReservationsRepository>();
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<UsersRepository>();
@@ -73,6 +67,11 @@ namespace backend
             builder.RegisterType<OffersService>().As<IOffersService>().InstancePerLifetimeScope()
                 .EnableInterfaceInterceptors()
                 .InterceptedBy(typeof(OffersChangedNotifier));
+
+            builder.RegisterType<ReservationsChangedNotifier>();
+            builder.RegisterType<ReservationsService>().As<IReservationsService>().InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(ReservationsChangedNotifier));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
