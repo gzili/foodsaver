@@ -8,6 +8,7 @@ using backend.Data;
 using backend.Exceptions;
 using backend.Hubs;
 using backend.Interceptors;
+using backend.Middleware;
 using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -99,18 +100,7 @@ namespace backend
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.Use(async delegate(HttpContext context, Func<Task> next)
-            {
-                try
-                {
-                    await next.Invoke();
-                }
-                catch (EntityNotFoundException e)
-                {
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    await context.Response.WriteAsync($"{e.EntityName} with ID = {e.EntityId} could not be found");
-                }
-            });
+            app.UseMiddleware<ErrorResponseMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
