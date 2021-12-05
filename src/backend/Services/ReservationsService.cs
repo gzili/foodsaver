@@ -11,13 +11,11 @@ namespace backend.Services
     public class ReservationsService : IReservationsService
     {
         private readonly IReservationsRepository _reservationsRepository;
-        private readonly IPushService _pushService;
         private readonly AppDbContext _db;
 
-        public ReservationsService(IReservationsRepository reservationsRepository, IPushService pushService, AppDbContext db)
+        public ReservationsService(IReservationsRepository reservationsRepository, AppDbContext db)
         {
             _reservationsRepository = reservationsRepository;
-            _pushService = pushService;
             _db = db;
         }
 
@@ -61,9 +59,6 @@ namespace backend.Services
                 reservation.Offer.AvailableQuantity -= reservation.Quantity;
                 _reservationsRepository.Create(reservation); // calls SaveChanges() implicitly!
             });
-            
-            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
         public Reservation FindById(int id)
@@ -83,7 +78,6 @@ namespace backend.Services
             reservation.CompletedAt = DateTime.UtcNow;
             
             _db.SaveChanges(); // Can this be avoided?
-            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
         public void Delete(Reservation reservation)
@@ -93,9 +87,6 @@ namespace backend.Services
                 reservation.Offer.AvailableQuantity += reservation.Quantity;
                 _reservationsRepository.Delete(reservation); // calls SaveChanges() implicitly!
             });
-            
-            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
     }
 }
