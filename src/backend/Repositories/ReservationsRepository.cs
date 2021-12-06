@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class ReservationsRepository : IRepositoryBase<Reservation>
+    public class ReservationsRepository : IReservationsRepository
     {
         private readonly AppDbContext _db;
         

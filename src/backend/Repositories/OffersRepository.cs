@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class OffersRepository : IRepositoryBase<Offer>
+    public class OffersRepository : IOffersRepository
     {
         private readonly AppDbContext _db;
 

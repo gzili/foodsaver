@@ -8,22 +8,19 @@ using backend.Repositories;
 
 namespace backend.Services
 {
-    public class OffersService
+    public class OffersService : IOffersService
     {
-        private readonly FileUploadService _fileUploadService;
-        private readonly OffersRepository _offersRepository;
-        private readonly PushService _pushService;
+        private readonly IOffersRepository _offersRepository;
+        private readonly IPushService _pushService;
+        private readonly IFileService _fileService;
 
-        public OffersService(
-            FileUploadService fileUploadService,
-            OffersRepository offersRepository,
-            PushService pushService)
+        public OffersService(IOffersRepository offersRepository, IPushService pushService, IFileService fileService)
         {
-            _fileUploadService = fileUploadService;
             _offersRepository = offersRepository;
             _pushService = pushService;
+            _fileService = fileService;
         }
-        
+
         public void Create(Offer offer)
         {
             _offersRepository.Create(offer);
@@ -78,7 +75,7 @@ namespace backend.Services
             _pushService.NotifyOfferDeleted(offer.Id);
             _pushService.NotifyOffersChanged();
             
-            _fileUploadService.DeleteFile(imagePath);
+            _fileService.DeleteFile(imagePath);
         }
     }
 

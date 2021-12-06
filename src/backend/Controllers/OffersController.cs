@@ -21,24 +21,23 @@ namespace backend.Controllers
     [Route("api/[controller]")] // /api/offers
     public class OffersController : ControllerBase
     {
-        private readonly FileUploadService _fileUploadService;
+        private readonly IOffersService _offersService;
         private readonly IMapper _mapper;
-        private readonly OffersService _offersService;
-        private readonly ReservationsService _reservationsService;
+        private readonly IConfiguration _config;
+        private readonly IFileService _fileService;
+        private readonly IReservationsService _reservationsService;
 
-        private readonly string _uploadPath;
-        
         public OffersController(
-            FileUploadService fileUploadService,
-            IConfiguration config,
+            IOffersService offersService,
             IMapper mapper,
-            OffersService offersService,
-            ReservationsService reservationsService)
+            IConfiguration config,
+            IFileService fileService,
+            IReservationsService reservationsService)
         {
-            _fileUploadService = fileUploadService;
-            _mapper = mapper;
-            _uploadPath = config["UploadedFilesPath"];
             _offersService = offersService;
+            _mapper = mapper;
+            _config = config;
+            _fileService = fileService;
             _reservationsService = reservationsService;
         }
 
@@ -55,7 +54,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id:int}")] // GET /api/offers/{id}
-        public ActionResult<OfferDto> FindById(int id)
+        public OfferDto FindById(int id)
         {
             var offer = _offersService.FindById(id);
             return _mapper.Map<OfferDto>(offer);
@@ -65,7 +64,7 @@ namespace backend.Controllers
         [HttpPost] // POST /api/offers
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            var imagePath = await _fileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, _uploadPath);
+            var imagePath = await _fileService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
             
             if (imagePath == null)
                 return BadRequest("Invalid image file");
@@ -97,7 +96,7 @@ namespace backend.Controllers
             if(offer.Giver != user)
                 return Conflict("Offer can only be updated by its owner");
 
-            var imagePath = await _fileUploadService.UploadFormFileAsync(image, _uploadPath);
+            var imagePath = await _fileService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
 
             // if a new file was uploaded, swap the new path with the old one
             if (imagePath != null)
@@ -107,7 +106,7 @@ namespace backend.Controllers
             
             // delete the old file if changes were saved successfully
             if (imagePath != null)
-                _fileUploadService.DeleteFile(imagePath);
+                _fileService.DeleteFile(imagePath);
 
             return _mapper.Map<OfferDto>(offer);
         }
@@ -160,13 +159,13 @@ namespace backend.Controllers
 
             return CreatedAtAction(
             nameof(GetReservation),
-            new { id = reservation.Id },
+            new { id = offer.Id },
             _mapper.Map<ReservationDto>(reservation));
         }
 
         [Authorize]
         [HttpGet("{id:int}/reservation")] // GET /api/offers/{id}/reservation
-        public ActionResult<ReservationDto> GetReservation(int id)
+        public ReservationDto GetReservation(int id)
         {
             var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Services
 {
-    public class PushService
+    public class PushService : IPushService
     {
         private readonly IHubContext<ReservationsHub> _reservationsHub;
 

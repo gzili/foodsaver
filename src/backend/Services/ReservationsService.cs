@@ -8,19 +8,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
-    public class ReservationsService
+    public class ReservationsService : IReservationsService
     {
-        private readonly PushService _pushService;
-        private readonly ReservationsRepository _reservationsRepository;
+        private readonly IReservationsRepository _reservationsRepository;
+        private readonly IPushService _pushService;
         private readonly AppDbContext _db;
 
-        public ReservationsService(PushService pushService, ReservationsRepository reservationsRepository, AppDbContext db)
+        public ReservationsService(IReservationsRepository reservationsRepository, IPushService pushService, AppDbContext db)
         {
-            _pushService = pushService;
             _reservationsRepository = reservationsRepository;
+            _pushService = pushService;
             _db = db;
         }
-        
+
         private static void WithConcurrencyResolution(Action f)
         {
             var saved = false;
@@ -59,7 +59,7 @@ namespace backend.Services
                     throw new QuantityTooLargeException();
                 
                 reservation.Offer.AvailableQuantity -= reservation.Quantity;
-                _reservationsRepository.Create(reservation);; // calls SaveChanges() implicitly!
+                _reservationsRepository.Create(reservation); // calls SaveChanges() implicitly!
             });
             
             _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);

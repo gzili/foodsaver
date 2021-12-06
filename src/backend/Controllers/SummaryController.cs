@@ -24,7 +24,7 @@ namespace backend.Controllers
         {
             var offersByCity =
                 _db.Offers
-                    .GroupBy(o => o.Address.City)
+                    .GroupBy(o => o.Giver.Address.City)
                     .Select(offers => new CitySummaryDto
                         { City = offers.Key, OffersCount = offers.Count() });
             

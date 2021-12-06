@@ -18,19 +18,21 @@ namespace backend.Controllers
     [Route("api/[controller]")] // /api/users
     public class UsersController : Controller
     {
-        private readonly FileUploadService _fileUploadService;
+        private readonly IUsersService _usersService;
         private readonly IMapper _mapper;
-        private readonly UsersService _usersService;
+        private readonly IConfiguration _config;
+        private readonly IFileService _fileService;
 
-        private readonly string _uploadPath;
-
-        public UsersController(FileUploadService fileUploadService, IConfiguration config, IMapper mapper, UsersService usersService)
+        public UsersController(
+            IUsersService usersService,
+            IMapper mapper,
+            IConfiguration config,
+            IFileService fileService)
         {
-            _fileUploadService = fileUploadService;
-            _mapper = mapper;
             _usersService = usersService;
-            
-            _uploadPath = config["UploadedFilesPath"];
+            _mapper = mapper;
+            _config = config;
+            _fileService = fileService;
         }
 
         [HttpPost("register")] // POST /api/users/register
@@ -39,7 +41,7 @@ namespace backend.Controllers
             if (_usersService.GetByEmail(createUserDto.Email) != null)
                 return Conflict("User with the same email already exists");
 
-            var avatarPath = await _fileUploadService.UploadFormFileAsync(createUserDto.Avatar, _uploadPath);
+            var avatarPath = await _fileService.UploadFormFileAsync(createUserDto.Avatar, _config["UploadedFilesPath"]);
 
             var user = _mapper.Map<User>(createUserDto);
             user.AvatarPath = avatarPath;

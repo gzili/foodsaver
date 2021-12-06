@@ -45,7 +45,7 @@ namespace backend
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
-            services.AddScoped<OffersService>();
+            services.AddScoped<IOffersService, OffersService>();
             services.AddScoped<OffersRepository>();
             services.AddScoped<ReservationsService>();
             services.AddScoped<ReservationsRepository>();
@@ -53,7 +53,7 @@ namespace backend
             services.AddScoped<UsersRepository>();
             
             services.AddScoped<PushService>();
-            services.AddSingleton<FileUploadService>();
+            services.AddSingleton<FileService>();
 
             services.AddControllersWithViews();
 
