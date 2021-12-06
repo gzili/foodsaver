@@ -33,7 +33,7 @@ namespace backend.Services
 
         public Offer FindById(int id)
         {
-            var offer = _offersRepository.FindByCondition(o => o.Id == id).FirstOrDefault();
+            var offer = _offersRepository.Items.FirstOrDefault(o => o.Id == id);
 
             if (offer == null)
             {
@@ -56,8 +56,8 @@ namespace backend.Services
             };
             
             var offers = includeExpired
-                ? _offersRepository.FindAll()
-                : _offersRepository.FindByCondition(o => o.ExpiresAt > DateTime.Now);
+                ? _offersRepository.Items
+                : _offersRepository.Items.Where(o => o.ExpiresAt > DateTime.Now);
 
             var orderedOffers = offers.OrderByDescending(o => o.ExpiresAt);
 

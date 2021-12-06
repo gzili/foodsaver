@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Threading;
 using backend.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +14,14 @@ namespace backend
     {
         public static void Main(string[] args)
         {
+            var culture = CultureInfo.CreateSpecificCulture("en-US");
+
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            
             var host = CreateHostBuilder(args).Build();
             
             using (var scope = host.Services.CreateScope())

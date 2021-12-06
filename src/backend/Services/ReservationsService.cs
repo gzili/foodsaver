@@ -33,8 +33,6 @@ namespace backend.Services
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    Console.WriteLine("conflict");
-                    
                     foreach (var entry in ex.Entries)
                     {
                         if (entry.Entity is Offer)
@@ -70,9 +68,7 @@ namespace backend.Services
 
         public Reservation FindById(int id)
         {
-            var reservation = _reservationsRepository
-                .FindByCondition(r => r.Id == id)
-                .FirstOrDefault();
+            var reservation = _reservationsRepository.Items.FirstOrDefault(r => r.Id == id);
 
             if (reservation == null)
             {
