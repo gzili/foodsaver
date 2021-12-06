@@ -5,7 +5,6 @@ using backend.Data;
 using backend.Hubs;
 using backend.Interceptors;
 using backend.Middleware;
-using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -40,18 +39,14 @@ namespace backend
             
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
-
             services.AddScoped<CustomCookieAuthEvents>();
             
             services.AddAutoMapper(typeof(Startup));
+            
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
-            services.AddScoped<IOffersRepository, OffersRepository>();
-            services.AddScoped<IReservationsRepository, ReservationsRepository>();
             services.AddScoped<IUsersService, UsersService>();
-            services.AddScoped<UsersRepository>();
-            
             services.AddScoped<IPushService, PushService>();
             services.AddSingleton<IFileService, FileService>();
 

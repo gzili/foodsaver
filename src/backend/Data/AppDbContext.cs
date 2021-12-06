@@ -5,6 +5,7 @@ namespace backend.Data
 {
     public class AppDbContext : DbContext
     {
+        public AppDbContext() {} // For testing only
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +20,7 @@ namespace backend.Data
                 .HasDefaultValueSql("now() AT TIME ZONE 'utc'");
         }
 
-        public DbSet<User> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
         public DbSet<Offer> Offers { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
     }
