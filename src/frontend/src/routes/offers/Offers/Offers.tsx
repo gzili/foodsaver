@@ -1,7 +1,7 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import { compareDesc, formatDistanceToNowStrict, parseJSON } from 'date-fns';
-import { Avatar, Box, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
+import { useInfiniteQuery } from 'react-query';
+import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
+import { Avatar, Box, Button, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useAuth } from 'contexts/authContext';
 
@@ -12,7 +12,8 @@ import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 import { IOfferDto } from 'dto/offer';
 import { UserType } from 'contexts/authContext';
 import { useHub } from 'contexts/hubContext';
-import { useCallback, useEffect } from 'react';
+import { Fragment, useCallback, useEffect } from 'react';
+import api from 'contexts/apiContext';
 
 interface IOffersListItem {
   item: IOfferDto,
@@ -55,18 +56,19 @@ function OffersListItem(props: IOffersListItem) {
   );
 }
 
-async function fetchOffers(): Promise<IOfferDto[]> {
-  const res = await fetch('api/offers');
+interface IPaginated<T> {
+  data: T[],
+  hasNextPage: boolean,
+}
 
-  if (!res.ok) {
-    throw new Error(`Unable to fetch offers: server responded with status ${res.status} ${res.statusText}`)
-  }
-
-  return res.json();
+const fetchOffers = ({ pageParam = 0 }) => {
+  return api.get('offers?limit=3&page=' + pageParam).json<IPaginated<IOfferDto>>();
 }
 
 function OffersList() {
-  const { isLoading, isError, data, error, refetch } = useQuery('offers', fetchOffers);
+  const { isLoading, isError, data, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery('offers', fetchOffers, {
+    getNextPageParam: (lastPage, allPages) => lastPage.hasNextPage ? allPages.length : undefined,
+  });
 
   const { connection } = useHub();
 
@@ -88,11 +90,22 @@ function OffersList() {
 
   if (data) {
     return (
-      <VStack spacing={2} pb="80px">
-        {data.sort((a, b) => compareDesc(parseJSON(a.createdAt), parseJSON(b.createdAt))).map(offer => (
-          <OffersListItem key={offer.id} item={offer} />
-        ))}
-      </VStack>
+      <>
+        <VStack spacing={2}>
+          {data.pages.map((page, i) => (
+            <Fragment key={i}>
+              {page.data.map(offer => (
+                <OffersListItem key={offer.id} item={offer} />
+              ))}
+            </Fragment>
+          ))}
+        </VStack>
+        {hasNextPage && (
+          <Box p={2} textAlign="center">
+            <Button isLoading={isFetchingNextPage} onClick={() => fetchNextPage()}>Load more</Button>
+          </Box>
+        )}
+      </>
     );
   }
 
@@ -108,7 +121,7 @@ export default function Offers() {
       <Heading as="h1" mb={2}>Offers</Heading>
       <OffersList />
       {(user && user.userType !== UserType.Charity) && (
-        <>
+        <Box pb="80px">
           <IconButton
             icon={<AddIcon />}
             aria-label="Create offer"
@@ -120,7 +133,7 @@ export default function Offers() {
             borderRadius="full"
           />
           <CreateOfferDrawer isOpen={isOpen} onClose={onClose} />
-        </>
+        </Box>
       )}
     </Box>
   );

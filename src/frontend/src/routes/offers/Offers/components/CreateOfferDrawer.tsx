@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { DatePickerInput, FieldWithController, FilePicker, Input } from 'components';
 import api from 'contexts/apiContext';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { endOfDay } from 'date-fns';
 
 interface ICreateOfferDrawer {
@@ -16,6 +16,7 @@ interface FormValues {
   foodName: string,
   foodPhoto: File[] | null,
   foodUnit: string,
+  foodMinQuantity: string,
   offerQuantity: number | string,
   offerDescription: string,
   offerExpirationDate: Date | null,
@@ -25,6 +26,7 @@ const validationSchema = yup.object({
   foodName: yup.string().required("This field is required"),
   foodPhoto: yup.array().length(1, "Please upload a photo"),
   foodUnit: yup.string().required("Please choose a unit"),
+  foodMinQuantity: yup.string().required("Please choose the minimum quantity"),
   offerQuantity: yup.number().typeError("Please provide the quantity"),
   offerExpirationDate: yup.date().typeError("Please set an expiration date"),
   offerDescription: yup.string(),
@@ -44,15 +46,14 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
       foodPhoto: [],
       offerQuantity: '',
       foodUnit: 'pcs',
+      foodMinQuantity: '1',
       offerExpirationDate: null,
       offerDescription: '',
     }
   });
 
-  const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(createOffer, {
     onSuccess: () => {
-      queryClient.invalidateQueries('offers');
       onClose();
     },
     onError: (error: Error) => {
@@ -66,6 +67,7 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
     formData.append('foodName', data.foodName);
     formData.append('foodPhoto', data.foodPhoto![0]);
     formData.append('foodUnit', data.foodUnit);
+    formData.append('foodMinQuantity', data.foodMinQuantity)
     formData.append('quantity', data.offerQuantity.toString());
     formData.append('expiresAt', endOfDay(data.offerExpirationDate!).toJSON());
     formData.append('description', data.offerDescription);
@@ -100,15 +102,49 @@ function CreateOfferContent({ onClose }: { onClose: () => void }) {
                     borderColor: 'brand.500',
                   }}
                 >
-                  <option value="g">g (grams)</option>
+                  <option value="pcs">pcs (pieces)</option>
                   <option value="kg">kg (kilograms)</option>
+                  <option value="g">g (grams)</option>
                   <option value="l">l (litres)</option>
                   <option value="ml">ml (mililitres)</option>
-                  <option value="pcs">pcs (pieces)</option>
                 </Select>
               )}
             </FieldWithController>
-            <FieldWithController control={control} name="offerExpirationDate" label="Expiration date">
+            <FieldWithController
+              control={control}
+              name="foodMinQuantity"
+              label="Mininum reservable amount">
+              {(props) => (
+                <Select
+                  {...props}
+                  borderWidth="2px"
+                  borderColor="gray.300"
+                  _hover={{
+                    borderColor: 'gray.400',
+                  }}
+                  _focus={{
+                    borderColor: 'brand.500',
+                  }}
+                >
+                  <option value="1">1</option>
+                  <option value="0.1">0.1</option>
+                  <option value="0.25">0.25</option>
+                  <option value="0.5">0.5</option>
+                  <option value="2">2</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="100">100</option>
+                  <option value="250">250</option>
+                  <option value="500">500</option>
+                </Select>
+              )}
+            </FieldWithController>
+            <FieldWithController
+              control={control}
+              name="offerExpirationDate"
+              label="Expiration date"
+              helperText="After this date, the offer will be hidden and no longer accept new reservations"
+            >
               {(props) => <DatePickerInput {...props} disablePast weekStartsOnMonday />}
             </FieldWithController>
             <FieldWithController control={control} name="offerDescription" label="Description">
