@@ -1,36 +1,40 @@
 using System;
 using System.Linq;
+using backend.Data;
 using backend.DTO;
 using backend.DTO.Offer;
 using backend.Exceptions;
 using backend.Models;
-using backend.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
     public class OffersService : IOffersService
     {
-        private readonly IOffersRepository _offersRepository;
-        private readonly IPushService _pushService;
+        private readonly AppDbContext _db;
         private readonly IFileService _fileService;
+        
+        private IQueryable<Offer> Offers => _db.Offers
+            .Include(o => o.Address)
+            .Include(o => o.Food)
+            .Include(o => o.Giver)
+            .ThenInclude(u => u.Address);
 
-        public OffersService(IOffersRepository offersRepository, IPushService pushService, IFileService fileService)
+        public OffersService(AppDbContext db, IFileService fileService)
         {
-            _offersRepository = offersRepository;
-            _pushService = pushService;
+            _db = db;
             _fileService = fileService;
         }
 
         public void Create(Offer offer)
         {
-            _offersRepository.Create(offer);
-            
-            _pushService.NotifyOffersChanged();
+            _db.Offers.Add(offer);
+            _db.SaveChanges();
         }
 
         public Offer FindById(int id)
         {
-            var offer = _offersRepository.Items.FirstOrDefault(o => o.Id == id);
+            var offer = Offers.FirstOrDefault(o => o.Id == id);
 
             if (offer == null)
             {
@@ -53,8 +57,8 @@ namespace backend.Services
             };
             
             var offers = includeExpired
-                ? _offersRepository.Items
-                : _offersRepository.Items.Where(o => o.ExpiresAt > DateTime.Now);
+                ? Offers
+                : Offers.Where(o => o.ExpiresAt > DateTime.Now);
 
             var orderedOffers = offers.OrderByDescending(o => o.ExpiresAt);
 
@@ -63,18 +67,18 @@ namespace backend.Services
 
         public void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
-            _offersRepository.Update(offer, updateOfferDto, foodDto);
+            _db.Entry(offer).CurrentValues.SetValues(updateOfferDto);
+            _db.Entry(offer.Food).CurrentValues.SetValues(foodDto);
+            _db.SaveChanges();
         }
 
         public void Delete(Offer offer)
         {
             var imagePath = offer.Food.ImagePath;
-            
-            _offersRepository.Delete(offer);
-            
-            _pushService.NotifyOfferDeleted(offer.Id);
-            _pushService.NotifyOffersChanged();
-            
+
+            _db.Offers.Remove(offer);
+            _db.SaveChanges();
+
             _fileService.DeleteFile(imagePath);
         }
     }

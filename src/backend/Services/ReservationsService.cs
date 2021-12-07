@@ -3,21 +3,20 @@ using System.Linq;
 using backend.Data;
 using backend.Exceptions;
 using backend.Models;
-using backend.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
     public class ReservationsService : IReservationsService
     {
-        private readonly IReservationsRepository _reservationsRepository;
-        private readonly IPushService _pushService;
         private readonly AppDbContext _db;
+        
+        private IQueryable<Reservation> Reservations =>  _db.Reservations
+            .Include(r => r.User)
+            .Include(r => r.Offer);
 
-        public ReservationsService(IReservationsRepository reservationsRepository, IPushService pushService, AppDbContext db)
+        public ReservationsService(AppDbContext db)
         {
-            _reservationsRepository = reservationsRepository;
-            _pushService = pushService;
             _db = db;
         }
 
@@ -59,16 +58,15 @@ namespace backend.Services
                     throw new QuantityTooLargeException();
                 
                 reservation.Offer.AvailableQuantity -= reservation.Quantity;
-                _reservationsRepository.Create(reservation); // calls SaveChanges() implicitly!
+                
+                _db.Reservations.Add(reservation);
+                _db.SaveChanges();
             });
-            
-            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
 
         public Reservation FindById(int id)
         {
-            var reservation = _reservationsRepository.Items.FirstOrDefault(r => r.Id == id);
+            var reservation = Reservations.FirstOrDefault(r => r.Id == id);
 
             if (reservation == null)
             {
@@ -81,21 +79,18 @@ namespace backend.Services
         public void Complete(Reservation reservation)
         {
             reservation.CompletedAt = DateTime.UtcNow;
-            
-            _db.SaveChanges(); // Can this be avoided?
-            _pushService.NotifyReservationsChanged(reservation.Offer);
+            _db.SaveChanges();
         }
 
         public void Delete(Reservation reservation)
         {
+            _db.Reservations.Remove(reservation);
+            
             WithConcurrencyResolution(() =>
             {
                 reservation.Offer.AvailableQuantity += reservation.Quantity;
-                _reservationsRepository.Delete(reservation); // calls SaveChanges() implicitly!
+                _db.SaveChanges();
             });
-            
-            _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
         }
     }
 }
