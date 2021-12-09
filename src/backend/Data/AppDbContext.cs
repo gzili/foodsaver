@@ -15,9 +15,18 @@ namespace backend.Data
                 .WithMany(o => o.Reservations)
                 .IsRequired();
 
-            modelBuilder.Entity<Reservation>()
-                .Property(r => r.CreatedAt)
-                .HasDefaultValueSql("now() AT TIME ZONE 'utc'");
+            if (Database.IsNpgsql())
+            {
+                modelBuilder.Entity<Reservation>()
+                    .Property(r => r.CreatedAt)
+                    .HasDefaultValueSql("now() AT TIME ZONE 'utc'");
+            }
+            else
+            {
+                modelBuilder.Entity<Reservation>()
+                    .Property(r => r.CreatedAt)
+                    .HasDefaultValueSql("datetime('now')"); // currently assumes SQLite
+            }
         }
 
         public virtual DbSet<User> Users { get; set; }
