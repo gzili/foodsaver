@@ -1,19 +1,19 @@
-import { Link as RouterLink } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query';
-import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
-import { Avatar, Box, Button, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { useAuth } from 'contexts/authContext';
+import { Avatar, Box, Button, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
+import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
+import { Fragment, useCallback, useEffect } from 'react';
+import { useInfiniteQuery } from 'react-query';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { FaIcon, faMapMarkerAlt } from 'components/core';
 import { LoadingOverlay } from 'components/layout';
-import { CreateOfferDrawer } from './components/CreateOfferDrawer';
-
-import { IOfferDto } from 'dto/offer';
-import { UserType } from 'contexts/authContext';
-import { useHub } from 'contexts/hubContext';
-import { Fragment, useCallback, useEffect } from 'react';
 import api from 'contexts/apiContext';
+import { useAuth, UserType } from 'contexts/authContext';
+import { absPath } from 'helpers';
+import { useHub } from 'contexts/hubContext';
+import { IOfferDto } from 'dto/offer';
+
+import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 interface IOffersListItem {
   item: IOfferDto,
@@ -27,19 +27,19 @@ function OffersListItem(props: IOffersListItem) {
   return (
     <Box
       as={RouterLink}
-      to={`/offers/${item.id}`}
+      to={'/app/offers/' + item.id}
       pos="relative"
       w="100%"
       h="180px"
       overflow="hidden"
-      bg={`url('${item.food.imagePath.replaceAll('\\', '/')}')`}
+      bg={`url('${absPath(item.food.imagePath, true)}')`}
       bgPos="center"
       bgSize="cover"
       borderRadius="xl">
       <Flex direction="column" justify="space-between" pos="absolute" inset={0} p={4} bg="rgba(0, 0, 0, 0.4)" color="white">
         <Box>
           <Flex align="center">
-            <Avatar size="sm" name={item.giver.username} src={item.giver.avatarPath ?? undefined} mr={2} />
+            <Avatar size="sm" name={item.giver.username} src={absPath(item.giver.avatarPath)} mr={2} />
             {item.giver.username}
           </Flex>
         </Box>

@@ -1,9 +1,16 @@
-import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, HStack, Button, useDisclosure } from '@chakra-ui/react';
+import {
+  AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay,
+  Button,
+  HStack,
+  useDisclosure
+} from '@chakra-ui/react';
+import { useRef } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+
 import { B } from 'components';
 import api from 'contexts/apiContext';
-import { useRef } from 'react';
-import { useQueryClient, useMutation } from 'react-query';
-import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';
+
+import { useOffer } from 'routes/app/offers/[id]/contexts/OfferContext';
 import type { IReservationPrompt, ReservationDto } from '../../../types';
 
 function ReservationDeletePrompt(props: IReservationPrompt) {

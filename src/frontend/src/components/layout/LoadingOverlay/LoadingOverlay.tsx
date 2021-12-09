@@ -1,5 +1,4 @@
-import { Flex, Box } from '@chakra-ui/layout';
-import { Spinner } from '@chakra-ui/spinner';
+import { Box, Flex, Spinner } from '@chakra-ui/react';
 
 export default function LoadingOverlay({ message }: { message: string }) {
   return (

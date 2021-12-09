@@ -1,23 +1,19 @@
 import {
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  Box,
-  Button,
+  AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay,
+  Box, Button,
   Flex,
   HStack,
   useDisclosure,
-  useNumberInput,
+  useNumberInput
 } from '@chakra-ui/react';
+import { useRef, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+
 import { B, Input } from 'components';
 import api from 'contexts/apiContext';
-import { useRef, useState } from 'react';
-import { useQueryClient, useMutation } from 'react-query';
-import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';
-import type { IReservationPrompt, CreateReservationDto } from '../../../types';
+
+import { useOffer } from 'routes/app/offers/[id]/contexts/OfferContext';
+import type { CreateReservationDto, IReservationPrompt } from '../../../types';
 
 function ReservationCreatePrompt(props: IReservationPrompt) {
   const { isOpen, onClose, quantity } = props;

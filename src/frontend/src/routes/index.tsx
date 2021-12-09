@@ -1,5 +1,6 @@
-import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Flex, Heading, HStack, Image, Text } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
+
 import logo from 'resources/foodsaver_logo.png';
 
 export default function Home() {
@@ -19,7 +20,7 @@ export default function Home() {
           </Text>
           <HStack justifyContent="center" spacing={2} pt={4}>
             <Button as={RouterLink} to="/join" colorScheme="brand">Join</Button>
-            <Button as={RouterLink} to="/offers">Browse offers</Button>
+            <Button as={RouterLink} to="/app/offers">Browse offers</Button>
           </HStack>
         </Box>
       </Flex>

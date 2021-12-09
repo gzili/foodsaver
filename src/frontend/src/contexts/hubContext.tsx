@@ -1,7 +1,7 @@
-import * as signalR from '@microsoft/signalr';
 import type { HubConnection } from '@microsoft/signalr';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import * as signalR from '@microsoft/signalr';
 import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 interface HubContextValue {
   connection: HubConnection,
@@ -32,6 +32,10 @@ export function HubProvider({ children }: HubProviderProps) {
       .catch(err => {
         console.log(err);
       });
+
+      return () => {
+        hubConnection.stop()
+      };
   }, []);
 
   const value = useMemo(() => ({

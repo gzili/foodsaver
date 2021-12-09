@@ -1,8 +1,10 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
-import { Flex, IconButton, Box, Menu, MenuButton, Avatar, MenuList, MenuItem, MenuDivider, Button } from '@chakra-ui/react';
-import { FaIcon, faHandHoldingHeart, faSignOutAlt } from 'components';
-import { useAuth } from 'contexts/authContext';
+import { Avatar, Box, Button, Flex, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+
+import { faHandHoldingHeart, FaIcon, faSignOutAlt } from 'components';
+import { useAuth } from 'contexts/authContext';
+import { absPath } from 'helpers';
 
 export default function AppBar() {
   const { user, signOut } = useAuth();
@@ -32,7 +34,7 @@ export default function AppBar() {
       {user ? (
         <Menu autoSelect={false} gutter={16} placement="bottom-end">
           <MenuButton>
-            <Avatar name={user.username} src={user.avatarPath ?? undefined} size="xs" />
+            <Avatar name={user.username} src={absPath(user.avatarPath)} size="xs" />
           </MenuButton>
           <MenuList>
             <MenuItem icon={<FaIcon icon={faHandHoldingHeart} />}>My offers</MenuItem>
