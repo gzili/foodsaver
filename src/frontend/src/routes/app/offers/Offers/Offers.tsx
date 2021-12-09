@@ -1,5 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons';
-import { Avatar, Box, Button, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Heading, VStack } from '@chakra-ui/react';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Fragment, useCallback, useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
@@ -8,12 +7,10 @@ import { Link as RouterLink } from 'react-router-dom';
 import { FaIcon, faMapMarkerAlt } from 'components/core';
 import { LoadingOverlay } from 'components/layout';
 import api from 'contexts/apiContext';
-import { useAuth, UserType } from 'contexts/authContext';
 import { absPath } from 'helpers';
 import { useHub } from 'contexts/hubContext';
 import { IOfferDto } from 'dto/offer';
 
-import { CreateOfferDrawer } from './components/CreateOfferDrawer';
 
 interface IOffersListItem {
   item: IOfferDto,
@@ -113,28 +110,10 @@ function OffersList() {
 }
 
 export default function Offers() {
-  const { user } = useAuth();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
-    <Box mt={10} pt={2} px={4}>
-      <Heading as="h1" mb={2}>Offers</Heading>
+    <Box mt={10} py={2} px={4}>
+      <Heading as="h1">Offers</Heading>
       <OffersList />
-      {(user && user.userType !== UserType.Charity) && (
-        <Box pb="80px">
-          <IconButton
-            icon={<AddIcon />}
-            aria-label="Create offer"
-            onClick={onOpen}
-            colorScheme="brand"
-            pos="fixed"
-            right={6}
-            bottom={6}
-            borderRadius="full"
-          />
-          <CreateOfferDrawer isOpen={isOpen} onClose={onClose} />
-        </Box>
-      )}
     </Box>
   );
 }
