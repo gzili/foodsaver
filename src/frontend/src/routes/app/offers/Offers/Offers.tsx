@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, Heading, VStack } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Heading, HStack, VStack } from '@chakra-ui/react';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
 import { Fragment, useCallback, useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
@@ -43,10 +43,10 @@ function OffersListItem(props: IOffersListItem) {
         <Box>
           <Box fontSize="xs" color="rgba(255, 255, 255, 0.8)">{[item.quantity, item.food.unit, '•', toNow].join(' ')}</Box>
           <Box fontWeight="bold" fontSize="lg">{item.food.name}</Box>
-          <Flex fontSize="sm" align="center">
-            <Box as={FaIcon} icon={faMapMarkerAlt} mr={2} />
-            {[item.giver.address.street, item.giver.address.city].join(', ')}
-          </Flex>
+          <HStack spacing={2} fontSize="sm">
+            <Box as={FaIcon} icon={faMapMarkerAlt} />
+            <Box>{[item.giver.address.street, item.giver.address.city].join(', ')}</Box>
+          </HStack>
         </Box>
       </Flex>
     </Box>

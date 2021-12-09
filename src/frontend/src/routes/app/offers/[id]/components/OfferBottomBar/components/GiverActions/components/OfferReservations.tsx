@@ -15,7 +15,7 @@ import parseJSON from 'date-fns/parseJSON';
 import { useCallback, useEffect, useRef } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
-import { faCheck, FaIcon } from 'components';
+import { faCheck, faHandshake, FaIcon } from 'components';
 import api from 'contexts/apiContext';
 import { useHub } from 'contexts/hubContext';
 
@@ -190,7 +190,7 @@ export function OfferReservations() {
   return (
     <>
       <ReservationsDrawer isOpen={isOpen} onClose={onClose} />
-      <Button colorScheme="brand" onClick={onOpen}>Show reservations</Button>
+      <Button colorScheme="brand" leftIcon={<FaIcon icon={faHandshake} />} onClick={onOpen}>Show reservations</Button>
     </>
   );
 }
