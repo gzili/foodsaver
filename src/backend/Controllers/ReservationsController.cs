@@ -20,7 +20,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("{id:int}/completion")] // /api/reservations/{id}/completion
-        public ActionResult<ReservationDto> Complete(int id)
+        public ActionResult<ReservationDto> Complete(int id, CompleteReservationDto dto)
         {
             var reservation = _reservationsService.FindById(id);
             var user = HttpContext.GetUser();
@@ -33,6 +33,11 @@ namespace backend.Controllers
             if (reservation.CompletedAt != null)
             {
                 return Conflict("Reservation is already completed");
+            }
+
+            if (reservation.Pin != dto.Pin)
+            {
+                return Conflict("Invalid PIN code");
             }
             
             _reservationsService.Complete(reservation);
