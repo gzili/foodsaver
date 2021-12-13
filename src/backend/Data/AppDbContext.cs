@@ -30,7 +30,7 @@ namespace backend.Data
         }
 
         public virtual DbSet<User> Users { get; set; }
-        public DbSet<Offer> Offers { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
+        public virtual DbSet<Offer> Offers { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
     }
 }
