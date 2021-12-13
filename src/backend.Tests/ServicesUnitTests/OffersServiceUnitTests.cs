@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using backend.Data;
+using backend.DTO.Offer;
 using backend.Exceptions;
 using backend.Models;
 using backend.Services;
 using backend.Tests.Mocks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
@@ -120,7 +122,7 @@ namespace backend.Tests.ServicesUnitTests
 
             Assert.True(size == limit);
         }
-        
+
         [Fact]
         public void FindAllPaginated_ReturnPaginatedIndexedList()
         {
@@ -168,7 +170,33 @@ namespace backend.Tests.ServicesUnitTests
 
             Assert.True(size == 3);
         }
-        
-        
+
+        [Fact]
+        public void Delete_DeletesOffer()
+        {
+            var food = new Food
+            {
+                Id = 1,
+                ImagePath = "path"
+            };
+
+            var offer = new Offer {Id = 1, Food = food};
+
+            var data = new List<Offer> {offer};
+
+            var mockSet = MockDbSet<Offer>.Create(data);
+
+            var mockContext = new Mock<AppDbContext>();
+            mockContext.Setup(c => c.Offers).Returns(mockSet);
+
+            var mockFileService = new Mock<IFileService>();
+
+            var service = new OffersService(mockContext.Object, mockFileService.Object);
+
+            service.Delete(offer);
+
+            mockContext.Verify(o => o.Offers.Remove(offer), Times.Once);
+            mockContext.Verify(o => o.SaveChanges(), Times.Once);
+        }
     }
 }
