@@ -4,6 +4,7 @@ import { HubProvider } from 'contexts/hubContext';
 
 import MyIndex from './my';
 import OffersIndex from './offers';
+import PlacesIndex from './places';
 
 export default function Index() {
   return (
@@ -11,6 +12,9 @@ export default function Index() {
       <Switch>
         <Route path="/app/my">
           <MyIndex />
+        </Route>
+        <Route path="/app/places">
+          <PlacesIndex />
         </Route>
         <Route path="/app/offers">
           <OffersIndex />

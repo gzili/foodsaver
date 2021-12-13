@@ -1,6 +1,6 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Flex, Grid, IconButton, useDisclosure } from '@chakra-ui/react';
-import { faHamburger, faHandHoldingHeart, faHome, FaIcon, faUser } from 'components';
+import { faHamburger, faHome, FaIcon, faMapMarkerAlt, faUser } from 'components';
 import { ReactNode } from 'react';
 import { useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -97,8 +97,8 @@ export default function BottomBar() {
           <NavButton to="/app" icon={<FaIcon icon={faHome} />} text="Home" />
           <NavButton to="/app/offers" icon={<FaIcon icon={faHamburger} />} text="Offers" />
           <CreateButton />
-          <NavButton to="/app/givers" icon={<FaIcon icon={faHandHoldingHeart} />} text="Givers" />
-          <NavButton to="/app/my" icon={<FaIcon icon={faUser} />} text="Me" />
+          <NavButton to="/app/places" icon={<FaIcon icon={faMapMarkerAlt} />} text="Places" />
+          <NavButton to="/app/my" icon={<FaIcon icon={faUser} />} text="Account" />
         </Grid>
       </Flex>
     </>
