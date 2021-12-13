@@ -304,7 +304,7 @@ namespace backend.Tests.ControllersUnitTests
             };
             var result = controller.GetReservation(1);
 
-            Assert.IsType<ReservationDto>(result);
+            Assert.IsType<ReservationCreatorDto>(result);
         }
     }
 }

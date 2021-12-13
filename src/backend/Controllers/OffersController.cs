@@ -165,7 +165,7 @@ namespace backend.Controllers
 
         [Authorize]
         [HttpGet("{id:int}/reservation")] // GET /api/offers/{id}/reservation
-        public ReservationDto GetReservation(int id)
+        public ReservationCreatorDto GetReservation(int id)
         {
             var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();
