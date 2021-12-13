@@ -52,6 +52,9 @@ namespace backend.Services
 
         public void Create(Reservation reservation)
         {
+            var random = new Random();
+            reservation.Pin = (short) random.Next(1000, 10000);
+            
             WithConcurrencyResolution(() =>
             {
                 if (reservation.Quantity > reservation.Offer.AvailableQuantity)

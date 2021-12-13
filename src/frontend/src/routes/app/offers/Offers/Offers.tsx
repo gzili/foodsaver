@@ -1,19 +1,16 @@
-import { Link as RouterLink } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query';
+import { Avatar, Box, Button, Flex, Heading, HStack, VStack } from '@chakra-ui/react';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
-import { Avatar, Box, Button, Flex, Heading, IconButton, useDisclosure, VStack } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import { useAuth } from 'contexts/authContext';
+import { Fragment, useCallback, useEffect } from 'react';
+import { useInfiniteQuery } from 'react-query';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { FaIcon, faMapMarkerAlt } from 'components/core';
 import { LoadingOverlay } from 'components/layout';
-import { CreateOfferDrawer } from './components/CreateOfferDrawer';
-
-import { IOfferDto } from 'dto/offer';
-import { UserType } from 'contexts/authContext';
-import { useHub } from 'contexts/hubContext';
-import { Fragment, useCallback, useEffect } from 'react';
 import api from 'contexts/apiContext';
+import { absPath } from 'helpers';
+import { useHub } from 'contexts/hubContext';
+import { IOfferDto } from 'dto/offer';
+
 
 interface IOffersListItem {
   item: IOfferDto,
@@ -27,29 +24,29 @@ function OffersListItem(props: IOffersListItem) {
   return (
     <Box
       as={RouterLink}
-      to={`/offers/${item.id}`}
+      to={'/app/offers/' + item.id}
       pos="relative"
       w="100%"
       h="180px"
       overflow="hidden"
-      bg={`url('${item.food.imagePath.replaceAll('\\', '/')}')`}
+      bg={`url('${absPath(item.food.imagePath, true)}')`}
       bgPos="center"
       bgSize="cover"
       borderRadius="xl">
       <Flex direction="column" justify="space-between" pos="absolute" inset={0} p={4} bg="rgba(0, 0, 0, 0.4)" color="white">
         <Box>
           <Flex align="center">
-            <Avatar size="sm" name={item.giver.username} src={item.giver.avatarPath ?? undefined} mr={2} />
+            <Avatar size="sm" name={item.giver.username} src={absPath(item.giver.avatarPath)} mr={2} />
             {item.giver.username}
           </Flex>
         </Box>
         <Box>
           <Box fontSize="xs" color="rgba(255, 255, 255, 0.8)">{[item.quantity, item.food.unit, '•', toNow].join(' ')}</Box>
           <Box fontWeight="bold" fontSize="lg">{item.food.name}</Box>
-          <Flex fontSize="sm" align="center">
-            <Box as={FaIcon} icon={faMapMarkerAlt} mr={2} />
-            {[item.giver.address.street, item.giver.address.city].join(', ')}
-          </Flex>
+          <HStack spacing={2} fontSize="sm">
+            <Box as={FaIcon} icon={faMapMarkerAlt} />
+            <Box>{[item.giver.address.street, item.giver.address.city].join(', ')}</Box>
+          </HStack>
         </Box>
       </Flex>
     </Box>
@@ -113,28 +110,10 @@ function OffersList() {
 }
 
 export default function Offers() {
-  const { user } = useAuth();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
-    <Box mt={10} pt={2} px={4}>
-      <Heading as="h1" mb={2}>Offers</Heading>
+    <Box mt={10} py={2} px={4}>
+      <Heading as="h1">Offers</Heading>
       <OffersList />
-      {(user && user.userType !== UserType.Charity) && (
-        <Box pb="80px">
-          <IconButton
-            icon={<AddIcon />}
-            aria-label="Create offer"
-            onClick={onOpen}
-            colorScheme="brand"
-            pos="fixed"
-            right={6}
-            bottom={6}
-            borderRadius="full"
-          />
-          <CreateOfferDrawer isOpen={isOpen} onClose={onClose} />
-        </Box>
-      )}
     </Box>
   );
 }

@@ -1,10 +1,12 @@
-import api from 'contexts/apiContext';
-import { useHub } from 'contexts/hubContext';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
+
+import api from 'contexts/apiContext';
+import { useHub } from 'contexts/hubContext';
+
 import { useOffer } from '../../../../contexts/OfferContext';
+import type { ReservationDto } from '../../types';
 import { ReservationCreate, ReservationDelete } from './components';
-import type { ReservationDto } from '../.././types';
 
 export function UserActions() {
   const { id } = useOffer();

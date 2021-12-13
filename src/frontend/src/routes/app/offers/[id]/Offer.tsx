@@ -1,15 +1,17 @@
-import { useCallback, useEffect } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
-import { useQuery, useQueryClient } from 'react-query';
+import { Avatar, Box, Code, Flex, Heading, Image, Text, VStack } from '@chakra-ui/react';
 import { formatDistanceToNowStrict, parseJSON } from 'date-fns';
-import { Box, Code, Heading, Image, Text, Flex, Avatar, VStack } from '@chakra-ui/react';
+import { useCallback, useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
+import { Redirect, useParams } from 'react-router-dom';
 
-import { IOfferDto } from 'dto/offer';
 import { LoadingOverlay } from 'components/layout';
 import { useAuth } from 'contexts/authContext';
 import { useHub } from 'contexts/hubContext';
-import { OfferProvider } from './contexts/OfferContext';
+import { IOfferDto } from 'dto/offer';
+import { absPath } from 'helpers';
+
 import { OfferBottomBar } from './components';
+import { OfferProvider } from './contexts/OfferContext';
 
 async function fetchOfferById(id: string) {
   if (!/\d+/.test(id)) {
@@ -84,7 +86,7 @@ export default function Offer() {
   return (
     <OfferProvider value={offer}>
       <Box>
-        <Image w="100%" h="200px" objectFit="cover" src={'/' + offer.food.imagePath} alt="Offer image" />
+        <Image w="100%" h="200px" objectFit="cover" src={absPath(offer.food.imagePath)} alt="Offer image" />
         <VStack py={4} px={6} spacing={4} direction="row" align="normal">
           <Box>
             <Heading as="h1" fontSize="2xl" lineHeight="1">{offer.food.name}</Heading>
@@ -101,7 +103,7 @@ export default function Offer() {
             </Flex>
           </Box>
           <Flex align="center">
-            <Avatar src={offer.giver.avatarPath ? '/' + offer.giver.avatarPath : undefined} size="sm" name={offer.giver.username} />
+            <Avatar src={absPath(offer.giver.avatarPath)} size="sm" name={offer.giver.username} />
             <Box ml={2}>{offer.giver.username}</Box>
           </Flex>
           <Box>
