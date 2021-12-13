@@ -26,6 +26,7 @@ namespace backend.DTO
 
             CreateMap<Models.Reservation, CreateReservationDto>();
             CreateMap<Models.Reservation, ReservationDto>();
+            CreateMap<Models.Reservation, ReservationCreatorDto>();
         }
     }
 }

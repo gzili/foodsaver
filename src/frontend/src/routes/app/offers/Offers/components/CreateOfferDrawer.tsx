@@ -1,11 +1,24 @@
-import { Button, Modal, ModalOverlay, ModalBody, ModalCloseButton, ModalHeader, ModalContent, ModalFooter, Select, Textarea, VStack } from '@chakra-ui/react';
-import * as yup from 'yup';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+  Textarea,
+  VStack
+} from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { endOfDay } from 'date-fns';
 import { useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
+import * as yup from 'yup';
+
 import { DatePickerInput, FieldWithController, FilePicker, Input } from 'components';
 import api from 'contexts/apiContext';
-import { useMutation } from 'react-query';
-import { endOfDay } from 'date-fns';
 
 interface ICreateOfferDrawer {
   isOpen: boolean,

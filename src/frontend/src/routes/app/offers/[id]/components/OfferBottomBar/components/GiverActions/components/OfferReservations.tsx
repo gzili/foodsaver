@@ -1,33 +1,25 @@
 import {
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  Avatar,
+  AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Avatar,
   Box,
   Button,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  Flex,
+  Drawer, DrawerBody, DrawerContent,
+  DrawerHeader, DrawerOverlay, Flex,
   Grid,
   HStack,
   IconButton,
   Stack,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
-import { faCheck, FaIcon } from 'components';
-import api from 'contexts/apiContext';
-import { useHub } from 'contexts/hubContext';
 import { formatDistanceToNowStrict } from 'date-fns';
 import parseJSON from 'date-fns/parseJSON';
 import { useCallback, useEffect, useRef } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useOffer } from 'routes/offers/[id]/contexts/OfferContext';
+
+import { faCheck, faHandshake, FaIcon } from 'components';
+import api from 'contexts/apiContext';
+import { useHub } from 'contexts/hubContext';
+
+import { useOffer } from 'routes/app/offers/[id]/contexts/OfferContext';
 import { ReservationDto } from '../../../types';
 
 interface ReservationCompletePromptProps {
@@ -198,7 +190,7 @@ export function OfferReservations() {
   return (
     <>
       <ReservationsDrawer isOpen={isOpen} onClose={onClose} />
-      <Button colorScheme="brand" onClick={onOpen}>Show reservations</Button>
+      <Button colorScheme="brand" leftIcon={<FaIcon icon={faHandshake} />} onClick={onOpen}>Show reservations</Button>
     </>
   );
 }

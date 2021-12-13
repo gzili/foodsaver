@@ -172,7 +172,7 @@ namespace backend.Controllers
 
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
-            return _mapper.Map<ReservationDto>(reservation);
+            return _mapper.Map<ReservationCreatorDto>(reservation);
         }
 
         [Authorize]
@@ -211,7 +211,7 @@ namespace backend.Controllers
                 return Conflict("Reservations can only be listed by the owner");
             }
 
-            return Ok(offer.Reservations.Select(_mapper.Map<ReservationDto>));
+            return offer.Reservations.Select(_mapper.Map<ReservationDto>).ToList();
         }
     }
 }
