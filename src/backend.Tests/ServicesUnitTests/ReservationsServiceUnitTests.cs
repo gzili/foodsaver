@@ -198,5 +198,26 @@ namespace backend.Tests.ServicesUnitTests
                 Assert.NotNull(reservation);
             }
         }
+
+        [Fact]
+        public void Complete_SetsCompletionDate()
+        {
+            using (var context = new AppDbContext(ContextOptions))
+            {
+                var reservation = context.Reservations.First();
+                Assert.Null(reservation.CompletedAt); // Assert correct test data
+
+                var service = new ReservationsService(context);
+                
+                service.Complete(reservation);
+            }
+
+            using (var context = new AppDbContext(ContextOptions))
+            {
+                var reservation = context.Reservations.First();
+                
+                Assert.NotNull(reservation.CompletedAt);
+            }
+        }
     }
 }
