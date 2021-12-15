@@ -14,6 +14,7 @@ using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace backend.Controllers
 {
@@ -92,9 +93,12 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();
-            
-            if(offer.Giver != user)
+
+            if (offer.Giver != user)
+            {
+                Log.Error("User " + user.Id + " tried to update offer " + offer.Id);
                 return Conflict("Offer can only be updated by its owner");
+            }
 
             var imagePath = await _fileService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
 
@@ -131,6 +135,7 @@ namespace backend.Controllers
 
             if (user == offer.Giver)
             {
+                Log.Error("Offer creator " +user.Id + " tried to create reservation for their offer " + offer.Id);
                 return Conflict("Offer cannot be reserved by its owner");
             }
             
@@ -138,6 +143,7 @@ namespace backend.Controllers
 
             if (reservation != null)
             {
+                Log.Error("User " + user.Id + " tried to create duplicate reservations for offer " + offer.Id);
                 return Conflict("User already has an active reservation for this offer");
             }
             
@@ -154,6 +160,7 @@ namespace backend.Controllers
             }
             catch (QuantityTooLargeException)
             {
+                Log.Error("Requested larger quantity that available for offer " + offer.Id);
                 return Conflict("Requested quantity is larger than available");
             }
 
@@ -208,6 +215,7 @@ namespace backend.Controllers
 
             if (offer.Giver != user)
             {
+                Log.Error("User " + user.Id + " tried to get other user's reservation " + id);
                 return Conflict("Reservations can only be listed by the owner");
             }
 

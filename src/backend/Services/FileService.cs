@@ -2,6 +2,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace backend.Services
 {
@@ -17,11 +18,15 @@ namespace backend.Services
         public async Task<string> UploadFormFileAsync(IFormFile file, string dir)
         {
             if (file == null || file.Length == 0)
+            {
+                Log.Error("File is null or length is 0");
                 return null;
+            }
 
             var dirPath = Path.Combine(_contentRoot, dir);
             if (!Directory.Exists(dirPath))
             {
+                Log.Information("Directory \"" + dirPath + "\" was created.");
                 Directory.CreateDirectory(dirPath);
             }
 
@@ -41,6 +46,7 @@ namespace backend.Services
         {
             var fullPath = Path.Combine(_contentRoot, path);
             File.Delete(fullPath);
+            Log.Information("File \"" + fullPath + "\" deleted");
         }
     }
 }
