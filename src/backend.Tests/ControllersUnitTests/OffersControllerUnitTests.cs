@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using backend.Services;
@@ -305,6 +306,145 @@ namespace backend.Tests.ControllersUnitTests
             var result = controller.GetReservation(1);
 
             Assert.IsType<ReservationCreatorDto>(result);
+        }
+
+        [Fact]
+        public void CancelReservation_ReturnsConflictWhenReservationDoesNotExist()
+        {
+            var offer = new Offer
+            {
+                Reservations = new List<Reservation>
+                {
+                    new Reservation
+                    {
+                        User = new User()
+                    }
+                }
+            };
+            
+            var mockOffersService = new Mock<IOffersService>();
+            mockOffersService.Setup(m => m.FindById(1))
+                .Returns(offer);
+
+            var controller = new OffersController(
+                mockOffersService.Object, null, null, null, null)
+            {
+                ControllerContext = _controllerContext
+            };
+
+            var returnValue = controller.CancelReservation(1);
+
+            Assert.IsType<ConflictObjectResult>(returnValue);
+        }
+
+        [Fact]
+        public void CancelReservation_ReturnsConflictWhenReservationIsAlreadyCompleted()
+        {
+            var offer = new Offer
+            {
+                Reservations = new List<Reservation>
+                {
+                    new Reservation
+                    {
+                        User = _user,
+                        CompletedAt = DateTime.Now
+                    }
+                }
+            };
+            
+            var mockOffersService = new Mock<IOffersService>();
+            mockOffersService.Setup(m => m.FindById(1))
+                .Returns(offer);
+
+            var controller = new OffersController(
+                mockOffersService.Object, null, null, null, null)
+            {
+                ControllerContext = _controllerContext
+            };
+
+            var returnValue = controller.CancelReservation(1);
+
+            Assert.IsType<ConflictObjectResult>(returnValue);
+        }
+
+        [Fact]
+        public void CancelReservation_CallsDelete()
+        {
+            var reservation = new Reservation
+            {
+                User = _user
+            };
+            
+            var offer = new Offer
+            {
+                Reservations = new List<Reservation> { reservation }
+            };
+            
+            var mockOffersService = new Mock<IOffersService>();
+            mockOffersService.Setup(m => m.FindById(1))
+                .Returns(offer);
+
+            var mockReservationsService = new Mock<IReservationsService>();
+
+            var controller = new OffersController(
+                mockOffersService.Object, null, null, null, mockReservationsService.Object)
+            {
+                ControllerContext = _controllerContext
+            };
+
+            var returnValue = controller.CancelReservation(1);
+
+            Assert.IsType<OkResult>(returnValue);
+            mockReservationsService.Verify(m => m.Delete(reservation), Times.Once);
+        }
+
+        [Fact]
+        public void GetAllReservations_ReturnsConflictWhenNoPermission()
+        {
+            var offer = new Offer
+            {
+                Giver = new User()
+            };
+
+            var mockOffersService = new Mock<IOffersService>();
+            mockOffersService
+                .Setup(m => m.FindById(1))
+                .Returns(offer);
+            
+            var controller = new OffersController(
+                mockOffersService.Object, null, null, null, null)
+            {
+                ControllerContext = _controllerContext
+            };
+
+            var returnValue = controller.GetAllReservations(1);
+
+            Assert.IsType<ConflictObjectResult>(returnValue.Result);
+        }
+
+        [Fact]
+        public void GetAllReservations_ReturnsListOfReservationsForGiver()
+        {
+            var offer = new Offer
+            {
+                Giver = _user,
+                Reservations = new List<Reservation>()
+            };
+
+            var mockOffersService = new Mock<IOffersService>();
+            mockOffersService
+                .Setup(m => m.FindById(1))
+                .Returns(offer);
+            
+            var controller = new OffersController(
+                mockOffersService.Object, _mapper, null, null, null)
+            {
+                ControllerContext = _controllerContext
+            };
+
+            var actionResult = controller.GetAllReservations(1);
+            
+            Assert.IsAssignableFrom<IEnumerable<ReservationDto>>(actionResult.Value);
         }
     }
 }
