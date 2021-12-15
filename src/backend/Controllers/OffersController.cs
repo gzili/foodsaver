@@ -14,6 +14,7 @@ using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace backend.Controllers
 {
@@ -64,13 +65,14 @@ namespace backend.Controllers
         [HttpPost] // POST /api/offers
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            var imagePath = await _fileService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
-            
+            var imagePath =
+                await _fileService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
+
             if (imagePath == null)
                 return BadRequest("Invalid image file");
-            
+
             var user = HttpContext.GetUser();
-            
+
             var offer = _mapper.Map<Offer>(createOfferDto);
             offer.AvailableQuantity = offer.Quantity;
             offer.CreatedAt = DateTime.UtcNow;
@@ -79,9 +81,9 @@ namespace backend.Controllers
 
             _offersService.Create(offer);
 
-            return CreatedAtAction(nameof(FindById), new { id = offer.Id }, _mapper.Map<OfferDto>(offer));
+            return CreatedAtAction(nameof(FindById), new {id = offer.Id}, _mapper.Map<OfferDto>(offer));
         }
-        
+
         [Authorize]
         [HttpPut("{id:int}")] // PUT /api/offers/{id}
         public async Task<ActionResult<OfferDto>> Update(
@@ -92,9 +94,12 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();
-            
-            if(offer.Giver != user)
+
+            if (offer.Giver != user)
+            {
+                Log.Error("User {user.Id} tried to update offer {offer.Id}", user.Id, offer.Id);
                 return Conflict("Offer can only be updated by its owner");
+            }
 
             var imagePath = await _fileService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
 
@@ -103,7 +108,7 @@ namespace backend.Controllers
                 (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
 
             _offersService.Update(offer, updateOfferDto, foodDto);
-            
+
             // delete the old file if changes were saved successfully
             if (imagePath != null)
                 _fileService.DeleteFile(imagePath);
@@ -131,36 +136,46 @@ namespace backend.Controllers
 
             if (user == offer.Giver)
             {
+                Log.Error("Offer creator {user.Id} tried to create reservation for their offer {offer.Id}", user.Id,
+                    offer.Id);
                 return Conflict("Offer cannot be reserved by its owner");
             }
-            
+
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
             if (reservation != null)
             {
+                Log.Error("User {user.Id} tried to create duplicate reservations for offer {offer.Id}", user.Id,
+                    offer.Id);
                 return Conflict("User already has an active reservation for this offer");
             }
-            
+
             reservation = new Reservation
             {
                 Offer = offer,
                 User = user,
                 Quantity = createReservationDto.Quantity
             };
-            
+
             try
             {
                 _reservationsService.Create(reservation);
             }
             catch (QuantityTooLargeException)
             {
+                Log.Error(
+                    "User {user.Id} tried to tried to reserve {reservation.Quantity} of offer {offer.Id} when only {offer.AvailableQuantity} was available",
+                    user.Id,
+                    reservation.Quantity,
+                    offer.Id,
+                    offer.AvailableQuantity);
                 return Conflict("Requested quantity is larger than available");
             }
 
             return CreatedAtAction(
-            nameof(GetReservation),
-            new { id = offer.Id },
-            _mapper.Map<ReservationDto>(reservation));
+                nameof(GetReservation),
+                new {id = offer.Id},
+                _mapper.Map<ReservationDto>(reservation));
         }
 
         [Authorize]
@@ -181,7 +196,7 @@ namespace backend.Controllers
         {
             var offer = _offersService.FindById(id);
             var user = HttpContext.GetUser();
-            
+
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
             if (reservation == null)
@@ -193,7 +208,7 @@ namespace backend.Controllers
             {
                 return Conflict("Completed reservation can not be cancelled");
             }
-            
+
             _reservationsService.Delete(reservation);
 
             return Ok();
@@ -208,6 +223,7 @@ namespace backend.Controllers
 
             if (offer.Giver != user)
             {
+                Log.Error("User {user.Id} tried to get other user's reservation {reservation.Id}", user.Id, id);
                 return Conflict("Reservations can only be listed by the owner");
             }
 

@@ -33,6 +33,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Npgsql" Version="5.0.10" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
+        <PackageReference Include="Serilog.AspNetCore" Version="4.1.1-dev-00241" />
     </ItemGroup>
 
     <ItemGroup>
@@ -49,6 +50,7 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Users\Error.cshtml" />
       <_ContentIncludedByDefault Remove="Users\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Logging\log4net.config" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

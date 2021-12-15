@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace backend
 {
@@ -22,18 +24,18 @@ namespace backend
 
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
-            
+
             var host = CreateHostBuilder(args).Build();
-            
+
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                
+
                 try
                 {
                     var context = services.GetRequiredService<AppDbContext>();
                     var config = services.GetRequiredService<IConfiguration>();
-                    
+
                     DbInitializer.Initialize(context, config);
                 }
                 catch (Exception ex)
@@ -43,6 +45,22 @@ namespace backend
                 }
             }
             
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                // Add this line:
+                .WriteTo.File(
+                    @"C:\logs\foodsaver_log_" + DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss") + ".txt",
+                    fileSizeLimitBytes: 1_000_000,
+                    rollOnFileSizeLimit: true,
+                    shared: true,
+                    flushToDiskInterval: TimeSpan.FromSeconds(1))
+                .CreateLogger();
+
+            Log.Information("Starting web host");
+            CreateHostBuilder(args).Build().Run();
             host.Run();
         }
 
@@ -50,7 +68,8 @@ namespace backend
         {
             return Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                .UseSerilog();
         }
     }
 }

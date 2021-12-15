@@ -3,6 +3,7 @@ using backend.DTO.Reservation;
 using backend.Extensions;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace backend.Controllers
 {
@@ -27,11 +28,19 @@ namespace backend.Controllers
 
             if (reservation.Offer.Giver != user)
             {
+                Log.Error(
+                    "User {user.Id} tried to complete reservation {reservation.Id}",
+                    user.Id,
+                    reservation.Id);
                 return Conflict("Reservation can only be marked as completed by the owner of the offer");
             }
 
             if (reservation.CompletedAt != null)
             {
+                Log.Error(
+                    "User {user.Id} Tried to complete an already completed reservation {reservation.Id}",
+                    user.Id,
+                    reservation.Id);
                 return Conflict("Reservation is already completed");
             }
 
