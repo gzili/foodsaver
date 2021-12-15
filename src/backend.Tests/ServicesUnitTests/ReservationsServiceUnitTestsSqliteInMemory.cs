@@ -14,6 +14,7 @@ namespace backend.Tests.ServicesUnitTests
         public ReservationsServiceUnitTestsSqliteInMemory()
             : base(
                 new DbContextOptionsBuilder<AppDbContext>()
+                    .UseLazyLoadingProxies()
                     .UseSqlite(CreateInMemoryDb())
                     .Options
                 )
