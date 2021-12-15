@@ -135,7 +135,7 @@ namespace backend.Controllers
 
             if (user == offer.Giver)
             {
-                Log.Error("Offer creator " +user.Id + " tried to create reservation for their offer " + offer.Id);
+                Log.Error("User " + user.Id + " tried to create reservation for their own offer " + offer.Id);
                 return Conflict("Offer cannot be reserved by its owner");
             }
             
@@ -143,7 +143,7 @@ namespace backend.Controllers
 
             if (reservation != null)
             {
-                Log.Error("User " + user.Id + " tried to create duplicate reservations for offer " + offer.Id);
+                Log.Error("User " + user.Id + " tried to create duplicate reservation for offer " + offer.Id);
                 return Conflict("User already has an active reservation for this offer");
             }
             
@@ -160,7 +160,12 @@ namespace backend.Controllers
             }
             catch (QuantityTooLargeException)
             {
-                Log.Error("Requested larger quantity that available for offer " + offer.Id);
+                Log.Error(
+                    "User {user.Id} tried to tried to reserve {reservation.Quantity} of offer {offer.Id} when only {offer.AvailableQuantity} was available",
+                    user.Id,
+                    reservation.Quantity,
+                    offer.Id,
+                    offer.AvailableQuantity);
                 return Conflict("Requested quantity is larger than available");
             }
 
@@ -215,7 +220,7 @@ namespace backend.Controllers
 
             if (offer.Giver != user)
             {
-                Log.Error("User " + user.Id + " tried to get other user's reservation " + id);
+                Log.Error("User " + user.Id + " tried to access reservations for offer " + id);
                 return Conflict("Reservations can only be listed by the owner");
             }
 
