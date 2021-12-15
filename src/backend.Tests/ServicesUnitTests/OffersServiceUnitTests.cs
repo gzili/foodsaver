@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using backend.Data;
-using backend.DTO.Offer;
 using backend.Exceptions;
 using backend.Models;
 using backend.Services;
 using backend.Tests.Mocks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
-
 
 namespace backend.Tests.ServicesUnitTests
 {
@@ -29,17 +27,17 @@ namespace backend.Tests.ServicesUnitTests
             var service = new OffersService(mockContext.Object, null);
             service.Create(offer);
 
-            mockSet.Verify(o => o.Add(It.IsAny<Offer>()), Times.Once());
+            mockSet.Verify(o => o.Add(It.IsAny<Offer>()), Times.Once);
             mockContext.Verify(o => o.SaveChanges(), Times.Once);
         }
 
         [Fact]
         public void FindById_ReturnsOffer()
         {
-            var offer1 = new Offer {Id = 1};
-            var offer2 = new Offer {Id = 2};
+            var offer1 = new Offer { Id = 1 };
+            var offer2 = new Offer { Id = 2 };
 
-            var data = new List<Offer> {offer1, offer2};
+            var data = new List<Offer> { offer1, offer2 };
 
             var mockSet = MockDbSet<Offer>.Create(data);
 
@@ -55,8 +53,8 @@ namespace backend.Tests.ServicesUnitTests
         [Fact]
         public void FindById_ThrowsEntityNotFoundException()
         {
-            var offer1 = new Offer {Id = 1};
-            var offer2 = new Offer {Id = 2};
+            var offer1 = new Offer { Id = 1 };
+            var offer2 = new Offer { Id = 2 };
 
             var data = new List<Offer> {offer1, offer2};
 
@@ -76,14 +74,7 @@ namespace backend.Tests.ServicesUnitTests
         [InlineData(true, 1, -1)]
         public void FindAllPaginated_ReturnsNormalizedSize(bool includeExpired, int page, int limit)
         {
-            var offer1 = new Offer {Id = 1};
-            var offer2 = new Offer {Id = 2};
-            var offer3 = new Offer {Id = 3};
-            var offer4 = new Offer {Id = 4};
-            var offer5 = new Offer {Id = 5};
-            var offer6 = new Offer {Id = 6};
-
-            var data = new List<Offer> {offer1, offer2, offer3, offer4, offer5, offer6};
+            var data = Enumerable.Range(0, 30).Select(_ => new Offer()).ToList();
 
             var mockSet = MockDbSet<Offer>.Create(data);
 
@@ -94,7 +85,7 @@ namespace backend.Tests.ServicesUnitTests
 
             var size = service.FindAllPaginated(includeExpired, page, limit).Count;
 
-            Assert.True(size is > 0 and < 25);
+            Assert.True(size is > 0 and <= 25);
         }
 
         [Theory]
@@ -102,14 +93,7 @@ namespace backend.Tests.ServicesUnitTests
         [InlineData(true, 0, 3)]
         public void FindAllPaginated_ReturnPaginatedSizedList(bool includeExpired, int page, int limit)
         {
-            var offer1 = new Offer {Id = 1};
-            var offer2 = new Offer {Id = 2};
-            var offer3 = new Offer {Id = 3};
-            var offer4 = new Offer {Id = 4};
-            var offer5 = new Offer {Id = 5};
-            var offer6 = new Offer {Id = 6};
-
-            var data = new List<Offer> {offer1, offer2, offer3, offer4, offer5, offer6};
+            var data = Enumerable.Range(0, 6).Select(_ => new Offer()).ToList();
 
             var mockSet = MockDbSet<Offer>.Create(data);
 
@@ -126,14 +110,7 @@ namespace backend.Tests.ServicesUnitTests
         [Fact]
         public void FindAllPaginated_ReturnPaginatedIndexedList()
         {
-            var offer1 = new Offer {Id = 1};
-            var offer2 = new Offer {Id = 2};
-            var offer3 = new Offer {Id = 3};
-            var offer4 = new Offer {Id = 4};
-            var offer5 = new Offer {Id = 5};
-            var offer6 = new Offer {Id = 6};
-
-            var data = new List<Offer> {offer1, offer2, offer3, offer4, offer5, offer6};
+            var data = Enumerable.Range(0, 6).Select(_ => new Offer()).ToList();
 
             var mockSet = MockDbSet<Offer>.Create(data);
 
