@@ -164,6 +164,12 @@ namespace backend.Controllers
             catch (QuantityTooLargeException)
             {
                 Log.Error("Requested larger quantity that available for offer {offerId}", offer.Id);
+                Log.Error(
+                    "User {user.Id} tried to tried to reserve {reservation.Quantity} of offer {offer.Id} when only {offer.AvailableQuantity} was available",
+                    user.Id,
+                    reservation.Quantity,
+                    offer.Id,
+                    offer.AvailableQuantity);
                 return Conflict("Requested quantity is larger than available");
             }
 

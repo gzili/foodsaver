@@ -28,13 +28,19 @@ namespace backend.Controllers
 
             if (reservation.Offer.Giver != user)
             {
-                Log.Error("Wrong user {userId} tried to complete reservation {reservationId}", user.Id, reservation.Id);
+                Log.Error(
+                    "User {user.Id} tried to complete reservation {reservation.Id}",
+                    user.Id,
+                    reservation.Id);
                 return Conflict("Reservation can only be marked as completed by the owner of the offer");
             }
 
             if (reservation.CompletedAt != null)
             {
-                Log.Error("Tried to complete completed reservation{reservationId}", reservation.Id);
+                Log.Error(
+                    "User {user.Id} Tried to complete an already completed reservation {reservation.Id}",
+                    user.Id,
+                    reservation.Id);
                 return Conflict("Reservation is already completed");
             }
 
