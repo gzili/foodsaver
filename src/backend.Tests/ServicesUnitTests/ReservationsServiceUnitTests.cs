@@ -219,5 +219,35 @@ namespace backend.Tests.ServicesUnitTests
                 Assert.NotNull(reservation.CompletedAt);
             }
         }
+
+        [Fact]
+        public void Delete_PerformsDeletionSteps()
+        {
+            int offerId;
+            decimal expectedAvailableQuantity;
+            
+            using (var context = new AppDbContext(ContextOptions))
+            {
+                var reservation = context.Reservations.First(r => r.Id == 1);
+                var offer = reservation.Offer;
+                offerId = offer.Id;
+                expectedAvailableQuantity = offer.AvailableQuantity + reservation.Quantity;
+
+                var service = new ReservationsService(context);
+                
+                service.Delete(reservation);
+            }
+
+            using (var context = new AppDbContext(ContextOptions))
+            {
+                var reservation = context.Reservations.FirstOrDefault(r => r.Id == 1);
+                
+                Assert.Null(reservation);
+
+                var offer = context.Offers.First(o => o.Id == offerId);
+                
+                Assert.Equal(expectedAvailableQuantity, offer.AvailableQuantity);
+            }
+        }
     }
 }
