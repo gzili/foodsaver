@@ -44,10 +44,6 @@ namespace backend
                     logger.LogError(ex, "An error occurred while seeding the database");
                 }
             }
-
-            var timeInMillis = DateTime.Now.ToUniversalTime().Subtract(
-                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            ).TotalMilliseconds;
             
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -56,7 +52,7 @@ namespace backend
                 .WriteTo.Console()
                 // Add this line:
                 .WriteTo.File(
-                    @"C:\logs\foodsaver_log_" + timeInMillis + ".txt",
+                    @"C:\logs\foodsaver_log_" + DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss") + ".txt",
                     fileSizeLimitBytes: 1_000_000,
                     rollOnFileSizeLimit: true,
                     shared: true,
@@ -65,7 +61,6 @@ namespace backend
 
             Log.Information("Starting web host");
             CreateHostBuilder(args).Build().Run();
-            Log.CloseAndFlush();
             host.Run();
         }
 

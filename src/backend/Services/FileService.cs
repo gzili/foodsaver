@@ -26,7 +26,7 @@ namespace backend.Services
             var dirPath = Path.Combine(_contentRoot, dir);
             if (!Directory.Exists(dirPath))
             {
-                Log.Information("Directory \"{dirPath}\" was created.", dirPath);
+                Log.Information("Directory \"{dir.Path}\" was created.", dirPath);
                 Directory.CreateDirectory(dirPath);
             }
 
@@ -46,7 +46,7 @@ namespace backend.Services
         {
             var fullPath = Path.Combine(_contentRoot, path);
             File.Delete(fullPath);
-            Log.Information("File \"{fullPath}\" deleted", fullPath);
+            Log.Information("File \"{full.Path}\" deleted", fullPath);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace backend.Controllers
 
             if (offer.Giver != user)
             {
-                Log.Error("User {userId} tried to update offer {offerID}", user.Id, offer.Id);
+                Log.Error("User {user.Id} tried to update offer {offer.Id}", user.Id, offer.Id);
                 return Conflict("Offer can only be updated by its owner");
             }
 
@@ -136,7 +136,7 @@ namespace backend.Controllers
 
             if (user == offer.Giver)
             {
-                Log.Error("Offer creator {userId} tried to create reservation for their offer {offerId}", user.Id,
+                Log.Error("Offer creator {user.Id} tried to create reservation for their offer {offer.Id}", user.Id,
                     offer.Id);
                 return Conflict("Offer cannot be reserved by its owner");
             }
@@ -145,7 +145,7 @@ namespace backend.Controllers
 
             if (reservation != null)
             {
-                Log.Error("User {userId} tried to create duplicate reservations for offer {offerId}", user.Id,
+                Log.Error("User {user.Id} tried to create duplicate reservations for offer {offer.Id}", user.Id,
                     offer.Id);
                 return Conflict("User already has an active reservation for this offer");
             }
@@ -163,7 +163,6 @@ namespace backend.Controllers
             }
             catch (QuantityTooLargeException)
             {
-                Log.Error("Requested larger quantity that available for offer {offerId}", offer.Id);
                 Log.Error(
                     "User {user.Id} tried to tried to reserve {reservation.Quantity} of offer {offer.Id} when only {offer.AvailableQuantity} was available",
                     user.Id,
@@ -224,7 +223,7 @@ namespace backend.Controllers
 
             if (offer.Giver != user)
             {
-                Log.Error("User {userId} tried to get other user's reservation {reservationId}", user.Id, id);
+                Log.Error("User {user.Id} tried to get other user's reservation {reservation.Id}", user.Id, id);
                 return Conflict("Reservations can only be listed by the owner");
             }
 
