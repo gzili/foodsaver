@@ -109,7 +109,7 @@ function PlacesList() {
 
 export default function Places() {
   return (
-    <Box pt={12} pb={2} px={4}>
+    <Box py={2} px={4}>
       <Heading as="h1">Places</Heading>
       <PlacesList />
     </Box>

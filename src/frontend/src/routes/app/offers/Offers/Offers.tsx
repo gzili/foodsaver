@@ -111,7 +111,7 @@ function OffersList() {
 
 export default function Offers() {
   return (
-    <Box mt={10} py={2} px={4}>
+    <Box py={2} px={4}>
       <Heading as="h1">Offers</Heading>
       <OffersList />
     </Box>
