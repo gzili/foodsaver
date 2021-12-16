@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using backend.Models;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace backend.Data
@@ -11,11 +12,14 @@ namespace backend.Data
     {
         public static void Initialize(AppDbContext db, IConfiguration config)
         {
+            Log.Information("Checking if database needs seeding");
             if (db.Users.Any())
             {
+                Log.Information("Skipping seeding, the database already has data");
                 return;
             }
 
+            Log.Information("Database is empty, seeding with test data");
             var random = new Random();
 
             var path = config["UploadedFilesPath"];
@@ -122,6 +126,7 @@ namespace backend.Data
             
             db.Offers.AddRange(offers);
             db.SaveChanges();
+            Log.Information("Database seeded successfully");
         }
     }
 }

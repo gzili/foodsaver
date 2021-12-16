@@ -26,6 +26,19 @@ namespace backend
             Thread.CurrentThread.CurrentUICulture = culture;
 
             var host = CreateHostBuilder(args).Build();
+            
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                /*.WriteTo.File(
+                    @"C:\logs\foodsaver_log_" + DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss") + ".txt",
+                    fileSizeLimitBytes: 1_000_000,
+                    rollOnFileSizeLimit: true,
+                    shared: true,
+                    flushToDiskInterval: TimeSpan.FromSeconds(1))*/
+                .CreateLogger();
 
             using (var scope = host.Services.CreateScope())
             {
@@ -44,23 +57,8 @@ namespace backend
                     logger.LogError(ex, "An error occurred while seeding the database");
                 }
             }
-            
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                // Add this line:
-                .WriteTo.File(
-                    @"C:\logs\foodsaver_log_" + DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss") + ".txt",
-                    fileSizeLimitBytes: 1_000_000,
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1))
-                .CreateLogger();
 
             Log.Information("Starting web host");
-            CreateHostBuilder(args).Build().Run();
             host.Run();
         }
 
