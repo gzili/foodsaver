@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using backend.DTO.User;
 using backend.Models;
 
 namespace backend.Services
@@ -8,5 +10,6 @@ namespace backend.Services
         User FindById(int id);
         User GetByEmail(string email);
         User IsValidLogin(string email, string password);
+        PlaceDto GetById(int id);
     }
 }
