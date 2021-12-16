@@ -19,10 +19,7 @@ function NavButton(props: INavButton) {
     to,
   } = props;
 
-  const match = useRouteMatch({
-    path: to,
-    exact: true,
-  });
+  const match = useRouteMatch(to);
 
   return (
     <Link to={to}>
@@ -94,7 +91,7 @@ export default function BottomBar() {
         }}
       >
         <Grid w="100%" h="100%" templateColumns="1fr 1fr 1fr 1fr 1fr">
-          <NavButton to="/app" icon={<FaIcon icon={faHome} />} text="Home" />
+          <NavButton to="/app/home" icon={<FaIcon icon={faHome} />} text="Home" />
           <NavButton to="/app/offers" icon={<FaIcon icon={faHamburger} />} text="Offers" />
           <CreateButton />
           <NavButton to="/app/places" icon={<FaIcon icon={faMapMarkerAlt} />} text="Places" />
