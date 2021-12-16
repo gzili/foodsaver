@@ -1,4 +1,4 @@
-const globalFont = '"Inter", sans-serif';
+const globalFont = '"Jost", sans-serif';
 
 const typography = {
   fonts: {
