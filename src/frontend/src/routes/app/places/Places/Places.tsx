@@ -2,32 +2,10 @@ import { Avatar, Box, Flex, Grid, Heading, HStack, IconButton, Text, VStack } fr
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 
-import { B, faHandHoldingHeart, FaIcon, faLongArrowAltRight, faMapMarkerAlt, faShoppingBag, faStore, faUser, LoadingOverlay } from 'components';
+import { B, FaIcon, faLongArrowAltRight, faMapMarkerAlt, faShoppingBag, LoadingOverlay } from 'components';
 import api from 'contexts/apiContext';
 import { UserType } from 'dto/user';
-import { absPath } from 'helpers';
-
-function getUserTypeString(userType: UserType) {
-  switch (userType) {
-    case UserType.Business:
-      return "Business";
-    case UserType.Charity:
-      return "Charity";
-    case UserType.Individual:
-      return "Individual";
-  }
-}
-
-function getUserTypeFaIcon(userType: UserType) {
-  switch (userType) {
-    case UserType.Business:
-      return faStore;
-    case UserType.Charity:
-      return faHandHoldingHeart;
-    case UserType.Individual:
-      return faUser;
-  }
-}
+import { absPath, getUserTypeFaIcon, getUserTypeString } from 'helpers';
 
 interface IPlace {
   id: number,
