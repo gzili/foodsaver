@@ -44,7 +44,7 @@ namespace backend.Services
             return offer;
         }
 
-        public PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit)
+        public PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit, int userId)
         {
             if (page < 0)
                 page = 0;
@@ -55,14 +55,20 @@ namespace backend.Services
                 <= 0 => 5,
                 _ => limit
             };
+
+            IQueryable<Offer> offers = Offers.OrderByDescending(o => o.CreatedAt);
+
+            if (!includeExpired)
+            {
+                offers = offers.Where(o => o.ExpiresAt > DateTime.Now);
+            }
+
+            if (userId > 0)
+            {
+                offers = offers.Where(o => o.Giver.Id == userId);
+            }
             
-            var offers = includeExpired
-                ? Offers
-                : Offers.Where(o => o.ExpiresAt > DateTime.Now);
-
-            var orderedOffers = offers.OrderByDescending(o => o.ExpiresAt);
-
-            return PaginatedList<Offer>.Create(orderedOffers, page, limit);
+            return PaginatedList<Offer>.Create(offers, page, limit);
         }
 
         public void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
