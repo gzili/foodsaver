@@ -83,7 +83,7 @@ namespace backend.Tests.ServicesUnitTests
 
             var service = new OffersService(mockContext.Object, null);
 
-            var size = service.FindAllPaginated(includeExpired, page, limit).Count;
+            var size = service.FindAllPaginated(includeExpired, page, limit, 0).Count;
 
             Assert.True(size is > 0 and <= 25);
         }
@@ -102,7 +102,7 @@ namespace backend.Tests.ServicesUnitTests
 
             var service = new OffersService(mockContext.Object, null);
 
-            var size = service.FindAllPaginated(includeExpired, page, limit).Count;
+            var size = service.FindAllPaginated(includeExpired, page, limit, 0).Count;
 
             Assert.True(size == limit);
         }
@@ -119,7 +119,7 @@ namespace backend.Tests.ServicesUnitTests
 
             var service = new OffersService(mockContext.Object, null);
 
-            var size = service.FindAllPaginated(true, 1, 5).Count;
+            var size = service.FindAllPaginated(true, 1, 5, 0).Count;
 
             Assert.True(size == 1);
         }
@@ -143,7 +143,7 @@ namespace backend.Tests.ServicesUnitTests
 
             var service = new OffersService(mockContext.Object, null);
 
-            var size = service.FindAllPaginated(false, 0, 5).Count;
+            var size = service.FindAllPaginated(false, 0, 5, 0).Count;
 
             Assert.True(size == 3);
         }

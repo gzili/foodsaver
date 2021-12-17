@@ -74,5 +74,11 @@ namespace backend.Controllers
             
             return Ok();
         }
+
+        [HttpGet("{id:int}")]
+        public PlaceDto Get(int id)
+        {
+            return _usersService.GetById(id);
+        }
     }
 }

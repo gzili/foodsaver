@@ -1,4 +1,5 @@
 import {
+  Alert,
   AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Avatar,
   Box,
   Button,
@@ -7,12 +8,15 @@ import {
   Grid,
   HStack,
   IconButton,
+  PinInput,
+  PinInputField,
   Stack,
-  useDisclosure
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import parseJSON from 'date-fns/parseJSON';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
 import { faCheck, faHandshake, FaIcon } from 'components';
@@ -33,8 +37,10 @@ function ReservationCompletePrompt(props: ReservationCompletePromptProps) {
 
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { mutate } = useMutation({
-    mutationFn: () => api.post(`reservations/${reservation.id}/completion`),
+  const [pin, setPin] = useState('');
+
+  const { mutate, isError } = useMutation({
+    mutationFn: () => api.post(`reservations/${reservation.id}/completion`, { json: { pin: parseInt(pin, 10) } }),
     onSuccess: () => onClose(),
   });
 
@@ -42,12 +48,25 @@ function ReservationCompletePrompt(props: ReservationCompletePromptProps) {
     <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelButtonRef} size="xs" isCentered>
       <AlertDialogOverlay />
       <AlertDialogContent>
-        <AlertDialogHeader>Confirm pickup</AlertDialogHeader>
-        <AlertDialogBody>Do you want to confirm the pickup of this reservation?</AlertDialogBody>
+        <AlertDialogHeader>Pickup confirmation</AlertDialogHeader>
+        <AlertDialogBody pt={0}>
+          <VStack>
+            <Box textAlign="center" lineHeight={1.25}>Please enter the PIN provided by the receiving user in order to complete this reservation:</Box>
+            {isError && <Alert status="error" borderRadius="md" justifyContent="center">The PIN code is invalid</Alert>}
+            <HStack>
+              <PinInput value={pin} onChange={setPin}>
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+              </PinInput>
+            </HStack>
+          </VStack>
+        </AlertDialogBody>
         <AlertDialogFooter>
           <HStack>
             <Button ref={cancelButtonRef} onClick={onClose}>Cancel</Button>
-            <Button colorScheme="brand" onClick={() => mutate()}>Confirm</Button>
+            <Button colorScheme="brand" isDisabled={pin.length < 4} onClick={() => mutate()}>Confirm</Button>
           </HStack>
         </AlertDialogFooter>
       </AlertDialogContent>

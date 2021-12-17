@@ -40,6 +40,7 @@ namespace backend.Controllers
                     {
                         Id = u.Id,
                         Username = u.Username,
+                        UserType = u.UserType,
                         AvatarPath = u.AvatarPath,
                         Address = new AddressDto
                         {

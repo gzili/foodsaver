@@ -5,8 +5,8 @@ import api from 'contexts/apiContext';
 import { useHub } from 'contexts/hubContext';
 
 import { useOffer } from '../../../../contexts/OfferContext';
-import type { ReservationDto } from '../../types';
-import { ReservationCreate, ReservationDelete } from './components';
+import { ReservationCreate, ReservedActions } from './components';
+import type { ICreatorReservation } from './types';
 
 export function UserActions() {
   const { id } = useOffer();
@@ -14,7 +14,7 @@ export function UserActions() {
   const { connection } = useHub();
 
   const { isLoading, data, refetch } = useQuery(['reservation', id], () => {
-    return api.get(`offers/${id}/reservation`).json<ReservationDto | ''>();
+    return api.get(`offers/${id}/reservation`).json<ICreatorReservation | ''>();
   });
 
   useEffect(() => {
@@ -29,5 +29,5 @@ export function UserActions() {
     return null;
   }
 
-  return !!data ? <ReservationDelete reservation={data} /> : <ReservationCreate />;
+  return !!data ? <ReservedActions reservation={data} /> : <ReservationCreate />;
 }

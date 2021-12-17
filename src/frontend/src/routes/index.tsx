@@ -1,12 +1,12 @@
 import { Box, Button, Flex, Heading, HStack, Image, Text } from '@chakra-ui/react';
-import { C } from 'components';
+import { APP_BAR_HEIGHT, C } from 'components';
 import { Link as RouterLink } from 'react-router-dom';
 
 import logo from 'resources/foodsaver_logo.png';
 
 export default function Home() {
   return (
-    <Box h="100vh" pt={10}>
+    <Box h={`calc(100vh - ${APP_BAR_HEIGHT * 4}px)`}>
       <Flex p={4} h="100%" direction="column" justifyContent="center">
         <Box>
           <Box flexShrink={1}>
