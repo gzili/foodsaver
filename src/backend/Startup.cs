@@ -1,15 +1,14 @@
-using System;
-using System.Net;
-using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.DynamicProxy;
 using backend.Data;
-using backend.Exceptions;
 using backend.Hubs;
-using backend.Repositories;
+using backend.Interceptors;
+using backend.Middleware;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +26,8 @@ namespace backend
 
         public IConfiguration Configuration { get; }
 
+        public ILifetimeScope AutofacContainer { get; private set; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -38,23 +39,16 @@ namespace backend
             
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.EventsType = typeof(CustomCookieAuthEvents); });
-
             services.AddScoped<CustomCookieAuthEvents>();
             
             services.AddAutoMapper(typeof(Startup));
+            
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
-            services.AddScoped<OffersService>();
-            services.AddScoped<OffersRepository>();
-            services.AddScoped<ReservationsService>();
-            services.AddScoped<ReservationsRepository>();
-            services.AddScoped<UsersService>();
-            services.AddScoped<UsersRepository>();
-            
-            services.AddSingleton<OfferEvents>();
-            services.AddSingleton<HubInvoker>();
-            services.AddScoped<PushService>();
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IPushService, PushService>();
+            services.AddSingleton<IFileService, FileService>();
 
             services.AddControllersWithViews();
 
@@ -62,9 +56,24 @@ namespace backend
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../frontend/build"; });
         }
 
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<OffersChangedNotifier>();
+            builder.RegisterType<OffersService>().As<IOffersService>().InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(OffersChangedNotifier));
+
+            builder.RegisterType<ReservationsChangedNotifier>();
+            builder.RegisterType<ReservationsService>().As<IReservationsService>().InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(ReservationsChangedNotifier));
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -76,7 +85,7 @@ namespace backend
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
@@ -85,18 +94,7 @@ namespace backend
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.Use(async delegate(HttpContext context, Func<Task> next)
-            {
-                try
-                {
-                    await next.Invoke();
-                }
-                catch (EntityNotFoundException e)
-                {
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    await context.Response.WriteAsync($"{e.EntityName} with ID = {e.EntityId} could not be found");
-                }
-            });
+            app.UseMiddleware<ErrorResponseMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

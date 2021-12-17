@@ -3,78 +3,89 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using backend.Data;
-using backend.DTO.Offers;
+using backend.DTO;
+using backend.DTO.Offer;
 using backend.DTO.Reservation;
+using backend.Exceptions;
+using backend.Extensions;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // "api/offers"
+    [Route("api/[controller]")] // /api/offers
     public class OffersController : ControllerBase
     {
+        private readonly IOffersService _offersService;
         private readonly IMapper _mapper;
-        private readonly OffersService _offersService;
-        private readonly PushService _pushService;
-        private readonly Lazy<ReservationsService> _lazyReservationsService;
-        private ReservationsService _reservationsService => _lazyReservationsService.Value;
+        private readonly IConfiguration _config;
+        private readonly IFileService _fileService;
+        private readonly IReservationsService _reservationsService;
 
         public OffersController(
+            IOffersService offersService,
             IMapper mapper,
-            OffersService offersService,
-            PushService pushService)
+            IConfiguration config,
+            IFileService fileService,
+            IReservationsService reservationsService)
         {
-            _mapper = mapper;
             _offersService = offersService;
-            _pushService = pushService;
-            _lazyReservationsService =
-                new Lazy<ReservationsService>(() => HttpContext.RequestServices.GetService<ReservationsService>());
+            _mapper = mapper;
+            _config = config;
+            _fileService = fileService;
+            _reservationsService = reservationsService;
         }
 
-        [HttpGet] // GET "api/offers"
-        public IEnumerable<OfferDto> FindAll(bool showExpired)
+        [HttpGet] // GET /api/offers
+        public ActionResult<PaginatedListDto<OfferDto>> FindAll(bool showExpired, int page, int limit, int userId)
         {
-            return _offersService.FindAll(showExpired).Select(_mapper.Map<OfferDto>);
+            var paginatedOffersList = _offersService.FindAllPaginated(showExpired, page, limit, userId);
+            var paginatedOffersListDto = new PaginatedListDto<OfferDto>
+            {
+                Data = paginatedOffersList.Select(_mapper.Map<OfferDto>).ToList(),
+                HasNextPage = paginatedOffersList.HasNextPage
+            };
+            return paginatedOffersListDto;
         }
 
-        [HttpGet("{id:int}")] // GET "api/offers/<number>"
-        public ActionResult<OfferDto> FindById(int id)
+        [HttpGet("{id:int}")] // GET /api/offers/{id}
+        public OfferDto FindById(int id)
         {
             var offer = _offersService.FindById(id);
             return _mapper.Map<OfferDto>(offer);
         }
 
         [Authorize]
-        [HttpPost] // POST "api/offers"
+        [HttpPost] // POST /api/offers
         public async Task<ActionResult<OfferDto>> Create([FromForm] CreateOfferDto createOfferDto)
         {
-            var imagePath = await FileUploadService.UploadFormFileAsync(createOfferDto.FoodPhoto, "images");
-            
+            var imagePath =
+                await _fileService.UploadFormFileAsync(createOfferDto.FoodPhoto, _config["UploadedFilesPath"]);
+
             if (imagePath == null)
                 return BadRequest("Invalid image file");
-            
-            var user = (User) HttpContext.Items["user"];
-            
-            var offer = _mapper.Map<Offer>(createOfferDto);
-            offer.CreatedAt = DateTime.UtcNow;
-            offer.Giver = user;
-            offer.Food.ImagePath = imagePath;
-            
-            _offersService.Create(offer);
-            
-            _pushService.NotifyOffersChanged();
 
-            return CreatedAtAction(nameof(FindById), new { id = offer.Id }, _mapper.Map<OfferDto>(offer));
+            var user = HttpContext.GetUser();
+
+            var offer = _mapper.Map<Offer>(createOfferDto);
+            offer.AvailableQuantity = offer.Quantity;
+            offer.CreatedAt = DateTime.UtcNow;
+            offer.Food.ImagePath = imagePath;
+            offer.Giver = user;
+
+            _offersService.Create(offer);
+
+            return CreatedAtAction(nameof(FindById), new {id = offer.Id}, _mapper.Map<OfferDto>(offer));
         }
-        
+
         [Authorize]
-        [HttpPut("{id:int}")] // "api/offers/{id}" id of the offer
+        [HttpPut("{id:int}")] // PUT /api/offers/{id}
         public async Task<ActionResult<OfferDto>> Update(
             int id,
             [FromForm] UpdateOfferDto updateOfferDto,
@@ -82,142 +93,141 @@ namespace backend.Controllers
             IFormFile image)
         {
             var offer = _offersService.FindById(id);
+            var user = HttpContext.GetUser();
 
-            var user = (User) HttpContext.Items["user"];
-            
-            if(offer.Giver != user)
+            if (offer.Giver != user)
+            {
+                Log.Error("User {user.Id} tried to update offer {offer.Id}", user.Id, offer.Id);
                 return Conflict("Offer can only be updated by its owner");
+            }
 
-            var imagePath = await FileUploadService.UploadFormFileAsync(image, "images");
+            var imagePath = await _fileService.UploadFormFileAsync(image, _config["UploadedFilesPath"]);
 
             // if a new file was uploaded, swap the new path with the old one
             if (imagePath != null)
                 (offer.Food.ImagePath, imagePath) = (imagePath, offer.Food.ImagePath);
 
-            _offersService.UpdateOffer(offer, updateOfferDto, foodDto);
-            
+            _offersService.Update(offer, updateOfferDto, foodDto);
+
             // delete the old file if changes were saved successfully
             if (imagePath != null)
-                FileUploadService.DeleteFile(imagePath);
+                _fileService.DeleteFile(imagePath);
 
             return _mapper.Map<OfferDto>(offer);
         }
 
         [Authorize]
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}")] // DELETE /api/offers/{id}
         public IActionResult Delete(int id)
         {
             var offer = _offersService.FindById(id);
 
             _offersService.Delete(offer);
-            
-            _pushService.NotifyOfferDeleted(id);
-            _pushService.NotifyOffersChanged();
 
             return NoContent();
         }
 
         [Authorize]
-        [HttpPost("{id:int}/reservation")] // POST "api/offers/<number>/reservation
+        [HttpPost("{id:int}/reservation")] // POST /api/offers/{id}/reservation
         public ActionResult<ReservationDto> CreateReservation(int id, CreateReservationDto createReservationDto)
         {
             var offer = _offersService.FindById(id);
-
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             if (user == offer.Giver)
             {
+                Log.Error("Offer creator {user.Id} tried to create reservation for their offer {offer.Id}", user.Id,
+                    offer.Id);
                 return Conflict("Offer cannot be reserved by its owner");
             }
 
-            Reservation reservation;
+            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
-            lock (ReservationsLock.Object)
+            if (reservation != null)
             {
-                reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
+                Log.Error("User {user.Id} tried to create duplicate reservations for offer {offer.Id}", user.Id,
+                    offer.Id);
+                return Conflict("User already has an active reservation for this offer");
+            }
 
-                if (reservation != null)
-                {
-                    return Conflict("User already has an active reservation for this offer");
-                }
+            reservation = new Reservation
+            {
+                Offer = offer,
+                User = user,
+                Quantity = createReservationDto.Quantity
+            };
 
-                if (createReservationDto.Quantity > offer.AvailableQuantity)
-                {
-                    return Conflict("Requested quantity is larger than available");
-                }
-
-                reservation = new Reservation
-                {
-                    Offer = offer,
-                    User = user,
-                    CreatedAt = DateTime.UtcNow,
-                    Quantity = createReservationDto.Quantity
-                };
-            
+            try
+            {
                 _reservationsService.Create(reservation);
+            }
+            catch (QuantityTooLargeException)
+            {
+                Log.Error(
+                    "User {user.Id} tried to tried to reserve {reservation.Quantity} of offer {offer.Id} when only {offer.AvailableQuantity} was available",
+                    user.Id,
+                    reservation.Quantity,
+                    offer.Id,
+                    offer.AvailableQuantity);
+                return Conflict("Requested quantity is larger than available");
             }
 
             return CreatedAtAction(
                 nameof(GetReservation),
-                new { id = reservation.Id },
+                new {id = offer.Id},
                 _mapper.Map<ReservationDto>(reservation));
         }
 
         [Authorize]
-        [HttpGet("{id:int}/reservation")] // GET "api/offers/{id}/reservation
-        public ActionResult<ReservationDto> GetReservation(int id)
+        [HttpGet("{id:int}/reservation")] // GET /api/offers/{id}/reservation
+        public ReservationCreatorDto GetReservation(int id)
         {
             var offer = _offersService.FindById(id);
-
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
-            return _mapper.Map<ReservationDto>(reservation);
+            return _mapper.Map<ReservationCreatorDto>(reservation);
         }
 
         [Authorize]
-        [HttpDelete("{id:int}/reservation")] // DELETE "api/offers/<number>/reservation
+        [HttpDelete("{id:int}/reservation")] // DELETE /api/offers/{id}/reservation
         public IActionResult CancelReservation(int id)
         {
             var offer = _offersService.FindById(id);
+            var user = HttpContext.GetUser();
 
-            var user = (User) HttpContext.Items["user"];
+            var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
 
-            lock (ReservationsLock.Object)
+            if (reservation == null)
             {
-                var reservation = offer.Reservations.FirstOrDefault(r => r.User == user);
-
-                if (reservation == null)
-                {
-                    return Conflict("User has not reserved this offer");
-                }
-
-                if (reservation.CompletedAt != null)
-                {
-                    return Conflict("Completed reservation can not be cancelled");
-                }
-            
-                _reservationsService.Delete(reservation);
+                return Conflict("User has not reserved this offer");
             }
+
+            if (reservation.CompletedAt != null)
+            {
+                return Conflict("Completed reservation can not be cancelled");
+            }
+
+            _reservationsService.Delete(reservation);
 
             return Ok();
         }
 
         [Authorize]
-        [HttpGet("{id:int}/reservations")]
+        [HttpGet("{id:int}/reservations")] // GET /api/offers/{id}/reservations
         public ActionResult<IEnumerable<ReservationDto>> GetAllReservations(int id)
         {
             var offer = _offersService.FindById(id);
-            
-            var user = (User) HttpContext.Items["user"];
+            var user = HttpContext.GetUser();
 
             if (offer.Giver != user)
             {
+                Log.Error("User {user.Id} tried to get other user's reservation {reservation.Id}", user.Id, id);
                 return Conflict("Reservations can only be listed by the owner");
             }
 
-            return Ok(offer.Reservations.Select(_mapper.Map<ReservationDto>));
+            return offer.Reservations.Select(_mapper.Map<ReservationDto>).ToList();
         }
     }
 }

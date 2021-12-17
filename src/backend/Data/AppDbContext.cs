@@ -1,38 +1,12 @@
 ﻿using backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace backend.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-            ChangeTracker.StateChanged += AdjustReservedAmount;
-            ChangeTracker.Tracked += AdjustReservedAmount;
-        }
-
-        private static void AdjustReservedAmount(object sender, EntityEntryEventArgs e)
-        {
-            switch (e.Entry.Entity)
-            {
-                case Reservation reservation:
-                    switch (e.Entry.State)
-                    {
-                        case EntityState.Added:
-                            reservation.Offer.AvailableQuantity -= reservation.Quantity;
-                            break;
-                        case EntityState.Deleted:
-                            reservation.Offer.AvailableQuantity += reservation.Quantity;
-                            break;
-                    }
-
-                    break;
-                case Offer offer when e.Entry.State == EntityState.Added:
-                    offer.AvailableQuantity = offer.Quantity;
-                    break;
-            }
-        }
+        public AppDbContext() {} // For testing only
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,10 +14,23 @@ namespace backend.Data
                 .HasOne(r => r.Offer)
                 .WithMany(o => o.Reservations)
                 .IsRequired();
+
+            if (Database.IsNpgsql())
+            {
+                modelBuilder.Entity<Reservation>()
+                    .Property(r => r.CreatedAt)
+                    .HasDefaultValueSql("now() AT TIME ZONE 'utc'");
+            }
+            else
+            {
+                modelBuilder.Entity<Reservation>()
+                    .Property(r => r.CreatedAt)
+                    .HasDefaultValueSql("datetime('now')"); // currently assumes SQLite
+            }
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Offer> Offers { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Offer> Offers { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
     }
 }

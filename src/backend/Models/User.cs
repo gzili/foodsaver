@@ -11,7 +11,7 @@ namespace backend.Models
         public UserType UserType { get; set; }
         [Required]
         public string Username { get; set; }
-        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$")]
+        [Required]
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }

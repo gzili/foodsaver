@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
@@ -13,5 +14,7 @@ namespace backend.Models
         public string ImagePath { get; set; }
         [Required]
         public string Unit { get; set; }
+        [DefaultValue(1)]
+        public decimal MinQuantity { get; set; }
     }
 }

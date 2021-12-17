@@ -2,46 +2,74 @@
 using System.Linq;
 using backend.Data;
 using backend.Exceptions;
-using backend.Hubs;
 using backend.Models;
-using backend.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
-    public class ReservationsService
+    public class ReservationsService : IReservationsService
     {
-        private readonly PushService _pushService;
-        private readonly ReservationsRepository _reservationsRepository;
-        private readonly OfferEvents _offerEvents;
         private readonly AppDbContext _db;
+        
+        private IQueryable<Reservation> Reservations =>  _db.Reservations
+            .Include(r => r.User)
+            .Include(r => r.Offer);
 
-        public ReservationsService(PushService pushService, ReservationsRepository reservationsRepository, OfferEvents offerEvents, AppDbContext db)
+        public ReservationsService(AppDbContext db)
         {
-            _pushService = pushService;
-            _reservationsRepository = reservationsRepository;
-            _offerEvents = offerEvents;
             _db = db;
         }
 
-        private void NotifyAvailableQuantityChanged(Reservation reservation)
+        private static void WithConcurrencyResolution(Action f)
         {
-            _offerEvents.OnAvailableQuantityChanged(
-                new AvailableQuantityChangedEventArgs(reservation.Offer.Id, reservation.Offer.AvailableQuantity));
+            var saved = false;
+            while (!saved)
+            {
+                try
+                {
+                    f();
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    foreach (var entry in ex.Entries)
+                    {
+                        if (entry.Entity is Offer)
+                        {
+                            var dbValues = entry.GetDatabaseValues();
+                            entry.OriginalValues.SetValues(dbValues);
+                            entry.CurrentValues.SetValues(dbValues);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException(
+                                "Concurrency conflicts are not handled for " + entry.Metadata.Name);
+                        }
+                    }
+                }
+            }
         }
-        
+
         public void Create(Reservation reservation)
         {
-            _reservationsRepository.Create(reservation);
+            var random = new Random();
+            reservation.Pin = (short) random.Next(1000, 10000);
             
-            NotifyAvailableQuantityChanged(reservation);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
+            WithConcurrencyResolution(() =>
+            {
+                if (reservation.Quantity > reservation.Offer.AvailableQuantity)
+                    throw new QuantityTooLargeException();
+                
+                reservation.Offer.AvailableQuantity -= reservation.Quantity;
+                
+                _db.Reservations.Add(reservation);
+                _db.SaveChanges();
+            });
         }
 
         public Reservation FindById(int id)
         {
-            var reservation = _reservationsRepository
-                .FindByCondition(r => r.Id == id)
-                .FirstOrDefault();
+            var reservation = Reservations.FirstOrDefault(r => r.Id == id);
 
             if (reservation == null)
             {
@@ -50,21 +78,22 @@ namespace backend.Services
 
             return reservation;
         }
-        
-        public void Delete(Reservation reservation)
-        {
-            _reservationsRepository.Delete(reservation);
-            
-            NotifyAvailableQuantityChanged(reservation);
-            _pushService.NotifyReservationsChanged(reservation.Offer);
-        }
 
         public void Complete(Reservation reservation)
         {
             reservation.CompletedAt = DateTime.UtcNow;
-            
             _db.SaveChanges();
-            _pushService.NotifyReservationsChanged(reservation.Offer);
+        }
+
+        public void Delete(Reservation reservation)
+        {
+            _db.Reservations.Remove(reservation);
+            
+            WithConcurrencyResolution(() =>
+            {
+                reservation.Offer.AvailableQuantity += reservation.Quantity;
+                _db.SaveChanges();
+            });
         }
     }
 }

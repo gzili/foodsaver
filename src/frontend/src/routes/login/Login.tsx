@@ -1,14 +1,15 @@
-import { Alert, AlertIcon, AlertDescription, Box, Button, Heading, VStack } from '@chakra-ui/react';
-import * as yup from 'yup';
+import { Alert, AlertDescription, AlertIcon, Box, Button, Heading, VStack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
-import { FieldWithController, Input } from 'components';
-import { useAuth } from 'contexts/auth.context';
-import { Redirect } from 'react-router';
-import api from 'contexts/api.context';
-import { useMutation } from 'react-query';
 import { HTTPError } from 'ky';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
+import { Redirect } from 'react-router';
+import * as yup from 'yup';
+
+import { FieldWithController, Input } from 'components';
+import api from 'contexts/apiContext';
+import { useAuth } from 'contexts/authContext';
 import { UserDto } from 'dto/user';
 
 interface FormValues {
@@ -29,7 +30,7 @@ const defaultValues = {
 }
 
 function loginUser(data: FormValues) {
-  return api.post('user/login', { json: data }).json<UserDto>();
+  return api.post('users/login', { json: data }).json<UserDto>();
 }
 
 function Login() {
@@ -56,7 +57,7 @@ function Login() {
   };
 
   return user ? (
-    <Redirect to="/offers" />
+    <Redirect to="/app/offers" />
   ) : (
     <Box maxW="280px" m="0 auto" py="4">
       <Box textAlign="center" fontSize="xl" fontWeight="bold" mb="4">food<Box as="span" color="brand.500">saver</Box></Box>

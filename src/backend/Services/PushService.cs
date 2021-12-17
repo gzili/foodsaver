@@ -4,13 +4,18 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Services
 {
-    public class PushService
+    public class PushService : IPushService
     {
         private readonly IHubContext<ReservationsHub> _reservationsHub;
 
         public PushService(IHubContext<ReservationsHub> reservationsHub)
         {
             _reservationsHub = reservationsHub;
+        }
+
+        public void NotifyAvailableQuantityChanged(int id, decimal quantity)
+        {
+            _reservationsHub.Clients.Group(id.ToString()).SendAsync("AvailableQuantityChanged", quantity);
         }
 
         public void NotifyOffersChanged()

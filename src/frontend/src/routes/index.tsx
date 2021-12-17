@@ -1,17 +1,19 @@
-import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Flex, Heading, HStack, Image, Text } from '@chakra-ui/react';
+import { APP_BAR_HEIGHT, C } from 'components';
+import { Link as RouterLink } from 'react-router-dom';
+
 import logo from 'resources/foodsaver_logo.png';
 
 export default function Home() {
   return (
-    <Box h="100vh" pt={10}>
+    <Box h={`calc(100vh - ${APP_BAR_HEIGHT * 4}px)`}>
       <Flex p={4} h="100%" direction="column" justifyContent="center">
         <Box>
           <Box flexShrink={1}>
             <Image src={logo} maxW="250px" m="0 auto" />
           </Box>
           <Heading as="h1" maxW="300px" m="0 auto" pt={2} textAlign="center">
-            Share excess <Box as="span" color="brand.500">food</Box> with anyone
+            <C color="brand.500">Share</C> excess <C color="brand.500">food</C> with <C color="brand.500">anyone</C>
           </Heading>
           <Text textAlign="center" pt={2}>
             Join the platform where everyone from individuals to large food chains
@@ -19,7 +21,7 @@ export default function Home() {
           </Text>
           <HStack justifyContent="center" spacing={2} pt={4}>
             <Button as={RouterLink} to="/join" colorScheme="brand">Join</Button>
-            <Button as={RouterLink} to="/offers">Browse offers</Button>
+            <Button as={RouterLink} to="/app/offers">Browse offers</Button>
           </HStack>
         </Box>
       </Flex>
