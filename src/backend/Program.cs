@@ -32,12 +32,6 @@ namespace backend
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                /*.WriteTo.File(
-                    @"C:\logs\foodsaver_log_" + DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss") + ".txt",
-                    fileSizeLimitBytes: 1_000_000,
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1))*/
                 .CreateLogger();
 
             using (var scope = host.Services.CreateScope())
