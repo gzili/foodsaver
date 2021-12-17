@@ -1,8 +1,8 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
-import { Avatar, Box, Button, Flex, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, IconButton, Menu, MenuButton,/* MenuDivider, */MenuItem, MenuList } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
-import { faHandHoldingHeart, FaIcon, faSignOutAlt } from 'components';
+import { /*faHandHoldingHeart, */FaIcon, faSignOutAlt } from 'components';
 import { useAuth } from 'contexts/authContext';
 import { absPath } from 'helpers';
 
@@ -41,8 +41,8 @@ export default function AppBar() {
               <Avatar name={user.username} src={absPath(user.avatarPath)} size="xs" />
             </MenuButton>
             <MenuList>
-              <MenuItem icon={<FaIcon icon={faHandHoldingHeart} />}>My offers</MenuItem>
-              <MenuDivider />
+              {/*<MenuItem icon={<FaIcon icon={faHandHoldingHeart} />}>My offers</MenuItem>
+              <MenuDivider />*/}
               <MenuItem icon={<FaIcon icon={faSignOutAlt} />} onClick={signOut}>Sign out</MenuItem>
             </MenuList>
           </Menu>
