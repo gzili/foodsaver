@@ -32,5 +32,11 @@ namespace backend.Services
         {
             _reservationsHub.Clients.User(offer.Giver.Id.ToString()).SendAsync("ReservationsChanged", offer.Id);
         }
+
+        public void NotifyReservationCompleted(Reservation reservation)
+        {
+            _reservationsHub.Clients.User(reservation.User.Id.ToString())
+                .SendAsync("ReservationCompleted", reservation.Id);
+        }
     }
 }

@@ -27,9 +27,15 @@ namespace backend.Interceptors
                 && args?[0] is Reservation reservation)
             {
                 _pushService.NotifyReservationsChanged(reservation.Offer);
+                
                 if (methodName is nameof(IReservationsService.Create) or nameof(IReservationsService.Delete))
                 {
                     _pushService.NotifyAvailableQuantityChanged(reservation.Offer.Id, reservation.Offer.AvailableQuantity);
+                }
+
+                if (methodName is nameof(IReservationsService.Complete))
+                {
+                    _pushService.NotifyReservationCompleted(reservation);
                 }
             }
         }

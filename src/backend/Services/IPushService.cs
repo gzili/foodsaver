@@ -8,5 +8,6 @@ namespace backend.Services
         void NotifyOffersChanged();
         void NotifyOfferDeleted(int id);
         void NotifyReservationsChanged(Offer offer);
+        void NotifyReservationCompleted(Reservation reservation);
     }
 }
