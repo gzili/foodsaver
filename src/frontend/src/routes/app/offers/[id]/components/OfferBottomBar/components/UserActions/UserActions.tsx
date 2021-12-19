@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useQuery } from 'react-query';
 
 import api from 'contexts/apiContext';
@@ -17,13 +17,23 @@ export function UserActions() {
     return api.get(`offers/${id}/reservation`).json<ICreatorReservation | ''>();
   });
 
+  const handleRefetch = useCallback(() => refetch(), [refetch]);
+
+  const handleReservationCompletion = useCallback(id => {
+    if (data && data.id === id) {
+      refetch();
+    }
+  }, [data, refetch]);
+
   useEffect(() => {
-    const cb = () => refetch();
+    connection.on("AvailableQuantityChanged", handleRefetch);
+    connection.on("ReservationCompleted", handleReservationCompletion);
 
-    connection.on("AvailableQuantityChanged", cb);
-
-    return () => connection.off("AvailableQuantityChanged", cb);
-  }, [refetch, connection]);
+    return () => {
+      connection.off("AvailableQuantityChanged", handleRefetch);
+      connection.off("ReservationCompleted", handleReservationCompletion);
+    };
+  }, [refetch, handleRefetch, handleReservationCompletion, connection]);
 
   if (isLoading) {
     return null;
