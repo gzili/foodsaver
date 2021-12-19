@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AutoMapper.QueryableExtensions;
 using backend.Data;
+using backend.DTO.Offer;
+using backend.DTO.Reservation;
 using backend.Exceptions;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +14,13 @@ namespace backend.Services
     public class ReservationsService : IReservationsService
     {
         private readonly AppDbContext _db;
-        
-        private IQueryable<Reservation> Reservations =>  _db.Reservations
+
+        private IQueryable<Reservation> Reservations => _db.Reservations
             .Include(r => r.User)
-            .Include(r => r.Offer);
+            .Include(r => r.Offer)
+            .ThenInclude(o => o.Address)
+            .Include(r => r.Offer)
+            .ThenInclude(o => o.Food);
 
         public ReservationsService(AppDbContext db)
         {
@@ -77,6 +84,11 @@ namespace backend.Services
             }
 
             return reservation;
+        }
+
+        public IEnumerable<Offer> GetReservedOffersByUserId(int userId)
+        {
+            return Reservations.Where(r => r.User.Id == userId).Select(r => r.Offer).ToList();
         }
 
         public void Complete(Reservation reservation)

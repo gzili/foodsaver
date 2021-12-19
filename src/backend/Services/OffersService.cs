@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using backend.Data;
 using backend.DTO;
@@ -42,6 +43,14 @@ namespace backend.Services
             }
 
             return offer;
+        }
+
+        public List<Offer> FindAllByUserId(int userId)
+        {
+            return Offers
+                .Where(o => o.Giver.Id == userId)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToList();
         }
 
         public PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit, int userId)

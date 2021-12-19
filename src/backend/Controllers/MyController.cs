@@ -4,6 +4,7 @@ using AutoMapper;
 using backend.DTO.Offer;
 using backend.DTO.User;
 using backend.Extensions;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,15 +15,19 @@ namespace backend.Controllers
     public class MyController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IOffersService _offersService;
+        private readonly IReservationsService _reservationsService;
 
-        public MyController(IMapper mapper)
+        public MyController(IMapper mapper, IOffersService offersService, IReservationsService reservationsService)
         {
             _mapper = mapper;
+            _offersService = offersService;
+            _reservationsService = reservationsService;
         }
         
         [Authorize]
         [HttpGet("profile")]
-        public ActionResult<UserDto> Get() // GET /api/my/profile
+        public ActionResult<UserDto> GetProfile() // GET /api/my/profile
         {
             var user = HttpContext.GetUser();
             
@@ -31,11 +36,19 @@ namespace backend.Controllers
         
         [Authorize]
         [HttpGet("offers")] // GET /api/my/offers
-        public IEnumerable<OfferDto> GetUserOffers()
+        public IEnumerable<OfferDto> GetOffers()
         {
             var user = HttpContext.GetUser();
-            
-            return user.Offers.Select(_mapper.Map<OfferDto>).ToList();
+            return _offersService.FindAllByUserId(user.Id).Select(_mapper.Map<OfferDto>);
+        }
+
+        [Authorize]
+        [HttpGet("reservations")]
+        public IEnumerable<OfferDto> GetReservations()
+        {
+            var user = HttpContext.GetUser();
+            var reservations = _reservationsService.GetReservedOffersByUserId(user.Id);
+            return reservations.Select(_mapper.Map<OfferDto>);
         }
     }
 }

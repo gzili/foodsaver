@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using backend.Models;
 
 namespace backend.Services
@@ -6,6 +7,7 @@ namespace backend.Services
     {
         void Create(Reservation reservation);
         Reservation FindById(int id);
+        IEnumerable<Offer> GetReservedOffersByUserId(int userId);
         void Complete(Reservation reservation);
         void Delete(Reservation reservation);
     }
