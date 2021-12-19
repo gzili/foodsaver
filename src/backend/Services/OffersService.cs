@@ -80,6 +80,11 @@ namespace backend.Services
             return PaginatedList<Offer>.Create(offers, page, limit);
         }
 
+        public IEnumerable<Offer> FindAllNearby(string city)
+        {
+            return Offers.Where(o => o.Giver.Address.City == city).ToList();
+        }
+
         public void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto)
         {
             _db.Entry(offer).CurrentValues.SetValues(updateOfferDto);

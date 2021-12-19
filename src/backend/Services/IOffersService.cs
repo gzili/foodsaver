@@ -11,6 +11,7 @@ namespace backend.Services
         Offer FindById(int id);
         List<Offer> FindAllByUserId(int userId);
         PaginatedList<Offer> FindAllPaginated(bool includeExpired, int page, int limit, int userId);
+        IEnumerable<Offer> FindAllNearby(string city);
         void Update(Offer offer, UpdateOfferDto updateOfferDto, FoodDto foodDto);
         void Delete(Offer offer);
     }

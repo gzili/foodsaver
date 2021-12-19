@@ -50,5 +50,13 @@ namespace backend.Controllers
             var reservations = _reservationsService.GetReservedOffersByUserId(user.Id);
             return reservations.Select(_mapper.Map<OfferDto>);
         }
+
+        [Authorize]
+        [HttpGet("nearby")]
+        public IEnumerable<OfferDto> GetNearby()
+        {
+            var user = HttpContext.GetUser();
+            return _offersService.FindAllNearby(user.Address.City).Select(_mapper.Map<OfferDto>);
+        }
     }
 }
