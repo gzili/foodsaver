@@ -2,7 +2,7 @@ import { Avatar, Box, Flex, Grid, Heading, HStack, IconButton, Text, VStack } fr
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 
-import { B, FaIcon, faLongArrowAltRight, faMapMarkerAlt, faShoppingBag, LoadingOverlay } from 'components';
+import { B, faAngleRight, FaIcon, faMapMarkerAlt, faShoppingBag, LoadingOverlay } from 'components';
 import api from 'contexts/apiContext';
 import { UserType } from 'dto/user';
 import { absPath, getUserTypeFaIcon, getUserTypeString } from 'helpers';
@@ -45,7 +45,7 @@ function PlacesListItem(props: IPlacesListItem) {
             </Flex>
           </Box>
         </HStack>
-        <IconButton as={Link} aria-label="Visit place" icon={<FaIcon icon={faLongArrowAltRight} />} to={"/app/places/" + place.id} />
+        <IconButton as={Link} aria-label="Visit place" icon={<FaIcon icon={faAngleRight} />} to={"/app/places/" + place.id} />
       </Grid>
       <Box mt={2} color="gray.600">
         <HStack spacing={1}>
