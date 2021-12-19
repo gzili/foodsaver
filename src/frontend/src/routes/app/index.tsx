@@ -2,6 +2,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import { HubProvider } from 'contexts/hubContext';
 
+import HomeIndex from './home';
 import MyIndex from './my';
 import OffersIndex from './offers';
 import PlacesIndex from './places';
@@ -10,6 +11,9 @@ export default function Index() {
   return (
     <HubProvider>
       <Switch>
+        <Route path="/app/home">
+          <HomeIndex />
+        </Route>
         <Route path="/app/my">
           <MyIndex />
         </Route>
