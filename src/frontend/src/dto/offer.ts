@@ -19,5 +19,6 @@ export interface IOfferDto {
     name: string,
     imagePath: string,
     unit: string,
+    minQuantity: number,
   },
 }

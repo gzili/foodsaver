@@ -57,12 +57,12 @@ function ReservationCreatePrompt(props: IReservationPrompt) {
 }
 
 export function ReservationCreate() {
-  const { availableQuantity } = useOffer();
+  const { availableQuantity, food } = useOffer();
 
   const { isOpen: isPromptOpen, onOpen, onClose } = useDisclosure();
 
-  const [inputValue, setInputValue] = useState('1');
-  const [value, setValue] = useState(1);
+  const [inputValue, setInputValue] = useState(food.minQuantity.toString());
+  const [value, setValue] = useState(food.minQuantity);
 
   const handleChange = (str: string) => {
     setInputValue(str);
@@ -74,8 +74,8 @@ export function ReservationCreate() {
     getInputProps: input,
     getDecrementButtonProps: dec,
   } = useNumberInput({
-    step: 1,
-    min: 1,
+    step: food.minQuantity,
+    min: food.minQuantity,
     max: availableQuantity,
     clampValueOnBlur: true,
     value: inputValue,
